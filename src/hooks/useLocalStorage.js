@@ -1,9 +1,6 @@
 import { useCallback, useState } from "react";
 
 export function useLocalStorage(key, initialValue) {
-  //Test update
-//new code update 
-//hbiaci
   const [storedValue, setStoredValue] = useState(() => {
     try {
       const item = localStorage.getItem(key);
