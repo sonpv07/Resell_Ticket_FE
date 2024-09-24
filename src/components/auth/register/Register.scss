@@ -1,0 +1,123 @@
+.login-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 478px;
+  height: auto;
+  background-color: #1a2129;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  padding-bottom: 20px;
+
+  .title-container {
+    width: 100%;
+
+    .title {
+      color: white;
+      text-align: center;
+      font-size: 18px;
+      font-weight: 600;
+      padding: 20px 0;
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 23px;
+      right: 20px;
+      color: white;
+      cursor: pointer;
+      &:hover {
+        color: grey;
+      }
+    }
+  }
+
+  .body-container {
+    padding: 0 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    .mail-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: white;
+      gap: 10px;
+      border-radius: 8px;
+      padding: 15px 0;
+      cursor: pointer;
+
+      &:hover {
+        background-color: rgba(255, 255, 255, 0.923);
+      }
+      .mail-img {
+        width: 25px;
+        height: 25px;
+      }
+
+      p {
+        font-weight: 500;
+        font-size: 20px;
+      }
+    }
+
+    .form-container {
+      .form {
+        .form-input {
+          padding: 15px 10px;
+          background-color: #00131a;
+          border: none;
+          color: white;
+
+          &::placeholder {
+            color: #667175;
+            font-size: 16px;
+            font-weight: 500;
+          }
+
+          &:focus {
+            background-color: #00131a24;
+          }
+        }
+
+        .login-link {
+          display: flex;
+          justify-content: space-between;
+
+          p {
+            color: white;
+
+            &.link {
+              font-weight: 500;
+              font-size: 16px;
+              color: rgb(16, 172, 172);
+              cursor: pointer;
+            }
+          }
+        }
+
+        .form-btn {
+          margin-top: 20px;
+          width: 100%;
+          padding: 25px 0px;
+          background-color: #27d575;
+          color: white;
+          font-size: 18px;
+          font-weight: 600;
+
+          &:hover {
+            background-color: #21e679;
+          }
+        }
+      }
+    }
+  }
+
+  .divider {
+    border-color: whitesmoke;
+    color: white;
+  }
+}
