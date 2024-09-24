@@ -1,5 +1,5 @@
 import React from "react";
-import "./Login.scss";
+import "./ProductCard.scss";
 
 export default function ProductCard() {
   return <div>ProductCard</div>;
