@@ -15,11 +15,9 @@ export default function Register({ toggleValue }) {
     try {
       const response = await AuthService.register(values);
 
-      console.log(response);
-
-      // const { token } = response.data;
-      // localStorage.setItem("user", JSON.stringify(response.data));
-      // localStorage.setItem("token", token);
+      if (response) {
+        // Move to OTP Page
+      }
     } catch (err) {
       console.log(err);
       alert(err.response.data);
@@ -120,6 +118,23 @@ export default function Register({ toggleValue }) {
                 type="password"
                 name="password"
                 placeholder="Password"
+                className="form-input"
+              />
+            </Form.Item>
+
+            <Form.Item
+              name="re_password"
+              rules={[
+                {
+                  required: true,
+                  message: "Please Input Password",
+                },
+              ]}
+            >
+              <Input
+                type="password"
+                name="re_password"
+                placeholder="Input Password Again"
                 className="form-input"
               />
             </Form.Item>
