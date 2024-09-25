@@ -1,5 +1,6 @@
 import Home from "./Home/Home";
 import TicketsList from "./Ticket/TicketsList/TicketsList";
+import EditProfile from "./User/profile/edit-profile/EditProfile";
 
 const pagesData = [
   {
@@ -11,6 +12,29 @@ const pagesData = [
     path: "tickets",
     element: <TicketsList />,
     title: "tickets",
+  },
+
+  {
+    path: "edit",
+    element: <EditProfile />,
+    title: "edit",
+    children: [
+      {
+        path: "email",
+        element: <EditProfile />,
+        title: "email",
+      },
+      {
+        path: "password",
+        element: <EditProfile />,
+        title: "password",
+      },
+      {
+        path: "name",
+        element: <EditProfile />,
+        title: "name",
+      },
+    ],
   },
 ];
 
