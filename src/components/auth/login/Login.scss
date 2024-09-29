@@ -66,6 +66,12 @@
 
     .form-container {
       .form {
+        .error-message {
+          color: red;
+          font-size: 14px;
+          font-weight: 500;
+        }
+
         .form-input {
           padding: 15px 10px;
           background-color: #00131a;
@@ -80,6 +86,22 @@
 
           &:focus {
             background-color: #00131a24;
+          }
+        }
+
+        .login-link {
+          display: flex;
+          justify-content: space-between;
+
+          p {
+            color: white;
+
+            &.link {
+              font-weight: 500;
+              font-size: 16px;
+              color: rgb(16, 172, 172);
+              cursor: pointer;
+            }
           }
         }
 

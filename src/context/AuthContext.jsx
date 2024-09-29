@@ -1,4 +1,4 @@
-import React, { createContext, useState, useEffect } from "react";
+import React, { createContext, useState } from "react";
 
 export const AuthContext = createContext();
 
@@ -8,11 +8,23 @@ export const AuthProvider = ({ children }) => {
     return savedUser ? JSON.parse(savedUser) : null;
   });
 
+  const [accessToken, setAccessToken] = useState(null);
+
+  const [refreshToken, setRefreshToken] = useState(null);
+
+  const [showForm, setShowForm] = useState("");
+
   return (
     <AuthContext.Provider
       value={{
         user,
         setUser,
+        accessToken,
+        setAccessToken,
+        refreshToken,
+        setRefreshToken,
+        showForm,
+        setShowForm,
       }}
     >
       {children}
