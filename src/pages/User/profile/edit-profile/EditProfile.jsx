@@ -29,12 +29,6 @@ const EDIT_TYPE = [
   },
 ];
 
-const USER_VALUE = {
-  name: "Son Pham",
-  email: "son@gmail.com",
-  phone: "123456789",
-};
-
 export default function EditProfile() {
   const pathname = useLocation().pathname;
 
@@ -59,7 +53,6 @@ export default function EditProfile() {
       <EditItem
         title={getEditType().title}
         subTitle={getEditType().subTitle}
-        userData={USER_VALUE}
         key={getEditType().id}
       />
     </div>

@@ -1,9 +1,13 @@
-import React from "react";
+import React, { useContext, useState } from "react";
 import "../EditItem.scss";
 import { Button, Form, Input } from "antd";
 import UserService from "../../../../services/user.service";
-export default function EditForm({ path, userData }) {
-  console.log(userData);
+import { AuthContext } from "../../../../context/AuthContext";
+import { toast } from "react-toastify";
+export default function EditForm({ path }) {
+  const { user, setUser } = useContext(AuthContext);
+
+  const [isLoading, setIsLoading] = useState(false);
 
   const getLabel = () => {
     switch (path) {
@@ -44,13 +48,40 @@ export default function EditForm({ path, userData }) {
   };
 
   const handleSubmit = async (values) => {
-    console.log(values);
-
     try {
       switch (path) {
-        // case "Email": {
-        //   return await editEmail();F
-        // }
+        case "Email": {
+          const updateValues = {
+            iD_Customer: user.iD_Customer,
+            name: user.name,
+            contact: user.contact,
+            email: values.email,
+            average_feedback: user.average_feedbacks,
+            packageExpirationDate: user.packageExpirationDate,
+            iD_Role: user.iD_Role,
+            iD_Package: user.iD_Package,
+          };
+
+          setIsLoading(true);
+
+          try {
+            const response = await UserService.editProfile(updateValues);
+
+            if (response.success) {
+              toast.success(response.message);
+              setUser(updateValues);
+              localStorage.setItem("user", JSON.stringify(updateValues));
+            } else {
+              toast.error(response.message);
+            }
+          } catch (error) {
+            console.log(error);
+          } finally {
+            setIsLoading(false);
+          }
+
+          break;
+        }
 
         // case "Password": {
         //   return await changePassword();
@@ -58,18 +89,72 @@ export default function EditForm({ path, userData }) {
 
         case "Name": {
           const updateValues = {
-            iD_Customer: 1,
+            iD_Customer: user.iD_Customer,
             name: values.name,
-            contact: "4984720617196565917702320421074306958",
-            email:
-              "uIYLP.Hr6H2aCTUboB1jKZKzR6hRAH_.rlJZ1OtTSu7Rq-ROo@gmail.com",
-            average_feedback: 0,
-            packageExpirationDate: "2024-09-30T01:52:03.569Z",
-            iD_Role: 1,
-            iD_Package: 1,
+            contact: user.contact,
+            email: user.email,
+            average_feedback: user.average_feedbacks,
+            packageExpirationDate: user.packageExpirationDate,
+            iD_Role: user.iD_Role,
+            iD_Package: user.iD_Package,
           };
 
-          return await UserService.editProfile(updateValues);
+          setIsLoading(true);
+
+          try {
+            const response = await UserService.editProfile(updateValues);
+
+            if (response.success) {
+              toast.success(response.message);
+              setUser(updateValues);
+              localStorage.setItem("user", JSON.stringify(updateValues));
+            } else {
+              toast.error(response.message);
+            }
+          } catch (error) {
+            // toast.success(response.message);
+            console.log("error", error);
+            return error;
+          } finally {
+            setIsLoading(false);
+          }
+
+          break;
+        }
+
+        case "Contact": {
+          const updateValues = {
+            iD_Customer: user.iD_Customer,
+            name: user.name,
+            contact: values.contact,
+            email: user.email,
+            average_feedback: user.average_feedbacks,
+            packageExpirationDate: user.packageExpirationDate,
+            iD_Role: user.iD_Role,
+            iD_Package: user.iD_Package,
+          };
+
+          setIsLoading(true);
+
+          try {
+            const response = await UserService.editProfile(updateValues);
+
+            if (response.success) {
+              toast.success(response.message);
+              setUser(updateValues);
+              localStorage.setItem("user", JSON.stringify(updateValues));
+            } else {
+              toast.error(response.message);
+            }
+          } catch (error) {
+            // toast.success(response.message);
+            console.log("error", error);
+            return error;
+          } finally {
+            setIsLoading(false);
+          }
+
+          break;
         }
 
         default:
@@ -80,7 +165,7 @@ export default function EditForm({ path, userData }) {
 
   const EmailForm = () => {
     const initialValues = {
-      email: userData.email,
+      email: user.email,
     };
     return (
       <Form
@@ -95,7 +180,7 @@ export default function EditForm({ path, userData }) {
             name="email"
             placeholder="Email"
             className="form-input"
-            value={userData.email}
+            value={user.email}
           />
         </Form.Item>
         <Form.Item>
@@ -103,7 +188,7 @@ export default function EditForm({ path, userData }) {
             className="form-btn"
             type="primary"
             htmlType="submit"
-            // loading={isLoading}
+            loading={isLoading}
           >
             Submit
           </Button>
@@ -114,7 +199,7 @@ export default function EditForm({ path, userData }) {
 
   const PhoneForm = () => {
     const initialValues = {
-      contact: userData.phone,
+      contact: user.contact || "",
     };
     return (
       <Form
@@ -129,7 +214,7 @@ export default function EditForm({ path, userData }) {
             name="contact"
             placeholder="Contact"
             className="form-input"
-            value={userData.phone}
+            value={user.phone}
           />
         </Form.Item>
         <Form.Item>
@@ -137,7 +222,7 @@ export default function EditForm({ path, userData }) {
             className="form-btn"
             type="primary"
             htmlType="submit"
-            // loading={isLoading}
+            loading={isLoading}
           >
             Submit
           </Button>
@@ -148,7 +233,7 @@ export default function EditForm({ path, userData }) {
 
   const NameForm = () => {
     const initialValues = {
-      name: userData.name,
+      name: user.name,
     };
 
     return (
@@ -164,7 +249,7 @@ export default function EditForm({ path, userData }) {
             name="name"
             placeholder="Name"
             className="form-input"
-            value={userData.name}
+            value={user.name}
           />
         </Form.Item>
         <Form.Item>
@@ -172,7 +257,7 @@ export default function EditForm({ path, userData }) {
             className="form-btn"
             type="primary"
             htmlType="submit"
-            // loading={isLoading}
+            loading={isLoading}
           >
             Submit
           </Button>
