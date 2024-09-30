@@ -6,7 +6,7 @@ import AuthService from "../../../services/auth.service";
 import { AuthContext } from "../../../context/AuthContext";
 import UserService from "../../../services/user.service";
 
-export default function Login({ toggleValue }) {
+export default function Login() {
   const [isLoading, setIsLoading] = useState(false);
 
   const [errorMessage, setErrorMessage] = useState("");
@@ -41,10 +41,6 @@ export default function Login({ toggleValue }) {
       } else {
         setErrorMessage(response.message);
       }
-
-      // const { token } = response.data;
-      // localStorage.setItem("user", JSON.stringify(response.data));
-      // localStorage.setItem("token", token);
     } catch (err) {
       console.error(err);
     } finally {
@@ -59,7 +55,7 @@ export default function Login({ toggleValue }) {
       <div className="title-container">
         <p className="title">LOGIN</p>
         <div className="close-btn">
-          <CloseOutlined onClick={() => toggleValue(false)} />
+          <CloseOutlined onClick={() => setShowForm("")} />
         </div>
         <Divider className="divider" style={{ margin: 0 }} />
       </div>
