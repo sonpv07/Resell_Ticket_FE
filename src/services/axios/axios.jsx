@@ -3,7 +3,7 @@ import axios from "axios";
 // API TEST
 // const baseUrl = "https://catfact.ninja/";
 
-const baseUrl = "http://localhost:8080/api/";
+const baseUrl = "http://localhost:5212/api/";
 
 const config = {
   baseUrl: baseUrl,

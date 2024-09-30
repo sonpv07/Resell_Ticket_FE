@@ -1,11 +1,17 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import "./Login.scss";
 import { CloseOutlined } from "@ant-design/icons";
 import { Button, Divider, Form, Input } from "antd";
 import AuthService from "../../../services/auth.service";
+import { AuthContext } from "../../../context/AuthContext";
+import UserService from "../../../services/user.service";
 
-export default function Login({ toggleValue }) {
+export default function Login() {
   const [isLoading, setIsLoading] = useState(false);
+
+  const [errorMessage, setErrorMessage] = useState("");
+
+  const { setUser, setAccessToken, setShowForm } = useContext(AuthContext);
 
   const handleLogin = async (values) => {
     console.log("Received values of form: ", values);
@@ -17,23 +23,39 @@ export default function Login({ toggleValue }) {
 
       console.log(response);
 
-      // const { token } = response.data;
-      // localStorage.setItem("user", JSON.stringify(response.data));
-      // localStorage.setItem("token", token);
+      if (response.success) {
+        console.log(response.data);
+
+        const user = await UserService.getProfile();
+
+        if (user) {
+          setUser(user);
+          localStorage.setItem("user", JSON.stringify(user));
+
+          setAccessToken(response.data.accessToken);
+          localStorage.setItem(
+            "token",
+            JSON.stringify(response.data.accessToken)
+          );
+        }
+      } else {
+        setErrorMessage(response.message);
+      }
     } catch (err) {
-      console.log(err);
-      alert(err.response.data);
+      console.error(err);
     } finally {
       setIsLoading(false);
     }
   };
 
+  console.log(errorMessage);
+
   return (
     <div className="login-container">
       <div className="title-container">
-        <p className="title">Sign Up or Login</p>
+        <p className="title">LOGIN</p>
         <div className="close-btn">
-          <CloseOutlined onClick={() => toggleValue(false)} />
+          <CloseOutlined onClick={() => setShowForm("")} />
         </div>
         <Divider className="divider" style={{ margin: 0 }} />
       </div>
@@ -83,6 +105,15 @@ export default function Login({ toggleValue }) {
                 className="form-input"
               />
             </Form.Item>
+
+            <div className="login-link">
+              <p>Don't have account?</p>
+              <p className="link" onClick={() => setShowForm("REGISTER")}>
+                Register now
+              </p>
+            </div>
+
+            {errorMessage && <p className="error-message">{errorMessage}</p>}
             <Form.Item>
               <Button
                 className="form-btn"
