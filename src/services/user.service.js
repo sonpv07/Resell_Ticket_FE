@@ -30,8 +30,8 @@ class UserService {
         return returnValue(false, null, "Update profile failed");
       }
     } catch (error) {
-      console.error("Error Login", error);
-      return returnValue(true, error, "Update profile failed");
+      console.error("Error Edit Profile", error);
+      return returnValue(false, error, "Update profile failed");
     }
   }
 }
