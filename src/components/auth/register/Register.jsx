@@ -1,11 +1,14 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import "./Register.scss";
 import { CloseOutlined } from "@ant-design/icons";
 import { Button, Divider, Form, Input } from "antd";
 import AuthService from "../../../services/auth.service";
+import { AuthContext } from "../../../context/AuthContext";
 
-export default function Register({ toggleValue }) {
+export default function Register() {
   const [isLoading, setIsLoading] = useState(false);
+
+  const { setShowForm } = useContext(AuthContext);
 
   const handleRegister = async (values) => {
     console.log("Received values of form: ", values);
@@ -15,7 +18,8 @@ export default function Register({ toggleValue }) {
     try {
       const response = await AuthService.register(values);
 
-      if (response) {
+      if (response.success) {
+        setShowForm("LOGIN");
         // Move to OTP Page
       }
     } catch (err) {
@@ -31,7 +35,7 @@ export default function Register({ toggleValue }) {
       <div className="title-container">
         <p className="title">SIGN UP</p>
         <div className="close-btn">
-          <CloseOutlined onClick={() => toggleValue(false)} />
+          <CloseOutlined onClick={() => setShowForm("")} />
         </div>
         <Divider className="divider" style={{ margin: 0 }} />
       </div>
@@ -52,41 +56,22 @@ export default function Register({ toggleValue }) {
             labelCol={{ span: 24 }}
             onFinish={handleRegister}
           >
-            <div style={{ display: "flex", justifyContent: "space-between" }}>
-              <Form.Item
-                name="firstName"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your email",
-                  },
-                ]}
-              >
-                <Input
-                  type="text"
-                  name="firstName"
-                  placeholder="First Name"
-                  className="form-input"
-                />
-              </Form.Item>
-
-              <Form.Item
-                name="lastName"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your last name",
-                  },
-                ]}
-              >
-                <Input
-                  type="text"
-                  name="lastName"
-                  placeholder="Last Name"
-                  className="form-input"
-                />
-              </Form.Item>
-            </div>
+            <Form.Item
+              name="name"
+              rules={[
+                {
+                  required: true,
+                  message: "Please input your name",
+                },
+              ]}
+            >
+              <Input
+                type="text"
+                name="name"
+                placeholder="Name"
+                className="form-input"
+              />
+            </Form.Item>
 
             <Form.Item
               name="email"
@@ -123,7 +108,7 @@ export default function Register({ toggleValue }) {
             </Form.Item>
 
             <Form.Item
-              name="re_password"
+              name="confirmPassWord"
               rules={[
                 {
                   required: true,
@@ -133,7 +118,7 @@ export default function Register({ toggleValue }) {
             >
               <Input
                 type="password"
-                name="re_password"
+                name="confirmPassWord"
                 placeholder="Input Password Again"
                 className="form-input"
               />
@@ -141,7 +126,9 @@ export default function Register({ toggleValue }) {
 
             <div className="login-link">
               <p>Already have account?</p>
-              <p className="link">Login now</p>
+              <p className="link" onClick={() => setShowForm("LOGIN")}>
+                Login now
+              </p>
             </div>
 
             <Form.Item>
