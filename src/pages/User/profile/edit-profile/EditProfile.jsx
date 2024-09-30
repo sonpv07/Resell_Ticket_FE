@@ -21,12 +21,18 @@ const EDIT_TYPE = [
     title: "Password",
     subTitle: `In order to change your password, we'll send a confirmation email to verify`,
   },
+
+  {
+    id: 3,
+    title: "Contact",
+    subTitle: ``,
+  },
 ];
 
 const USER_VALUE = {
-  firstName: "Son",
-  lastName: "Pham",
+  name: "Son Pham",
   email: "son@gmail.com",
+  phone: "123456789",
 };
 
 export default function EditProfile() {

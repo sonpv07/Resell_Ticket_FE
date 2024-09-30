@@ -17,6 +17,23 @@ class UserService {
       console.error("Error Login", error);
     }
   }
+
+  static async editProfile(values) {
+    try {
+      const response = await api.put(`${URL}`, values);
+
+      console.log(response);
+
+      if (response.status >= 200 && response.status < 300) {
+        return returnValue(true, response.data, "Update profile successfully");
+      } else {
+        return returnValue(false, null, "Update profile failed");
+      }
+    } catch (error) {
+      console.error("Error Login", error);
+      return returnValue(true, error, "Update profile failed");
+    }
+  }
 }
 
 export default UserService;

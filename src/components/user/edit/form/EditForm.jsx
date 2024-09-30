@@ -1,6 +1,7 @@
 import React from "react";
 import "../EditItem.scss";
 import { Button, Form, Input } from "antd";
+import UserService from "../../../../services/user.service";
 export default function EditForm({ path, userData }) {
   console.log(userData);
 
@@ -11,6 +12,9 @@ export default function EditForm({ path, userData }) {
 
       case "Password":
         return "Change your account password";
+
+      case "Contact":
+        return "Change your contact number";
 
       case "Name":
         return "Edit your account name";
@@ -31,6 +35,9 @@ export default function EditForm({ path, userData }) {
       case "Name":
         return <NameForm />;
 
+      case "Contact":
+        return <PhoneForm />;
+
       default:
         break;
     }
@@ -39,24 +46,36 @@ export default function EditForm({ path, userData }) {
   const handleSubmit = async (values) => {
     console.log(values);
 
-    // try {
-    //   switch (path) {
-    //     case "Email": {
-    //       return await editEmail();F
-    //     }
+    try {
+      switch (path) {
+        // case "Email": {
+        //   return await editEmail();F
+        // }
 
-    //     case "Password": {
-    //       return await changePassword();
-    //     }
+        // case "Password": {
+        //   return await changePassword();
+        // }
 
-    //     case "Name": {
-    //       return await changeName();
-    //     }
+        case "Name": {
+          const updateValues = {
+            iD_Customer: 1,
+            name: values.name,
+            contact: "4984720617196565917702320421074306958",
+            email:
+              "uIYLP.Hr6H2aCTUboB1jKZKzR6hRAH_.rlJZ1OtTSu7Rq-ROo@gmail.com",
+            average_feedback: 0,
+            packageExpirationDate: "2024-09-30T01:52:03.569Z",
+            iD_Role: 1,
+            iD_Package: 1,
+          };
 
-    //     default:
-    //       break;
-    //   }
-    // } catch (error) {}
+          return await UserService.editProfile(updateValues);
+        }
+
+        default:
+          break;
+      }
+    } catch (error) {}
   };
 
   const EmailForm = () => {
@@ -93,10 +112,43 @@ export default function EditForm({ path, userData }) {
     );
   };
 
+  const PhoneForm = () => {
+    const initialValues = {
+      contact: userData.phone,
+    };
+    return (
+      <Form
+        className="form"
+        labelCol={{ span: 24 }}
+        onFinish={handleSubmit}
+        initialValues={initialValues}
+      >
+        <Form.Item name="contact">
+          <Input
+            type="text"
+            name="contact"
+            placeholder="Contact"
+            className="form-input"
+            value={userData.phone}
+          />
+        </Form.Item>
+        <Form.Item>
+          <Button
+            className="form-btn"
+            type="primary"
+            htmlType="submit"
+            // loading={isLoading}
+          >
+            Submit
+          </Button>
+        </Form.Item>
+      </Form>
+    );
+  };
+
   const NameForm = () => {
     const initialValues = {
-      firstName: userData.firstName,
-      lastName: userData.lastName,
+      name: userData.name,
     };
 
     return (
@@ -106,22 +158,13 @@ export default function EditForm({ path, userData }) {
         onFinish={handleSubmit}
         initialValues={initialValues}
       >
-        <Form.Item name="firstName">
+        <Form.Item name="name">
           <Input
             type="text"
-            name="firstName"
-            placeholder="First Name"
+            name="name"
+            placeholder="Name"
             className="form-input"
-            value={userData.firstName}
-          />
-        </Form.Item>
-        <Form.Item name="lastName">
-          <Input
-            type="text"
-            name="lastName"
-            placeholder="Last Name"
-            className="form-input"
-            value={userData.lastName}
+            value={userData.name}
           />
         </Form.Item>
         <Form.Item>

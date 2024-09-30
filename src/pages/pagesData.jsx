@@ -34,6 +34,11 @@ const pagesData = [
         element: <EditProfile />,
         title: "name",
       },
+      {
+        path: "contact",
+        element: <EditProfile />,
+        title: "Contact",
+      },
     ],
   },
 ];
