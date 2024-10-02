@@ -50,6 +50,7 @@ export default function Login() {
       console.error(err);
     } finally {
       setIsLoading(false);
+      setShowForm("");
     }
   };
 
