@@ -1,5 +1,7 @@
 import Home from "./Home/Home";
 import TicketsList from "./Ticket/TicketsList/TicketsList";
+import ViewProfile from "./User/profile/view-profile/ViewProfile";  // Import ViewProfile
+
 
 const pagesData = [
   {
@@ -11,6 +13,11 @@ const pagesData = [
     path: "tickets",
     element: <TicketsList />,
     title: "tickets",
+  },
+  {
+    path: "view-profile",  // Thêm route cho ViewProfile
+    element: <ViewProfile />,
+    title: "view-profile",
   },
 ];
 
