@@ -1,5 +1,6 @@
 import Home from "./Home/Home";
 import Shopping from "./Ticket/Shopping/Shopping";
+import TicketDetail from "./Ticket/TicketDetail/TicketDetail";
 
 const pagesData = [
   {
@@ -11,6 +12,11 @@ const pagesData = [
     path: "tickets",
     element: <Shopping />,
     title: "tickets",
+  },
+  {
+    path: "ticket/:id",
+    element: <TicketDetail />,
+    title: "ticket detail",
   },
 ];
 

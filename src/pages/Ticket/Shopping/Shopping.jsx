@@ -32,6 +32,7 @@ export default function Shopping() {
       quantity: 100,
       soldQuantity: 75,
       isNegotiation: true,
+      name: "Black Pink Concert",
       ticket_detail:
         "General admission for the main event area. Standing room only.",
       seller_info: {
@@ -45,6 +46,7 @@ export default function Shopping() {
       quantity: 50,
       soldQuantity: 20,
       isNegotiation: true,
+      name: "Black Pink Concert",
 
       ticket_detail:
         "VIP access includes premium seating and a meet-and-greet with the performers.",
@@ -58,6 +60,7 @@ export default function Shopping() {
       category: "Festival",
       quantity: 200,
       soldQuantity: 180,
+      name: "Black Pink Concert",
       ticket_detail:
         "Limited early bird tickets at a discounted rate. Valid for general admission.",
       seller_info: {
@@ -70,6 +73,7 @@ export default function Shopping() {
       category: "Festival",
       quantity: 20,
       soldQuantity: 5,
+      name: "Black Pink Concert",
       ticket_detail:
         "Exclusive backstage pass. Includes all VIP benefits plus a tour of the backstage area.",
       seller_info: {
@@ -82,6 +86,7 @@ export default function Shopping() {
       category: "Festival",
       quantity: 20,
       soldQuantity: 5,
+      name: "Black Pink Concert",
       ticket_detail:
         "Exclusive backstage pass. Includes all VIP benefits plus a tour of the backstage area.",
       seller_info: {
