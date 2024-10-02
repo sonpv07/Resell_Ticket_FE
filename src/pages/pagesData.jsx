@@ -2,6 +2,7 @@ import Home from "./Home/Home";
 import EditProfile from "./User/profile/edit-profile/EditProfile";
 import ViewProfile from "./User/profile/view-profile/ViewProfile"; // Import ViewProfile
 import Shopping from "./Ticket/Shopping/Shopping";
+import TicketDetail from "./Ticket/TicketDetail/TicketDetail";
 
 const pagesData = [
   {
@@ -46,6 +47,11 @@ const pagesData = [
     path: "view-profile", // Thêm route cho ViewProfile
     element: <ViewProfile />,
     title: "view-profile",
+  },
+  {
+    path: "ticket/:id",
+    element: <TicketDetail />,
+    title: "ticket detail",
   },
 ];
 

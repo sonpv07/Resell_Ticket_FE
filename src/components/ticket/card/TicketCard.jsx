@@ -2,9 +2,13 @@ import React from "react";
 import "./TicketCard.scss";
 import { Progress, Tag } from "antd";
 import { ShoppingCartOutlined, StarFilled } from "@ant-design/icons";
+import { getTagColor } from "../../../utils";
+import { useNavigate } from "react-router-dom";
 
 export default function TicketCard({
+  id = 1,
   price,
+  name,
   category,
   quantity,
   soldQuantity,
@@ -13,20 +17,8 @@ export default function TicketCard({
   isNegotiation,
 }) {
   const availableQuantity = quantity - soldQuantity;
-  const soldPercentage = (soldQuantity / quantity) * 100;
 
-  const getTagColor = (category) => {
-    switch (category) {
-      case "Concert":
-        return "#f44336";
-      case "Sport":
-        return "#2196f3";
-      case "Festival":
-        return "#ff9800";
-      default:
-        return "#000";
-    }
-  };
+  const navigation = useNavigate();
 
   return (
     <div className="ticket-card">
@@ -43,6 +35,10 @@ export default function TicketCard({
         </div>
       </div>
       <div className="ticket-card__content">
+        <div className="ticket-card__name">
+          <h2>{name}</h2>
+        </div>
+
         <div className="ticket-card__price">
           <span className="ticket-card__currency">$</span>
           {price.toFixed(2)}
@@ -94,7 +90,10 @@ export default function TicketCard({
         </div>
       </div>
       <div className="ticket-card__footer">
-        <button className="ticket-card__button">
+        <button
+          className="ticket-card__button"
+          onClick={() => navigation(`/ticket/${id}`)}
+        >
           <span className="ticket-card__button-icon">
             <ShoppingCartOutlined />
           </span>
