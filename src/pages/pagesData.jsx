@@ -1,5 +1,5 @@
 import Home from "./Home/Home";
-import TicketsList from "./Ticket/TicketsList/TicketsList";
+import Shopping from "./Ticket/Shopping/Shopping";
 
 const pagesData = [
   {
@@ -9,7 +9,7 @@ const pagesData = [
   },
   {
     path: "tickets",
-    element: <TicketsList />,
+    element: <Shopping />,
     title: "tickets",
   },
 ];
