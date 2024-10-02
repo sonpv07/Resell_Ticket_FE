@@ -82,6 +82,15 @@ export default function TicketCard({
               </span>
             </div>
           </div>
+
+          <div className="ticket-card__ticket-detail">
+            <div className="ticket-card__ticket-detail-title">
+              Additional Details:
+            </div>
+            <div className="ticket-card__ticket-detail-content">
+              {ticket_detail}
+            </div>
+          </div>
         </div>
       </div>
       <div className="ticket-card__footer">

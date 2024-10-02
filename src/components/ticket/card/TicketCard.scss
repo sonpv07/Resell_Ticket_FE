@@ -1,6 +1,4 @@
 .ticket-card {
-  width: 100%;
-  max-width: 300px;
   border: 0.5px solid #6c6c6fdf;
   border-radius: 8px;
   overflow: hidden;
@@ -107,6 +105,18 @@
   &__star {
     margin-left: 4px;
     font-size: 16px;
+  }
+
+  &__ticket-detail {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid #99a1a3;
+    font-size: 14px;
+  }
+
+  &__ticket-detail-title {
+    font-weight: 600;
+    margin-bottom: 4px;
   }
 
   &__footer {
