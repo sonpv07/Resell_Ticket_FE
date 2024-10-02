@@ -1,4 +1,4 @@
-import Home from "./Home/Home";
+import Home from "./Home/HomePage";
 import TicketsList from "./Ticket/TicketsList/TicketsList";
 
 const pagesData = [
