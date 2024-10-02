@@ -1,0 +1,151 @@
+.ticket-card {
+  border: 0.5px solid #6c6c6fdf;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background-color: #00131a;
+  color: white;
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    border-bottom: 1px solid #99a1a3;
+  }
+
+  &__title {
+    font-size: 14px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+  }
+
+  &__category {
+    padding: 2px 6px;
+    border-radius: 4px;
+    margin-right: 8px;
+    font-size: 12px;
+  }
+
+  &__icon {
+    font-size: 18px;
+  }
+
+  &__content {
+    padding: 16px;
+  }
+
+  &__price {
+    font-size: 24px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+  }
+
+  &__currency {
+    font-size: 18px;
+    margin-right: 2px;
+    color: #99a1a3;
+  }
+
+  &__price-note {
+    font-size: 13px;
+    color: #99a1a3;
+    margin-top: 4px;
+    margin-left: 5px;
+  }
+
+  &__availability {
+    margin-top: 16px;
+  }
+
+  &__availability-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    margin-bottom: 4px;
+  }
+
+  &__availability-number {
+    font-weight: 600;
+  }
+
+  &__progress-bar {
+    margin: 8px 0;
+  }
+
+  &__progress-bar-fill {
+    height: 100%;
+    background-color: #4caf50;
+    transition: width 0.3s ease;
+  }
+
+  &__seller-info {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid #99a1a3;
+    font-size: 14px;
+  }
+
+  &__seller-name {
+    display: block;
+    margin-bottom: 4px;
+
+    & span {
+      font-weight: 500;
+    }
+  }
+
+  &__seller-rating {
+    display: flex;
+    align-items: center;
+  }
+
+  &__star {
+    margin-left: 4px;
+    font-size: 16px;
+  }
+
+  &__ticket-detail {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid #99a1a3;
+    font-size: 14px;
+  }
+
+  &__ticket-detail-title {
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+
+  &__footer {
+    padding: 16px;
+    border-top: 1px solid #99a1a3;
+  }
+
+  &__button {
+    width: 100%;
+    padding: 10px;
+    background-color: #1976d2;
+    color: #ffffff;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s ease;
+
+    &:hover {
+      background-color: #1565c0;
+    }
+  }
+
+  &__button-icon {
+    margin-right: 8px;
+    margin-bottom: 1px;
+  }
+}
