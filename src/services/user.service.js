@@ -1,4 +1,4 @@
-import returnValue from "../utils";
+import { returnValue } from "../utils";
 import api from "./axios/axios";
 
 const URL = "Customer";
@@ -15,6 +15,23 @@ class UserService {
       }
     } catch (error) {
       console.error("Error Login", error);
+    }
+  }
+
+  static async editProfile(values) {
+    try {
+      const response = await api.put(`${URL}`, values);
+
+      console.log(response);
+
+      if (response.status >= 200 && response.status < 300) {
+        return returnValue(true, response.data, "Update profile successfully");
+      } else {
+        return returnValue(false, null, "Update profile failed");
+      }
+    } catch (error) {
+      console.error("Error Edit Profile", error);
+      return returnValue(false, error, "Update profile failed");
     }
   }
 }
