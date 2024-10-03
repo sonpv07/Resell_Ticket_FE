@@ -1,0 +1,17 @@
+@import '../../styles/variables';
+
+.home-page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+
+  .event-list {
+    flex-grow: 1;
+    padding: 20px;
+  }
+.text{
+   display: flex;
+  justify-content: center;
+  padding: 40px;
+}
+}
