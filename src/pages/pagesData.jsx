@@ -1,4 +1,6 @@
-import Home from "./Home/Home";
+import HomePage from "./Home/HomePage";
+import Home from "./Home/HomePage";
+import TicketsList from "./Ticket/TicketsList/TicketsList";
 import EditProfile from "./User/profile/edit-profile/EditProfile";
 import ViewProfile from "./User/profile/view-profile/ViewProfile"; // Import ViewProfile
 import Shopping from "./Ticket/Shopping/Shopping";
@@ -7,7 +9,7 @@ import TicketDetail from "./Ticket/TicketDetail/TicketDetail";
 const pagesData = [
   {
     path: "",
-    element: <Home />,
+    element: <HomePage />,
     title: "home",
   },
   {
