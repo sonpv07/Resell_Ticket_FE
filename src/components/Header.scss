@@ -15,7 +15,9 @@
   }
 
   &__nav {
-    a {
+    display: flex;
+    cursor: pointer;
+    p {
       color: white;
       margin-left: 20px;
       text-decoration: none;

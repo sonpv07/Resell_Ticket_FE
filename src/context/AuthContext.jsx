@@ -12,7 +12,7 @@ export const AuthProvider = ({ children }) => {
 
   const [refreshToken, setRefreshToken] = useState(null);
 
-  const [showForm, setShowForm] = useState("LOGIN");
+  const [showForm, setShowForm] = useState("");
 
   return (
     <AuthContext.Provider
