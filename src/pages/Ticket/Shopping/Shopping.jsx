@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import "./Shopping.scss";
 import TicketList from "../../../components/ticket/list/TicketList";
 import { Select } from "antd";
+import Header from "../../../components/Header";
 
 export default function Shopping() {
   const [locations, setLocations] = useState([]);
@@ -97,38 +98,40 @@ export default function Shopping() {
   ];
 
   return (
-    <div className="shopping__container">
-      <div className="shopping__filter">
-        <h2>Filter Tickets</h2>
-        <div className="shopping__filter-option">
-          <div className="shopping__filter-option__item">
-            <Select
-              mode="multiple"
-              allowClear
-              style={{ width: "100%", height: "50px" }}
-              className="custom-select"
-              placeholder="Select locations..."
-              onChange={handleChange}
-              options={options}
-            />
-          </div>
-          <div className="shopping__filter-option__item">
-            <Select
-              mode="multiple"
-              allowClear
-              style={{ width: "100%", height: "50px" }}
-              className="custom-select"
-              placeholder="Select ticket category..."
-              onChange={handleChange}
-              options={categoryOptions}
-            />
-          </div>
-          <div className="shopping__filter-option__item">
-            <button className="shopping__filter-option__item__button">
-              Filter
-            </button>
-          </div>
-          {/* <div className="shopping__filter-option__item">
+    <div>
+      <Header />
+      <div className="shopping__container">
+        <div className="shopping__filter">
+          <h2>Filter Tickets</h2>
+          <div className="shopping__filter-option">
+            <div className="shopping__filter-option__item">
+              <Select
+                mode="multiple"
+                allowClear
+                style={{ width: "100%", height: "50px" }}
+                className="custom-select"
+                placeholder="Select locations..."
+                onChange={handleChange}
+                options={options}
+              />
+            </div>
+            <div className="shopping__filter-option__item">
+              <Select
+                mode="multiple"
+                allowClear
+                style={{ width: "100%", height: "50px" }}
+                className="custom-select"
+                placeholder="Select ticket category..."
+                onChange={handleChange}
+                options={categoryOptions}
+              />
+            </div>
+            <div className="shopping__filter-option__item">
+              <button className="shopping__filter-option__item__button">
+                Filter
+              </button>
+            </div>
+            {/* <div className="shopping__filter-option__item">
             <Select
               mode="multiple"
               allowClear
@@ -139,11 +142,12 @@ export default function Shopping() {
               options={options}
             />
           </div> */}
-        </div>
+          </div>
 
-        {/* Add filter options here */}
+          {/* Add filter options here */}
+        </div>
+        <TicketList ticketData={ticketData} />
       </div>
-      <TicketList ticketData={ticketData} />
     </div>
   );
 }

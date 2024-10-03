@@ -1,6 +1,4 @@
 import HomePage from "./Home/HomePage";
-import Home from "./Home/HomePage";
-import TicketsList from "./Ticket/TicketsList/TicketsList";
 import EditProfile from "./User/profile/edit-profile/EditProfile";
 import ViewProfile from "./User/profile/view-profile/ViewProfile"; // Import ViewProfile
 import Shopping from "./Ticket/Shopping/Shopping";

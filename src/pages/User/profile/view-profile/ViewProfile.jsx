@@ -8,6 +8,8 @@ function ViewProfile() {
 
   const { user } = useContext(AuthContext);
 
+  console.log(user);
+
   const navigate = useNavigate(); // Initialize navigation
 
   // const fetchUserData = async () => {
@@ -48,7 +50,7 @@ function ViewProfile() {
           <div className="field">
             <p>Email address:</p>
             <div className="field-edit">
-              <p>{user.email}</p>
+              <p>{user?.email}</p>
               <button
                 onClick={() => navigate("/edit/email")}
                 className="small-edit-button"
@@ -61,7 +63,7 @@ function ViewProfile() {
           <div className="field">
             <p>Phone number:</p>
             <div className="field-edit">
-              <p>{user.contact}</p>
+              <p>{user?.contact}</p>
               <button
                 onClick={() => navigate("/edit/contact")}
                 className="small-edit-button"
@@ -77,7 +79,7 @@ function ViewProfile() {
               {/* kt nếu showPassword là true thì hiển thị, ngược lại ẩn */}
               <p>
                 {showPassword
-                  ? user.password
+                  ? user?.password
                   : "*".repeat(user.password.length)}
               </p>
               <button
@@ -95,7 +97,7 @@ function ViewProfile() {
             </div>
           </div>
 
-          <p>Average Rating: {user.average_feedback ?? 0}/5</p>
+          <p>Average Rating: {user?.average_feedback ?? 0}/5</p>
         </div>
       </div>
     </div>

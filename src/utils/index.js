@@ -6,9 +6,7 @@ const returnValue = (success, data, message) => {
   };
 };
 
-module.exports = returnValue;
-
-export const getTagColor = (category) => {
+const getTagColor = (category) => {
   switch (category) {
     case "Concert":
       return "#f44336";
@@ -20,3 +18,5 @@ export const getTagColor = (category) => {
       return "#000";
   }
 };
+
+module.exports = { returnValue, getTagColor };
