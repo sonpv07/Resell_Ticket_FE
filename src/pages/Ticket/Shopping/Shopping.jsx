@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import "./Shopping.scss";
 import TicketList from "../../../components/ticket/list/TicketList";
 import { Select } from "antd";
-import Header from "../../../components/Header";
+import Header from "../../../components/header/Header";
 
 export default function Shopping() {
   const [locations, setLocations] = useState([]);

@@ -1,8 +1,8 @@
 import React from "react";
-import Header from "../../components/Header"; // Thay đổi đường dẫn
-import SearchBar from "../../components/SearchBar"; // Thay đổi đường dẫn
-import Footer from "../../components/Footer"; // Thay đổi đường dẫn
 import "./HomePage.scss";
+import Header from "../../components/header/Header";
+import SearchBar from "../../components/search-bar/SearchBar";
+import Footer from "../../components/footer/Footer";
 
 const HomePage = () => {
   return (

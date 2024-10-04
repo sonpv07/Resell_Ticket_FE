@@ -1,0 +1,18 @@
+@import "../../styles/variables"; // Đảm bảo đường dẫn đúng
+
+.footer {
+  background-color: $primary-color;
+  color: white;
+  padding: 20px;
+  text-align: center;
+  width: 100%;
+
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  z-index: 1;
+
+  p {
+    margin: 5px 0;
+  }
+}
