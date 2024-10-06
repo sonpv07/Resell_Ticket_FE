@@ -80,7 +80,7 @@ function ViewProfile() {
               <p>
                 {showPassword
                   ? user?.password
-                  : "*".repeat(user.password.length)}
+                  : "*".repeat(user?.password?.length)}
               </p>
               <button
                 onClick={toggleShowPassword}

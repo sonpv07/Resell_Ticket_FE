@@ -3,11 +3,11 @@
 .footer {
   background-color: $primary-color;
   color: white;
-  padding: 20px;
+  padding: 20px 0;
   text-align: center;
   width: 100%;
 
-  position: fixed;
+  position: static;
   bottom: 0;
   left: 0;
   z-index: 1;
