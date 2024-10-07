@@ -4,19 +4,20 @@ import { AuthContext } from "../../context/AuthContext";
 import Login from "../auth/login/Login";
 import Register from "../auth/register/Register";
 import { Avatar, Badge, Dropdown, Menu } from "antd";
-import {
-  BellFilled,
-  LogoutOutlined,
-  NotificationFilled,
-  SettingFilled,
-  ShoppingCartOutlined,
-  UserOutlined,
-} from "@ant-design/icons";
+import { ShoppingCartOutlined, UserOutlined } from "@ant-design/icons";
 import { SETTING_DATA } from "../../configs/constant";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const Header = () => {
+  const { showForm, setShowForm, user, setUser } = useContext(AuthContext);
+
   const navigate = useNavigate();
+
+  const handleLogout = () => {
+    setUser(null);
+    toast.success("Logout Success");
+  };
 
   const handleOnClick = (label) => {
     switch (label) {
@@ -30,7 +31,7 @@ const Header = () => {
         navigate("/view-profile");
         break;
       case "Logout":
-        navigate("/view-profile");
+        handleLogout();
         break;
 
       default:
@@ -66,17 +67,22 @@ const Header = () => {
     </Menu>
   );
 
-  const { showForm, setShowForm, user } = useContext(AuthContext);
-
   return (
     <>
       <header className="header">
-        <div className="header__logo">TicketSwap</div>
+        <div className="header__logo" onClick={() => navigate("/")}>
+          TicketSwap
+        </div>
         <div className="header__nav">
           <p onClick={() => navigate("/tickets")}>Shopping</p>
-          <Badge count={1} size="small">
-            <ShoppingCartOutlined style={{ fontSize: 28, color: "white" }} />
-          </Badge>
+
+          {user && (
+            <Badge count={1} size="small">
+              <ShoppingCartOutlined
+                style={{ fontSize: 28, color: "white", cursor: "pointer" }}
+              />
+            </Badge>
+          )}
 
           {user ? (
             <Dropdown overlay={menu} trigger={["click"]}>

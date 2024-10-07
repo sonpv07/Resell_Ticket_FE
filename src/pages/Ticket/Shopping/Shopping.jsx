@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import "./Shopping.scss";
 import TicketList from "../../../components/ticket/list/TicketList";
 import { Select } from "antd";
-import Header from "../../../components/header/Header";
 
 export default function Shopping() {
   const [locations, setLocations] = useState([]);
@@ -99,7 +98,6 @@ export default function Shopping() {
 
   return (
     <div>
-      <Header />
       <div className="shopping__container">
         <div className="shopping__filter">
           <h2>Filter Tickets</h2>

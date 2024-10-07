@@ -8,9 +8,9 @@ const returnValue = (success, data, message) => {
 
 const getTagColor = (category) => {
   switch (category) {
-    case "Concert":
+    case "Theater":
       return "#f44336";
-    case "Sport":
+    case "Concert":
       return "#2196f3";
     case "Festival":
       return "#ff9800";
