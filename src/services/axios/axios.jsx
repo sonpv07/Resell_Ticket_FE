@@ -1,24 +1,17 @@
-import axios from "axios";
+import axios from 'axios';
 
-// API TEST
-// const baseUrl = "https://catfact.ninja/";
+// Create an axios instance
+const instance = axios.create({
+  baseURL: 'http://14.225.204.144:7070/api',  // API base URL
+  timeout: 5000,  // Set timeout
+  headers: {
+    'Content-Type': 'multipart/form-data'  // If you're sending FormData
+  }
+});
 
-const baseUrl = "http://localhost:8080/api/";
-
-const config = {
-  baseUrl: baseUrl,
+// Function to create a ticket (make sure the endpoint is correct)
+export const createTicket = (ticketData) => {
+  return instance.post('/tickets', ticketData);
 };
 
-const api = axios.create(config);
-
-api.defaults.baseURL = baseUrl;
-
-const handleBefore = (config) => {
-  const token = localStorage.getItem("token")?.replaceAll('"', "");
-  config.headers["Authorization"] = `Bearer ${token}`;
-  return config;
-};
-
-api.interceptors.request.use(handleBefore, null);
-
-export default api;
+export default instance;
