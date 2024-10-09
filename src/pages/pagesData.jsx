@@ -1,4 +1,5 @@
 import Home from "./Home/Home";
+import Package from "./Package/Package";
 import TicketsList from "./Ticket/TicketsList/TicketsList";
 import EditProfile from "./User/profile/edit-profile/EditProfile";
 import ViewProfile from "./User/profile/view-profile/ViewProfile"; // Import ViewProfile
@@ -46,6 +47,11 @@ const pagesData = [
     path: "view-profile", // Thêm route cho ViewProfile
     element: <ViewProfile />,
     title: "view-profile",
+  },
+  {
+    path: "package", // Thêm route cho Package
+    element: <Package />,
+    title: "package",
   },
 ];
 

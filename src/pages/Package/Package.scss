@@ -1,0 +1,34 @@
+.package-container {
+    padding: 50px;
+    background-color: #1a2129;
+  
+    .title {
+      text-align: center;
+      color: white;
+      margin-bottom: 40px;
+      font-size: 2rem;
+    }
+  
+    .package-card {
+      transition: transform 0.3s ease;
+      
+      &:hover {
+        transform: scale(1.05);
+      }
+  
+      .package-name {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #ff4d4f; /* Đặt màu nổi bật cho tên gói */
+        margin-bottom: 10px;
+      }
+  
+      .package-price {
+        font-size: 36px;
+        font-weight: bold;
+        margin: 20px 0;
+        color: #1890ff;
+      }
+    }
+  }
+  
