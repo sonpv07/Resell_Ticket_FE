@@ -14,6 +14,8 @@ const getTagColor = (category) => {
       return "#2196f3";
     case "Festival":
       return "#ff9800";
+    case "Sport":
+      return "#acd8a7";
     default:
       return "#000";
   }
