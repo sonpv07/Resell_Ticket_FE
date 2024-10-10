@@ -1,0 +1,9 @@
+.layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; // Ensures the layout takes up the full viewport height
+}
+
+.content {
+  flex-grow: 1; // Makes the content area grow to take up available space
+}
