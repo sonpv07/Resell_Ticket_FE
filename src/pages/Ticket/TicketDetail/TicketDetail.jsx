@@ -5,6 +5,7 @@ import { getTagColor } from "../../../utils";
 import { useParams } from "react-router-dom";
 import TicketService from "../../../services/ticket.service";
 import UserService from "../../../services/user.service";
+import moment from "moment";
 
 export default function TicketDetail() {
   // const ticketData = {
@@ -90,105 +91,6 @@ export default function TicketDetail() {
   }, [id]);
 
   return (
-    // <div className="ticket-detail">
-    //   <div className="ticket-detail__container">
-    //     <div className="ticket-detail__image-container">
-    //       <img
-    //         src={ticketData?.image}
-    //         alt={ticketData?.event_info?.name}
-    //         className="ticket-detail__image"
-    //       />
-    //     </div>
-    //     <div className="ticket-detail__info">
-    //       <h1 className="ticket-detail__title">{ticketData?.show_Name}</h1>
-
-    //       <Tag color={getTagColor(ticketData?.ticket_category)}>
-    //         {ticketData?.ticket_category}
-    //       </Tag>
-    //       <div className="ticket-detail__price">
-    //         ${ticketData?.price}
-    //         <span className="ticket-detail__price-note">per ticket</span>
-    //       </div>
-    //       <div className="ticket-detail__availability">
-    //         {ticketData?.quantity > 0 ? (
-    //           <span className="ticket-detail__in-stock">In Stock</span>
-    //         ) : (
-    //           <span className="ticket-detail__out-of-stock">Out of Stock</span>
-    //         )}
-    //         <span className="ticket-detail__stock-count">
-    //           {ticketData?.quantity}{" "}
-    //           {ticketData?.quantity === 1 ? "ticket" : "tickets"} available
-    //         </span>
-    //       </div>
-    //       <div className="ticket-detail__actions">
-    //         <div className="ticket-detail__quantity">
-    //           <label htmlFor="quantity">Quantity:</label>
-    //           <select
-    //             id="quantity"
-    //             value={selectedQuantity}
-    //             onChange={handleQuantityChange}
-    //             disabled={ticketData?.quantity === 0}
-    //           >
-    //             {Array.from({ length: ticketData?.quantity }).map((_, i) => (
-    //               <option key={i + 1} value={i + 1}>
-    //                 {i + 1}
-    //               </option>
-    //             ))}
-    //           </select>
-    //         </div>
-    //         <button
-    //           className="ticket-detail__button ticket-detail__button--primary"
-    //           onClick={handleBuyNow}
-    //           disabled={ticketData?.quantity === 0}
-    //         >
-    //           Buy Now
-    //         </button>
-    //         <button
-    //           className="ticket-detail__button ticket-detail__button--secondary"
-    //           onClick={handleAddToCart}
-    //           disabled={ticketData?.quantity === 0}
-    //         >
-    //           Create Negotiation
-    //         </button>
-    //         <button
-    //           className="ticket-detail__button ticket-detail__button--tertiary"
-    //           onClick={handleChatWithSeller}
-    //         >
-    //           Chat with Seller
-    //         </button>
-    //       </div>
-    //       <div className="ticket-detail__seller">
-    //         <h2>Seller Information: </h2>
-    //         <p className="ticket-detail__seller-name">{sellerInfo?.name}</p>
-    //         <div className="ticket-detail__seller-rating">
-    //           <span>Phone Number:</span> {sellerInfo?.contact}
-    //         </div>
-    //         <div className="ticket-detail__seller-rating">
-    //           <span>Email:</span> {sellerInfo?.email}
-    //         </div>
-    //         <div className="ticket-detail__seller-rating">
-    //           <span> Rating:</span> {sellerInfo?.average_feedback.toFixed(1)}
-    //           <span className="ticket-detail__star">⭐</span>
-    //         </div>
-    //       </div>
-    //     </div>
-    //   </div>
-    //   <div className="ticket-detail__description">
-    //     <h2>Ticket Details</h2>
-    //     {ticketData?.seat && (
-    //       <div className="ticket-detail__description__item">
-    //         <h3>Seat: </h3>
-    //         <p>{ticketData.seat}</p>
-    //       </div>
-    //     )}
-
-    //     <div className="ticket-detail__description__item">
-    //       <h3>Additional Data: </h3>
-    //       <p>{ticketData?.description}</p>
-    //     </div>
-    //   </div>
-    // </div>
-
     <div className="ticket-detail">
       <div className="ticket-detail__container">
         {/* Ticket Image Section */}
@@ -334,6 +236,17 @@ export default function TicketDetail() {
         ) : (
           <>
             <h2>Ticket Details:</h2>
+
+            <div className="ticket-detail__description__item">
+              <h3>Event Location: </h3>
+              <p>{ticketData?.location}</p>
+            </div>
+
+            <div className="ticket-detail__description__item">
+              <h3>Event Date: </h3>
+              <p>{moment(ticketData?.event_Date).format("LLL")}</p>
+            </div>
+
             {ticketData?.seat && (
               <div className="ticket-detail__description__item">
                 <h3>Seat: </h3>
