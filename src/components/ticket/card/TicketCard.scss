@@ -43,6 +43,12 @@
     align-items: center;
   }
 
+  &__location {
+    color: white;
+    font-size: 16px;
+    margin-top: 10px;
+  }
+
   &__date {
     color: #ccc;
     font-size: 16px;

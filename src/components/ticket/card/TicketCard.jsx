@@ -16,6 +16,7 @@ export default function TicketCard({
   description,
   event_Date,
   isLoading,
+  location,
 }) {
   // const availableQuantity = quantity - soldQuantity;
 
@@ -127,8 +128,11 @@ export default function TicketCard({
             <div className="ticket-card__name">
               <h2>{show_Name}</h2>
             </div>
+
+            <p className="ticket-card__location">{`Location: ${location}`}</p>
+
             <p className="ticket-card__date">
-              {moment(event_Date).format("MMM Do YY")}
+              {moment(event_Date).format("LLL")}
             </p>
 
             <div className="ticket-card__price">
