@@ -1,17 +1,19 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 
 import "./TicketManagement.scss";
 import { Button, Space, Table, Tag } from "antd";
 import TicketService from "../../../services/ticket.service";
 import { getTagColor } from "../../../utils";
 import moment from "moment";
+import { AuthContext } from "../../../context/AuthContext";
 
 export default function TicketManagement() {
   const [ticketList, setTicketList] = useState([]);
   const [totalActive, setTotalActive] = useState(0);
   const [totalSold, setTotalSold] = useState(0);
+  const [totalRevenue, setTotalRevenue] = useState(0);
 
-  const totalRevenue = 100;
+  const { user } = useContext(AuthContext);
 
   const columns = [
     {
@@ -90,7 +92,9 @@ export default function TicketManagement() {
 
   const fetchApi = async () => {
     try {
-      const response = await TicketService.getTicketList();
+      const response = await TicketService.getTicketListBySeller(
+        user.iD_Customer
+      );
 
       if (response.success) {
         const transformedData = response.data.map((ticket) => ({
@@ -99,27 +103,28 @@ export default function TicketManagement() {
           price: ticket.price,
           quantity: ticket.quantity,
           status: ticket.status,
-          address: ticket.seat,
           category: ticket.ticket_category,
           location: ticket.location,
           soldQuantity: ticket.ticketsold,
           date: ticket.event_Date,
         }));
 
-        const { activeCount, soldCount } = response.data.reduce(
+        const { activeCount, soldCount, revenue } = response.data.reduce(
           (acc, ticket) => {
-            const { quantity, ticketsold } = ticket;
+            const { quantity, ticketsold, price } = ticket;
 
             acc.activeCount += quantity;
             acc.soldCount += ticketsold;
+            acc.revenue += price * ticketsold;
 
             return acc;
           },
-          { activeCount: 0, soldCount: 0 } // Initial accumulator values
+          { activeCount: 0, soldCount: 0, revenue: 0 } // Initial accumulator values
         );
 
         setTotalActive(activeCount);
         setTotalSold(soldCount);
+        setTotalRevenue(revenue);
         setTicketList(transformedData);
       }
     } catch (error) {
