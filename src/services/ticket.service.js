@@ -31,6 +31,24 @@ class TicketService {
       return returnValue(false, null, "Get Ticket Failure");
     }
   }
+
+  static async getTicketListBySeller(sellerId) {
+    try {
+      const response = await api.get(`${URL}/ticket/${sellerId}`);
+
+      if (response.status >= 200 && response.status < 300) {
+        return returnValue(
+          true,
+          response.data,
+          "Get Ticket List By User Success"
+        );
+      } else {
+        return returnValue(false, null, "Get Ticket List By User Failure");
+      }
+    } catch (error) {
+      return returnValue(false, null, "Get Ticket List By User Failure");
+    }
+  }
 }
 
 export default TicketService;
