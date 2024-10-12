@@ -9,9 +9,6 @@ const instance = axios.create({
   }
 });
 
-// Function to create a ticket (make sure the endpoint is correct)
-export const createTicket = (ticketData) => {
-  return instance.post('/tickets', ticketData);
-};
+
 
 export default instance;

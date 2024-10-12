@@ -1,20 +1,21 @@
 import React, { useState } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { createTicket } from '../../services/axios/axios';
+import { createTicket } from '../../services/axios/ticketCreate';
 import './CreateTicketPage.scss';
 
-const CreateTicketPage = () => {
+const CreateTicketPage = ({ customerID }) => {
   const [ticket, setTicket] = useState({
     ID_Ticket: '',
-    iD_Customer: '',
+    iD_Customer: customerID || '',  // Automatically set customerID
     price: '',
     ticket_category: '',
-    ticket_type: true, // Boolean for true/false
+    ticket_type: true,  // Default to true
     quantity: '',
     status: '',
     event_Date: '',
     show_Name: '',
+    location: '',
     description: '',
     seat: '',
     Image: null,
@@ -28,55 +29,67 @@ const CreateTicketPage = () => {
 
   const [imagePreview, setImagePreview] = useState(null);
 
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
+ const handleChange = (e) => {
+  const { name, value, type, checked } = e.target;
 
-    // Handle checkbox for ticket_type (true/false)
-    if (type === 'checkbox') {
-      setTicket({
-        ...ticket,
-        [name]: checked,
-      });
-    } else {
-      // Validate price and quantity
-      if (name === 'price' && value <= 0) {
+  // Log the input event details
+  console.log(`Input changed: name=${name}, value=${value}, type=${type}, checked=${checked}`);
+
+  // Handle checkbox for ticket_type (true/false)
+  if (type === 'checkbox') {
+    console.log('Checkbox checked:', checked);
+    setTicket({
+      ...ticket,
+      [name]: checked,
+    });
+  } else {
+    // Validate price and quantity
+    if (name === 'price' && value <= 0) {
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        price: 'Price must be greater than 0',
+      }));
+      console.log('Price validation failed');
+    } else if (name === 'quantity' && value <= 0) {
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        quantity: 'Quantity must be greater than 0',
+      }));
+      console.log('Quantity validation failed');
+    } else if (name === 'event_Date') {
+      const selectedDate = new Date(value);
+      const today = new Date();
+      console.log(`Selected event date: ${selectedDate}`);
+
+      if (selectedDate <= today) {
         setErrors((prevErrors) => ({
           ...prevErrors,
-          price: 'Price must be greater than 0',
+          event_Date: 'Event Date must be in the future.',
         }));
-      } else if (name === 'quantity' && value <= 0) {
-        setErrors((prevErrors) => ({
-          ...prevErrors,
-          quantity: 'Quantity must be greater than 0',
-        }));
-      } else if (name === 'event_Date') {
-        const selectedDate = new Date(value);
-        const today = new Date();
-
-        if (selectedDate <= today) {
-          setErrors((prevErrors) => ({
-            ...prevErrors,
-            event_Date: 'Event Date must be in the future.',
-          }));
-        } else {
-          setErrors((prevErrors) => ({
-            ...prevErrors,
-            event_Date: '',
-          }));
-        }
+        console.log('Event date validation failed');
       } else {
         setErrors((prevErrors) => ({
           ...prevErrors,
-          [name]: '',
+          event_Date: '',
         }));
+        console.log('Event date is valid');
       }
-
-      setTicket({
-        ...ticket,
-        [name]: value,
-      });
+    } else {
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        [name]: '',
+      }));
+      console.log(`Field ${name} is valid`);
     }
-  };
+
+    // Update ticket state
+    console.log(`Updating ticket: ${name} = ${value}`);
+    setTicket({
+      ...ticket,
+      [name]: value,
+    });
+  }
+};
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -141,10 +154,10 @@ const CreateTicketPage = () => {
       // Reset form after successful submission
       setTicket({
         ID_Ticket: '',
-        iD_Customer: '',
+        iD_Customer: customerID || '',  // Reset customerID automatically
         price: '',
         ticket_category: '',
-        ticket_type: true, // Reset to true
+        ticket_type: true,  // Reset to true
         quantity: '',
         status: '',
         event_Date: '',
@@ -168,23 +181,13 @@ const CreateTicketPage = () => {
       console.error('API Error:', error);
     }
   };
-
+  
   return (
     <div className="create-ticket-container">
       <h1 className="title">Sell Your Ticket</h1>
 
       <form onSubmit={handleSubmit} className="create-ticket-form">
-        <label>
-          Customer ID:
-          <input
-            type="text"
-            name="iD_Customer"
-            value={ticket.iD_Customer}
-            onChange={handleChange}
-            required
-          />
-        </label>
-
+        
         <label>
           Price:
           <input
