@@ -2,7 +2,12 @@ import React from "react";
 import "./Cart.scss";
 import { Button } from "antd";
 import { DeleteFilled } from "@ant-design/icons";
+import { useLocation } from "react-router-dom";
 export default function Cart() {
+  const DELIVERY_PRICE = 10;
+
+  const { state } = useLocation();
+
   const cart = [
     {
       id: 1,
@@ -27,6 +32,10 @@ export default function Cart() {
     return subTotal;
   };
 
+  if (!state) {
+    return <h1 className="null">Nothing to checkout</h1>;
+  }
+
   return (
     <div className="cart">
       <div className="cart__items">
@@ -36,24 +45,22 @@ export default function Cart() {
           <p>Price</p>
           <p>Quantity</p>
           <p>Total</p>
-          <p>Remove</p>
+          <p>Seller</p>
         </div>
 
         <br />
         <hr />
 
-        {cart.map((item) => {
+        {state.ticket.map((item) => {
           return (
             <div>
               <div className="cart__items__title cart__items__item">
-                <img src={item.image} alt={item.name} />
-                <p>{item.name}</p>
-                <p>{item.price}</p>
+                <img src={item.image} alt={item.show_Name} />
+                <p>{item.show_Name}</p>
+                <p>{item.price} $</p>
                 <p>{item.quantity}</p>
                 <p>{item.quantity * item.price}</p>
-                <p className="remove">
-                  <DeleteFilled />
-                </p>
+                <p>{item.iD_CustomerNavigation.name}</p>
               </div>
               <hr />
             </div>
@@ -73,13 +80,13 @@ export default function Cart() {
 
             <div className="cart__total__detail">
               <p>Delivery Fee </p>
-              <p>{0}</p>
+              <p>{DELIVERY_PRICE}</p>
             </div>
             <hr />
 
             <div className="cart__total__detail">
               <p>Total </p>
-              <p>{getSubtotal() + 10}</p>
+              <p>{getSubtotal() + DELIVERY_PRICE}</p>
             </div>
           </div>
           <Button

@@ -2,36 +2,13 @@ import React, { useEffect, useState } from "react";
 import "./TicketDetail.scss";
 import { Skeleton, Tag } from "antd";
 import { getTagColor } from "../../../utils";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import TicketService from "../../../services/ticket.service";
 import UserService from "../../../services/user.service";
 import moment from "moment";
 
 export default function TicketDetail() {
-  // const ticketData = {
-  //   id: "1234",
-  //   title: "VIP Ticket - Rock Festival 2023",
-  //   price: 150,
-  //   category: "Concert",
-  //   quantity: 100,
-  //   soldQuantity: 75,
-  //   isNegotiation: false,
-  //   ticket_detail:
-  //     "VIP access to the Rock Festival 2023. Includes premium viewing area, complimentary drinks, and exclusive merchandise.",
-  //   seller_info: {
-  //     name: "EventMaster Tickets",
-  //     rating: 4.8,
-  //     totalSales: 1500,
-  //   },
-  //   event_info: {
-  //     name: "Rock Festival 2023",
-  //     date: "August 15-17, 2023",
-  //     venue: "Sunshine Valley Amphitheater",
-  //     description:
-  //       "Join us for three days of non-stop rock music featuring top bands from around the world. Experience electrifying performances, great food, and unforgettable memories.",
-  //     image: "https://media.hanoitimes.vn/2023/07/07/blackpink_los_angeles.jpg",
-  //   },
-  // };
+  const navigate = useNavigate();
 
   const [ticketData, setTicketData] = useState(null);
 
@@ -48,13 +25,7 @@ export default function TicketDetail() {
   };
 
   const handleBuyNow = () => {
-    console.log(`Buying ${selectedQuantity} tickets`);
-    // Implement buy logic here
-  };
-
-  const handleAddToCart = () => {
-    console.log(`Adding ${selectedQuantity} tickets to cart`);
-    // Implement add to cart logic here
+    navigate("/cart", { state: { ticket: [ticketData] } });
   };
 
   const handleChatWithSeller = () => {
@@ -189,7 +160,6 @@ export default function TicketDetail() {
                 </button>
                 <button
                   className="ticket-detail__button ticket-detail__button--secondary"
-                  onClick={handleAddToCart}
                   disabled={ticketData?.quantity === 0}
                 >
                   Create Negotiation
