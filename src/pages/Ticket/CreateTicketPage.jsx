@@ -7,17 +7,17 @@ import './CreateTicketPage.scss';
 const CreateTicketPage = ({ customerID }) => {
   const [ticket, setTicket] = useState({
     ID_Ticket: '',
-    iD_Customer: customerID || '',  // Automatically set customerID
+    iD_Customer: customerID || '',  
     price: '',
     ticket_category: '',
-    ticket_type: true,  // Default to true
+    ticket_type: true,  
     quantity: '',
     status: '',
     event_Date: '',
     show_Name: '',
-    location: '',
+    location: '',  
     description: '',
-    seat: '',
+    seat: '',  
     Image: null,
   });
 
@@ -29,67 +29,54 @@ const CreateTicketPage = ({ customerID }) => {
 
   const [imagePreview, setImagePreview] = useState(null);
 
- const handleChange = (e) => {
-  const { name, value, type, checked } = e.target;
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
 
-  // Log the input event details
-  console.log(`Input changed: name=${name}, value=${value}, type=${type}, checked=${checked}`);
-
-  // Handle checkbox for ticket_type (true/false)
-  if (type === 'checkbox') {
-    console.log('Checkbox checked:', checked);
-    setTicket({
-      ...ticket,
-      [name]: checked,
-    });
-  } else {
-    // Validate price and quantity
-    if (name === 'price' && value <= 0) {
-      setErrors((prevErrors) => ({
-        ...prevErrors,
-        price: 'Price must be greater than 0',
-      }));
-      console.log('Price validation failed');
-    } else if (name === 'quantity' && value <= 0) {
-      setErrors((prevErrors) => ({
-        ...prevErrors,
-        quantity: 'Quantity must be greater than 0',
-      }));
-      console.log('Quantity validation failed');
-    } else if (name === 'event_Date') {
-      const selectedDate = new Date(value);
-      const today = new Date();
-      console.log(`Selected event date: ${selectedDate}`);
-
-      if (selectedDate <= today) {
+    // Handle checkbox for ticket_type (true/false)
+    if (type === 'checkbox') {
+      setTicket({
+        ...ticket,
+        [name]: checked,
+      });
+    } else {
+      // Validate price and quantity
+      if (name === 'price' && value <= 0) {
         setErrors((prevErrors) => ({
           ...prevErrors,
-          event_Date: 'Event Date must be in the future.',
+          price: 'Price must be greater than 0',
         }));
-        console.log('Event date validation failed');
+      } else if (name === 'quantity' && value <= 0) {
+        setErrors((prevErrors) => ({
+          ...prevErrors,
+          quantity: 'Quantity must be greater than 0',
+        }));
+      } else if (name === 'event_Date') {
+        const selectedDate = new Date(value);
+        const today = new Date();
+        if (selectedDate <= today) {
+          setErrors((prevErrors) => ({
+            ...prevErrors,
+            event_Date: 'Event Date must be in the future.',
+          }));
+        } else {
+          setErrors((prevErrors) => ({
+            ...prevErrors,
+            event_Date: '',
+          }));
+        }
       } else {
         setErrors((prevErrors) => ({
           ...prevErrors,
-          event_Date: '',
+          [name]: '',
         }));
-        console.log('Event date is valid');
       }
-    } else {
-      setErrors((prevErrors) => ({
-        ...prevErrors,
-        [name]: '',
-      }));
-      console.log(`Field ${name} is valid`);
-    }
 
-    // Update ticket state
-    console.log(`Updating ticket: ${name} = ${value}`);
-    setTicket({
-      ...ticket,
-      [name]: value,
-    });
-  }
-};
+      setTicket({
+        ...ticket,
+        [name]: value,
+      });
+    }
+  };
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -110,7 +97,6 @@ const CreateTicketPage = ({ customerID }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validate event date is in the future
     const selectedDate = new Date(ticket.event_Date);
     const today = new Date();
 
@@ -127,7 +113,6 @@ const CreateTicketPage = ({ customerID }) => {
       return;
     }
 
-    // Validate fields
     if (ticket.price <= 0 || ticket.quantity <= 0) {
       alert('Please make sure all values are valid before submitting.');
       return;
@@ -139,7 +124,6 @@ const CreateTicketPage = ({ customerID }) => {
         formData.append(key, ticket[key]);
       }
 
-      // Call the createTicket API
       await createTicket(formData);
       toast.success('Ticket created successfully!', {
         position: "top-right",
@@ -151,7 +135,6 @@ const CreateTicketPage = ({ customerID }) => {
         progress: undefined,
       });
 
-      // Reset form after successful submission
       setTicket({
         ID_Ticket: '',
         iD_Customer: customerID || '',  // Reset customerID automatically
@@ -162,8 +145,9 @@ const CreateTicketPage = ({ customerID }) => {
         status: '',
         event_Date: '',
         show_Name: '',
+        location: '',  // Reset location
         description: '',
-        seat: '',
+        seat: '',  // Reset seat
         Image: null,
       });
       setImagePreview(null);
@@ -178,10 +162,9 @@ const CreateTicketPage = ({ customerID }) => {
         draggable: true,
         progress: undefined,
       });
-      console.error('API Error:', error);
     }
   };
-  
+
   return (
     <div className="create-ticket-container">
       <h1 className="title">Sell Your Ticket</h1>
@@ -252,6 +235,28 @@ const CreateTicketPage = ({ customerID }) => {
             type="text"
             name="show_Name"
             value={ticket.show_Name}
+            onChange={handleChange}
+            required
+          />
+        </label>
+
+        <label>
+          Location: 
+          <input
+            type="text"
+            name="location"
+            value={ticket.location}
+            onChange={handleChange}
+            required
+          />
+        </label>
+
+        <label>
+          Seat: 
+          <input
+            type="text"
+            name="seat"
+            value={ticket.seat}
             onChange={handleChange}
             required
           />
