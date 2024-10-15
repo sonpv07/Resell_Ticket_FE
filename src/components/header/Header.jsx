@@ -77,11 +77,13 @@ const Header = () => {
           <p onClick={() => navigate("/tickets")}>Shopping</p>
 
           {user && (
-            <Badge count={1} size="small">
-              <ShoppingCartOutlined
-                style={{ fontSize: 28, color: "white", cursor: "pointer" }}
-              />
-            </Badge>
+            <div onClick={() => navigate("/cart")}>
+              <Badge count={1} size="small">
+                <ShoppingCartOutlined
+                  style={{ fontSize: 28, color: "white", cursor: "pointer" }}
+                />
+              </Badge>
+            </div>
           )}
 
           {user ? (

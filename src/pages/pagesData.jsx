@@ -5,6 +5,7 @@ import Shopping from "./Ticket/Shopping/Shopping";
 import TicketDetail from "./Ticket/TicketDetail/TicketDetail";
 import TicketManagement from "./Seller/management/TicketManagement";
 import SellerProfile from "./Seller/profile/SellerProfile";
+import Cart from "./User/cart/Cart";
 
 const pagesData = [
   {
@@ -66,6 +67,12 @@ const pagesData = [
     path: "seller/management",
     element: <TicketManagement />,
     title: "ticket management",
+  },
+
+  {
+    path: "cart",
+    element: <Cart />,
+    title: "cart",
   },
 ];
 
