@@ -1,0 +1,63 @@
+.report-modal {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 478px;
+  height: auto;
+  background-color: #1a2129;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  padding-bottom: 20px;
+  z-index: 10;
+
+  .title-container {
+    width: 100%;
+
+    .title {
+      color: white;
+      text-align: center;
+      font-size: 18px;
+      font-weight: 600;
+      padding: 20px 0;
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      color: white;
+      cursor: pointer;
+      &:hover {
+        color: grey;
+      }
+    }
+  }
+
+  .report-content {
+    padding: 0 30px;
+
+    button {
+      padding: 12px 25px;
+      background-color: #1976d2;
+      color: #ffffff;
+      border: none;
+      border-radius: 4px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background-color 0.3s ease;
+      float: right;
+      margin-top: 20px;
+
+      &:hover {
+        background-color: #1565c0;
+      }
+    }
+  }
+}
