@@ -1,31 +1,35 @@
 import React, { useState, useEffect } from "react";
 import { Card, Typography, Space, Button, Spin } from "antd";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import UserService from "../../services/user.service";
 
 const { Title, Text } = Typography;
 
 function ViewProfile() {
-  const [userInfo, setUserInfo] = useState(null); // Set initial value as null to indicate loading
-  const [loading, setLoading] = useState(true);  // State to handle loading spinner
+  const [userInfo, setUserInfo] = useState(null); 
+  const [loading, setLoading] = useState(true); 
   const navigate = useNavigate();
 
-  // Fetch user data from mock API
+  // Fetch user data 
   const fetchUserData = async () => {
     try {
-      const response = await axios.get(
-        "https://66f646f8436827ced976737d.mockapi.io/profile/1"
-      );
-      setUserInfo(response.data);  // Set user data from API response
-      setLoading(false);  // Stop loading spinner
+      const response = await UserService.getProfile(1); // ID người dùng (1) cần được thay thế theo logic của bạn
+
+      if (response.success) {
+        setUserInfo(response.data);  // Set user data from API response
+      } else {
+        console.error("Error fetching user data");
+      }
+
+      setLoading(false);  
     } catch (error) {
       console.error("Error fetching user data:", error);
-      setLoading(false);  // Stop loading spinner on error
+      setLoading(false);  
     }
   };
 
   useEffect(() => {
-    fetchUserData(); // Fetch user data when the component loads
+    fetchUserData(); 
   }, []);
 
   const handleEditProfile = () => {

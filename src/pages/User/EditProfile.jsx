@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Form, Input, Button, Card, Typography, Space } from "antd";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import UserService from "../../services/user.service";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -15,29 +15,31 @@ function EditProfile() {
     phone: "",
     password: "",
   });
-  const [editPassword, setEditPassword] = useState(false); // State for toggling password edit fields
+  const [editPassword, setEditPassword] = useState(false);
   const navigate = useNavigate();
 
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
 
-  const fetchUserData = async () => {
+  const fetchUserData = useCallback(async () => {
     try {
-      const response = await axios.get(
-        "https://66f646f8436827ced976737d.mockapi.io/profile/1"
-      );
-      setUserInfo(response.data);
-      form.setFieldsValue(response.data);
+      const response = await UserService.getProfile(1); // ID user 1 cần replace
+
+      if (response.success) {
+        setUserInfo(response.data);
+        form.setFieldsValue(response.data);
+      } else {
+        toast.error("Error fetching user data");
+      }
     } catch (error) {
       toast.error("Error fetching user data");
-      console.error("Error fetching user data:", error);
     }
-  };
+  }, [form]);
 
   useEffect(() => {
-    fetchUserData();
-  }, []);
+    fetchUserData(); // Fetch user data khi component mount
+  }, [fetchUserData]);
 
   const handleSave = async (values) => {
     if (editPassword) {
@@ -53,14 +55,15 @@ function EditProfile() {
     }
 
     try {
-      await axios.put(
-        "https://66f646f8436827ced976737d.mockapi.io/profile/1",
-        values
-      );
-      toast.success("Profile updated successfully!");
-      navigate("/view-profile");
+      const response = await UserService.editProfile(values);
+
+      if (response.success) {
+        toast.success("Profile updated successfully!");
+        navigate("/view-profile");
+      } else {
+        toast.error(response.message || "Failed to update profile");
+      }
     } catch (error) {
-      console.error("Error updating profile:", error);
       toast.error("Failed to update profile");
     }
   };

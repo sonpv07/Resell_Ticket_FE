@@ -1,8 +1,8 @@
 import Home from "./Home/Home";
 import Package from "./Package/Package";
 import TicketsList from "./Ticket/TicketsList/TicketsList";
-import EditProfile from "./User/profile/edit-profile/EditProfile";
-import ViewProfile from "./User/profile/view-profile/ViewProfile"; // Import ViewProfile
+import EditProfile from "./User/EditProfile";  
+import ViewProfile from "./User/ViewProfile";  
 
 const pagesData = [
   {
@@ -15,7 +15,6 @@ const pagesData = [
     element: <TicketsList />,
     title: "tickets",
   },
-
   {
     path: "edit",
     element: <EditProfile />,
@@ -44,12 +43,12 @@ const pagesData = [
     ],
   },
   {
-    path: "view-profile", // Thêm route cho ViewProfile
+    path: "view-profile",  
     element: <ViewProfile />,
     title: "view-profile",
   },
   {
-    path: "package", // Thêm route cho Package
+    path: "package",  
     element: <Package />,
     title: "package",
   },
