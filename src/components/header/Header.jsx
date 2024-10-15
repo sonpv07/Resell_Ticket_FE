@@ -76,7 +76,7 @@ const Header = () => {
         <div className="header__nav">
           <p onClick={() => navigate("/tickets")}>Shopping</p>
 
-          {user && (
+          {/* {user && (
             <div onClick={() => navigate("/cart")}>
               <Badge count={1} size="small">
                 <ShoppingCartOutlined
@@ -84,7 +84,7 @@ const Header = () => {
                 />
               </Badge>
             </div>
-          )}
+          )} */}
 
           {user ? (
             <Dropdown overlay={menu} trigger={["click"]}>
