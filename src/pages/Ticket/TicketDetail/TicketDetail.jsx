@@ -181,7 +181,14 @@ export default function TicketDetail() {
             ) : (
               <>
                 <h2>Seller Information: </h2>
-                <p className="ticket-detail__seller-name">{sellerInfo?.name}</p>
+                <p
+                  className="ticket-detail__seller-name"
+                  onClick={() =>
+                    navigate(`/seller-profile/${sellerInfo?.iD_Customer}`)
+                  }
+                >
+                  {sellerInfo?.name}
+                </p>
                 <div className="ticket-detail__seller-rating">
                   <span>Phone Number:</span> {sellerInfo?.contact}
                 </div>

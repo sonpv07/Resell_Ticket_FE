@@ -150,9 +150,15 @@
   }
 
   &__seller-name {
-    font-size: 16px;
+    font-size: 20px;
     font-weight: 600;
     margin-bottom: 4px;
+    cursor: pointer;
+    width: fit-content;
+
+    &:hover {
+      text-decoration: underline;
+    }
   }
 
   &__seller-rating {
