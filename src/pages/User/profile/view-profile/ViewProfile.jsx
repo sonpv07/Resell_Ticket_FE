@@ -1,16 +1,18 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect } from "react";
+import { Card, Typography, Space, Button, Spin } from "antd";
 import { useNavigate } from "react-router-dom";
-import "./ViewProfile.scss";
-import { AuthContext } from "../../../../context/AuthContext";
+import axios from "axios";
+
+const { Title, Text } = Typography;
 
 function ViewProfile() {
-  const [showPassword, setShowPassword] = useState(false); // manage hide/show pass
+  const [userInfo, setUserInfo] = useState(null); // Set initial value as null to indicate loading
+  const [loading, setLoading] = useState(true); // State to handle loading spinner
+  const navigate = useNavigate();
 
   const { user } = useContext(AuthContext);
 
   console.log(user);
-
-  const navigate = useNavigate(); // Initialize navigation
 
   // const fetchUserData = async () => {
   //   try {
@@ -28,78 +30,153 @@ function ViewProfile() {
   //   fetchUserData();
   // }, []);
 
-  // Toggle hiển thị mật khẩu
-  const toggleShowPassword = () => {
-    setShowPassword(!showPassword);
+  // useEffect(() => {
+  //   fetchUserData(); // Fetch user data when the component loads
+  // }, []);
+
+  const handleEditProfile = () => {
+    navigate("/edit");
   };
 
-  return (
-    <div className="container">
-      <div className="profile">
-        <img src="/avatar.jpg" alt="Avatar" className="avatar" />
-        <div className="info">
-          <h1>{user.name}</h1>
-          <button
-            className="edit-button"
-            onClick={() => navigate("/edit/name")}
-          >
-            Rename
-          </button>
-          <h3>Profile</h3>
-
-          <div className="field">
-            <p>Email address:</p>
-            <div className="field-edit">
-              <p>{user?.email}</p>
-              <button
-                onClick={() => navigate("/edit/email")}
-                className="small-edit-button"
-              >
-                Edit
-              </button>
-            </div>
-          </div>
-
-          <div className="field">
-            <p>Phone number:</p>
-            <div className="field-edit">
-              <p>{user?.contact}</p>
-              <button
-                onClick={() => navigate("/edit/contact")}
-                className="small-edit-button"
-              >
-                Edit
-              </button>
-            </div>
-          </div>
-
-          <div className="field">
-            <p>Password:</p>
-            <div className="field-edit">
-              {/* kt nếu showPassword là true thì hiển thị, ngược lại ẩn */}
-              <p>
-                {showPassword
-                  ? user?.password
-                  : "*".repeat(user?.password?.length)}
-              </p>
-              <button
-                onClick={toggleShowPassword}
-                className="small-edit-button"
-              >
-                {showPassword ? "Hide" : "Show"}
-              </button>
-              <button
-                onClick={() => navigate("/edit/password")}
-                className="small-edit-button"
-              >
-                Change
-              </button>
-            </div>
-          </div>
-
-          <p>Average Rating: {user?.average_feedback ?? 0}/5</p>
-        </div>
+  // Show spinner while loading data
+  if (loading) {
+    return (
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+          backgroundColor: "#1A2129",
+        }}
+      >
+        <Spin size="large" />
       </div>
+    );
+  }
+
+  const maskedPassword = "•".repeat(userInfo.password.length);
+
+  return (
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        height: "100vh",
+        backgroundColor: "#1A2129",
+      }}
+    >
+      <Card
+        style={{
+          width: 700,
+          height: 600,
+          backgroundColor: "#1e293b",
+          borderRadius: "10px",
+          textAlign: "center",
+          boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+        }}
+        cover={
+          <img
+            src={userInfo.avatar || "./avatar.jpg"} // Sử dụng avatar từ API hoặc ảnh mặc định
+            alt="Avatar"
+            style={{
+              width: 150,
+              height: 150,
+              borderRadius: "50%",
+              margin: "0 auto",
+              objectFit: "cover",
+              marginTop: "30px",
+              marginBottom: "-10px",
+            }}
+          />
+        }
+      >
+        <Space direction="vertical" size="middle" style={{ width: "100%" }}>
+          <Title level={3} style={{ color: "white", textAlign: "center" }}>
+            {userInfo.name}
+          </Title>
+          <Button type="primary" onClick={handleEditProfile}>
+            Edit Profile
+          </Button>
+
+          <div
+            style={{ textAlign: "left", padding: "0 40px", marginTop: "20px" }}
+          >
+            {/* Email */}
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                marginBottom: "20px",
+                paddingBottom: "10px",
+                borderBottom: "1px solid #ccc", // Horizontal separator
+              }}
+            >
+              <div>
+                <Text style={{ color: "white" }}>Email address:</Text>
+                <Text style={{ marginLeft: "20px", color: "white" }}>
+                  {userInfo.email}
+                </Text>
+              </div>
+            </div>
+
+            {/* Phone Number */}
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                marginBottom: "20px",
+                paddingBottom: "10px",
+                borderBottom: "1px solid #ccc",
+              }}
+            >
+              <div>
+                <Text style={{ color: "white" }}>Phone number:</Text>
+                <Text style={{ marginLeft: "20px", color: "white" }}>
+                  {userInfo.phone}
+                </Text>
+              </div>
+            </div>
+
+            {/* Password */}
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                marginBottom: "20px",
+                paddingBottom: "10px",
+                borderBottom: "1px solid #ccc", // Horizontal separator
+              }}
+            >
+              <div>
+                <Text style={{ color: "white" }}>Password:</Text>
+                <Text style={{ marginLeft: "20px", color: "white" }}>
+                  {maskedPassword}
+                </Text>
+              </div>
+            </div>
+
+            {/* Rating */}
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                marginBottom: "20px",
+                paddingBottom: "10px",
+              }}
+            >
+              <div>
+                <Text style={{ color: "white" }}>Average Rating:</Text>
+                <Text style={{ marginLeft: "20px", color: "white" }}>
+                  {userInfo.rating}/5
+                </Text>
+              </div>
+            </div>
+          </div>
+        </Space>
+      </Card>
     </div>
   );
 }

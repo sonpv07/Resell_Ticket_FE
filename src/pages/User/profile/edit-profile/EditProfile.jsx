@@ -1,60 +1,220 @@
-import React from "react";
-import "./EditProfile.scss";
-import EditItem from "../../../../components/user/edit/EditItem";
-import { useLocation } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Form, Input, Button, Card, Typography, Space } from "antd";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
-const EDIT_TYPE = [
-  {
-    id: 0,
-    title: "Email",
-    subTitle: `In order to change your email, we'll send a confirmation email to verify your email address`,
-  },
+const { Title } = Typography;
 
-  {
-    id: 1,
-    title: "Name",
-    subTitle: ``,
-  },
+function EditProfile() {
+  const [form] = Form.useForm();
+  const [userInfo, setUserInfo] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    password: "",
+  });
+  const [editPassword, setEditPassword] = useState(false); // State for toggling password edit fields
+  const navigate = useNavigate();
 
-  {
-    id: 2,
-    title: "Password",
-    subTitle: `In order to change your password, we'll send a confirmation email to verify`,
-  },
+  const [oldPassword, setOldPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmNewPassword, setConfirmNewPassword] = useState("");
 
-  {
-    id: 3,
-    title: "Contact",
-    subTitle: ``,
-  },
-];
-
-export default function EditProfile() {
-  const pathname = useLocation().pathname;
-
-  const getEditType = () => {
-    const currentPath = pathname.substring(pathname.lastIndexOf("/") + 1);
-
-    return EDIT_TYPE.find(
-      (item) => item.title.toLowerCase() === currentPath.toLowerCase()
-    );
+  const fetchUserData = async () => {
+    try {
+      const response = await axios.get(
+        "https://66f646f8436827ced976737d.mockapi.io/profile/1"
+      );
+      setUserInfo(response.data);
+      form.setFieldsValue(response.data);
+    } catch (error) {
+      toast.error("Error fetching user data");
+      console.error("Error fetching user data:", error);
+    }
   };
 
-  console.log(getEditType());
+  useEffect(() => {
+    fetchUserData();
+  }, []);
+
+  const handleSave = async (values) => {
+    if (editPassword) {
+      if (oldPassword !== userInfo.password) {
+        toast.error("Old password is incorrect");
+        return;
+      }
+      if (newPassword !== confirmNewPassword) {
+        toast.error("New passwords do not match");
+        return;
+      }
+      values.password = newPassword;
+    }
+
+    try {
+      await axios.put(
+        "https://66f646f8436827ced976737d.mockapi.io/profile/1",
+        values
+      );
+      toast.success("Profile updated successfully!");
+      navigate("/view-profile");
+    } catch (error) {
+      console.error("Error updating profile:", error);
+      toast.error("Failed to update profile");
+    }
+  };
 
   return (
-    <div className="edit-container">
-      <div className="path">
-        <p>Account</p>
-        <p>/</p>
-        <p>{getEditType().title}</p>
-      </div>
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        height: "100vh",
+        backgroundColor: "#1A2129",
+      }}
+    >
+      <Card
+        style={{
+          width: 700,
+          backgroundColor: "#24303B",
+          borderRadius: "10px",
+          textAlign: "center",
+          boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+        }}
+      >
+        <Title level={3} style={{ color: "white" }}>
+          Edit Profile
+        </Title>
 
-      <EditItem
-        title={getEditType().title}
-        subTitle={getEditType().subTitle}
-        key={getEditType().id}
-      />
+        <Form
+          form={form}
+          layout="vertical"
+          initialValues={userInfo}
+          onFinish={handleSave}
+        >
+          {/* Name */}
+          <Form.Item
+            label="Name"
+            name="name"
+            rules={[{ required: true, message: "Please input your name!" }]}
+          >
+            <Input
+              style={{
+                backgroundColor: "#324A5F",
+                color: "#F0F0F0",
+                fontWeight: "bold",
+                border: "1px solid #666",
+              }}
+            />
+          </Form.Item>
+
+          {/* Email (Disabled) */}
+          <Form.Item label="Email" name="email">
+            <Input
+              disabled
+              style={{
+                backgroundColor: "#24303B",
+                color: "#888",
+                border: "1px solid #666",
+                fontStyle: "italic",
+              }}
+            />
+          </Form.Item>
+
+          {/* Phone */}
+          <Form.Item
+            label="Phone"
+            name="phone"
+            rules={[{ required: true, message: "Please input your phone number!" }]}
+          >
+            <Input
+              style={{
+                backgroundColor: "#324A5F",
+                color: "#F0F0F0",
+                fontWeight: "bold",
+                border: "1px solid #666",
+              }}
+            />
+          </Form.Item>
+
+          {/* Old Password */}
+          {editPassword && (
+            <Form.Item
+              label="Old Password"
+              name="oldPassword"
+              rules={[{ required: true, message: "Please input your old password!" }]}
+            >
+              <Input.Password
+                value={oldPassword}
+                onChange={(e) => setOldPassword(e.target.value)}
+                style={{
+                  backgroundColor: "#324A5F",
+                  color: "#F0F0F0",
+                  border: "1px solid #666",
+                }}
+              />
+            </Form.Item>
+          )}
+
+          {/* New Password */}
+          {editPassword && (
+            <>
+              <Form.Item
+                label="New Password"
+                name="newPassword"
+                rules={[{ required: true, message: "Please input your new password!" }]}
+              >
+                <Input.Password
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  style={{
+                    backgroundColor: "#324A5F",
+                    color: "#F0F0F0",
+                    border: "1px solid #666",
+                  }}
+                />
+              </Form.Item>
+              <Form.Item
+                label="Confirm New Password"
+                name="confirmNewPassword"
+                rules={[{ required: true, message: "Please confirm your new password!" }]}
+              >
+                <Input.Password
+                  value={confirmNewPassword}
+                  onChange={(e) => setConfirmNewPassword(e.target.value)}
+                  style={{
+                    backgroundColor: "#324A5F",
+                    color: "#F0F0F0",
+                    border: "1px solid #666",
+                  }}
+                />
+              </Form.Item>
+            </>
+          )}
+
+          {/* Toggle sửa mật khẩu */}
+          <Button
+            type="link"
+            onClick={() => setEditPassword(!editPassword)}
+            style={{ marginBottom: "20px", color: "lightblue" }}
+          >
+            {editPassword ? "Cancel Password Change" : "Change Password"}
+          </Button>
+
+          <Space>
+            <Button type="primary" htmlType="submit">
+              Save
+            </Button>
+            <Button onClick={() => navigate("/view-profile")}>Cancel</Button>
+          </Space>
+        </Form>
+      </Card>
+
+      <ToastContainer />
     </div>
   );
 }
+
+export default EditProfile;

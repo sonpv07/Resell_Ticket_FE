@@ -73,6 +73,9 @@ const pagesData = [
     path: "cart",
     element: <Cart />,
     title: "cart",
+    path: "package", // Thêm route cho Package
+    element: <Package />,
+    title: "package",
   },
 ];
 
