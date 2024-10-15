@@ -84,8 +84,6 @@ export default function SellerProfile() {
     };
   }, [id]);
 
-  console.log(tickets);
-
   return (
     <div className="seller-profile">
       <div className="seller-profile__info">
