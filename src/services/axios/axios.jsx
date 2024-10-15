@@ -1,9 +1,9 @@
 import axios from "axios";
 
-// API TEST
-// const baseUrl = "https://catfact.ninja/";
+// API LOCAL
+// const baseUrl = "http://localhost:5212/api/";
 
-const baseUrl = "http://localhost:5212/api/";
+const baseUrl = "http://14.225.204.144:7070/api/";
 
 const config = {
   baseUrl: baseUrl,
