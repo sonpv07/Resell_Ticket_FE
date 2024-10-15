@@ -49,6 +49,22 @@ class TicketService {
       return returnValue(false, null, "Get Ticket List By User Failure");
     }
   }
+
+  static async filterTicket(location, ticketCategory) {
+    try {
+      const response = await api.get(
+        `${URL}/filter?ticketCategory=${ticketCategory}&location=${location}}`
+      );
+
+      if (response.status >= 200 && response.status < 300) {
+        return returnValue(true, response.data, "Filter Ticket Success");
+      } else {
+        return returnValue(false, null, "Filter Ticket Failure");
+      }
+    } catch (error) {
+      return returnValue(false, null, "Filter Ticket Failure");
+    }
+  }
 }
 
 export default TicketService;
