@@ -1,61 +1,35 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useContext } from "react";
 import { Card, Typography, Space, Button, Spin } from "antd";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import { AuthContext } from "../../../../context/AuthContext";
 
 const { Title, Text } = Typography;
 
 function ViewProfile() {
-  const [userInfo, setUserInfo] = useState(null); // Set initial value as null to indicate loading
-  const [loading, setLoading] = useState(true); // State to handle loading spinner
   const navigate = useNavigate();
 
   const { user } = useContext(AuthContext);
-
-  console.log(user);
-
-  // const fetchUserData = async () => {
-  //   try {
-  //     const response = await fetch(
-  //       "https://66f646f8436827ced976737d.mockapi.io/profile/1"
-  //     );
-  //     const data = await response.json();
-  //     setUserInfo(data);
-  //   } catch (error) {
-  //     console.error("Error fetching user data:", error);
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   fetchUserData();
-  // }, []);
-
-  // useEffect(() => {
-  //   fetchUserData(); // Fetch user data when the component loads
-  // }, []);
 
   const handleEditProfile = () => {
     navigate("/edit");
   };
 
   // Show spinner while loading data
-  if (loading) {
-    return (
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          height: "100vh",
-          backgroundColor: "#1A2129",
-        }}
-      >
-        <Spin size="large" />
-      </div>
-    );
-  }
-
-  const maskedPassword = "•".repeat(userInfo.password.length);
+  // if (loading) {
+  //   return (
+  //     <div
+  //       style={{
+  //         display: "flex",
+  //         justifyContent: "center",
+  //         alignItems: "center",
+  //         height: "100vh",
+  //         backgroundColor: "#1A2129",
+  //       }}
+  //     >
+  //       <Spin size="large" />
+  //     </div>
+  //   );
+  // }
 
   return (
     <div
@@ -78,7 +52,7 @@ function ViewProfile() {
         }}
         cover={
           <img
-            src={userInfo.avatar || "./avatar.jpg"} // Sử dụng avatar từ API hoặc ảnh mặc định
+            src={user?.avatar || "./avatar.jpg"} // Sử dụng avatar từ API hoặc ảnh mặc định
             alt="Avatar"
             style={{
               width: 150,
@@ -94,7 +68,7 @@ function ViewProfile() {
       >
         <Space direction="vertical" size="middle" style={{ width: "100%" }}>
           <Title level={3} style={{ color: "white", textAlign: "center" }}>
-            {userInfo.name}
+            {user.name}
           </Title>
           <Button type="primary" onClick={handleEditProfile}>
             Edit Profile
@@ -116,7 +90,7 @@ function ViewProfile() {
               <div>
                 <Text style={{ color: "white" }}>Email address:</Text>
                 <Text style={{ marginLeft: "20px", color: "white" }}>
-                  {userInfo.email}
+                  {user.email}
                 </Text>
               </div>
             </div>
@@ -134,13 +108,13 @@ function ViewProfile() {
               <div>
                 <Text style={{ color: "white" }}>Phone number:</Text>
                 <Text style={{ marginLeft: "20px", color: "white" }}>
-                  {userInfo.phone}
+                  {user.contact}
                 </Text>
               </div>
             </div>
 
             {/* Password */}
-            <div
+            {/* <div
               style={{
                 display: "flex",
                 justifyContent: "space-between",
@@ -149,14 +123,7 @@ function ViewProfile() {
                 paddingBottom: "10px",
                 borderBottom: "1px solid #ccc", // Horizontal separator
               }}
-            >
-              <div>
-                <Text style={{ color: "white" }}>Password:</Text>
-                <Text style={{ marginLeft: "20px", color: "white" }}>
-                  {maskedPassword}
-                </Text>
-              </div>
-            </div>
+            ></div> */}
 
             {/* Rating */}
             <div
@@ -170,7 +137,7 @@ function ViewProfile() {
               <div>
                 <Text style={{ color: "white" }}>Average Rating:</Text>
                 <Text style={{ marginLeft: "20px", color: "white" }}>
-                  {userInfo.rating}/5
+                  {user.average_feedback}/5
                 </Text>
               </div>
             </div>

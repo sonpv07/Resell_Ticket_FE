@@ -127,7 +127,9 @@ function EditProfile() {
           <Form.Item
             label="Phone"
             name="phone"
-            rules={[{ required: true, message: "Please input your phone number!" }]}
+            rules={[
+              { required: true, message: "Please input your phone number!" },
+            ]}
           >
             <Input
               style={{
@@ -144,7 +146,9 @@ function EditProfile() {
             <Form.Item
               label="Old Password"
               name="oldPassword"
-              rules={[{ required: true, message: "Please input your old password!" }]}
+              rules={[
+                { required: true, message: "Please input your old password!" },
+              ]}
             >
               <Input.Password
                 value={oldPassword}
@@ -164,7 +168,12 @@ function EditProfile() {
               <Form.Item
                 label="New Password"
                 name="newPassword"
-                rules={[{ required: true, message: "Please input your new password!" }]}
+                rules={[
+                  {
+                    required: true,
+                    message: "Please input your new password!",
+                  },
+                ]}
               >
                 <Input.Password
                   value={newPassword}
@@ -179,7 +188,12 @@ function EditProfile() {
               <Form.Item
                 label="Confirm New Password"
                 name="confirmNewPassword"
-                rules={[{ required: true, message: "Please confirm your new password!" }]}
+                rules={[
+                  {
+                    required: true,
+                    message: "Please confirm your new password!",
+                  },
+                ]}
               >
                 <Input.Password
                   value={confirmNewPassword}

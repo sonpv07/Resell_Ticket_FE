@@ -65,6 +65,20 @@ class TicketService {
       return returnValue(false, null, "Filter Ticket Failure");
     }
   }
+
+  static async createTicket(sellerId, body) {
+    try {
+      const response = await api.post(`${URL}/ticket/${sellerId}`, body);
+
+      if (response.status >= 200 && response.status < 300) {
+        return returnValue(true, response.data, "Create Ticket Success");
+      } else {
+        return returnValue(false, null, "Create Ticket Failure");
+      }
+    } catch (error) {
+      return returnValue(false, null, "Create Ticket Failure");
+    }
+  }
 }
 
 export default TicketService;

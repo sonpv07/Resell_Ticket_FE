@@ -6,6 +6,8 @@ import TicketDetail from "./Ticket/TicketDetail/TicketDetail";
 import TicketManagement from "./Seller/management/TicketManagement";
 import SellerProfile from "./Seller/profile/SellerProfile";
 import Cart from "./User/cart/Cart";
+import CreateTicketPage from "./Ticket/CreateTicketPage";
+import Package from "./Package/Package";
 
 const pagesData = [
   {
@@ -58,22 +60,55 @@ const pagesData = [
   },
 
   {
+    path: "seller",
+    title: "Seller",
+    children: [
+      {
+        path: "management",
+        element: <TicketManagement />,
+        title: "email",
+      },
+
+      {
+        path: "create-ticket",
+        element: <CreateTicketPage />,
+        title: "create ticket page",
+      },
+    ],
+  },
+  {
+    path: "seller",
+    element: <EditProfile />,
+    title: "Seller",
+    children: [
+      {
+        path: "management",
+        element: <TicketManagement />,
+        title: "email",
+      },
+
+      {
+        path: "create-ticket",
+        element: <CreateTicketPage />,
+        title: "create ticket page",
+      },
+    ],
+  },
+
+  {
     path: "seller-profile/:id",
     element: <SellerProfile />,
     title: "SeLLer Profile",
   },
 
   {
-    path: "seller/management",
-    element: <TicketManagement />,
-    title: "ticket management",
-  },
-
-  {
     path: "cart",
     element: <Cart />,
     title: "cart",
-    path: "package", // Thêm route cho Package
+  },
+
+  {
+    path: "package",
     element: <Package />,
     title: "package",
   },

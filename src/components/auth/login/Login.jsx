@@ -54,7 +54,9 @@ export default function Login() {
     }
   };
 
-  console.log(errorMessage);
+  const handleLoginGoogle = () => {
+    window.open("http://14.225.204.144:7070/api/Auth/login-google", "_self");
+  };
 
   return (
     <Overlay isOpen={showForm === "LOGIN"} onClose={() => setShowForm("")}>
@@ -68,7 +70,7 @@ export default function Login() {
         </div>
 
         <div className="body-container">
-          <div className="mail-btn">
+          <div className="mail-btn" onClick={handleLoginGoogle}>
             <img alt="google-icon" src="google.png" className="mail-img" />
             <p>Continue with Google</p>
           </div>

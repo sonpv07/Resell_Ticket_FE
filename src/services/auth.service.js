@@ -34,6 +34,22 @@ class AuthService {
       return returnValue(false, null, "Register failed");
     }
   }
+
+  static async loginGoogle() {
+    try {
+      const response = await api.get(`${URL}/login-google`);
+
+      if (response.status >= 200 && response.status < 300) {
+        return returnValue(true, response.data, "Login Google successfully");
+      } else {
+        console.error("Login Google fail", response.data);
+        return returnValue(false, null, "Login Google failed");
+      }
+    } catch (error) {
+      console.error("Error Register", error);
+      return returnValue(false, null, "Login Google failed");
+    }
+  }
 }
 
 export default AuthService;
