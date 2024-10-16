@@ -8,6 +8,7 @@ import SellerProfile from "./Seller/profile/SellerProfile";
 import Cart from "./User/cart/Cart";
 import CreateTicketPage from "./Ticket/CreateTicketPage";
 import Package from "./Package/Package";
+import OrderHistory from "../components/OrderHistory";
 
 const pagesData = [
   {
@@ -111,6 +112,12 @@ const pagesData = [
     path: "package",
     element: <Package />,
     title: "package",
+  },
+
+  {
+    path: "/order-history",
+    title: "Order History",
+    element: <OrderHistory customerId="12345" />,
   },
 ];
 
