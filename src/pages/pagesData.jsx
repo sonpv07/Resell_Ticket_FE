@@ -9,6 +9,7 @@ import Cart from "./User/cart/Cart";
 import CreateTicketPage from "./Ticket/CreateTicketPage";
 import Package from "./Package/Package";
 import OrderHistory from "../components/OrderHistory";
+import PaymentBill from "./Payment/PaymentBill";
 
 const pagesData = [
   {
@@ -77,24 +78,6 @@ const pagesData = [
       },
     ],
   },
-  {
-    path: "seller",
-    element: <EditProfile />,
-    title: "Seller",
-    children: [
-      {
-        path: "management",
-        element: <TicketManagement />,
-        title: "email",
-      },
-
-      {
-        path: "create-ticket",
-        element: <CreateTicketPage />,
-        title: "create ticket page",
-      },
-    ],
-  },
 
   {
     path: "seller-profile/:id",
@@ -118,6 +101,18 @@ const pagesData = [
     path: "/order-history",
     title: "Order History",
     element: <OrderHistory customerId="12345" />,
+  },
+
+  {
+    path: "success-payment",
+    element: <PaymentBill />,
+    title: "success-payment",
+  },
+
+  {
+    path: "fail-payment",
+    element: <PaymentBill />,
+    title: "fail-payment",
   },
 ];
 

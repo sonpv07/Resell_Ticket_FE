@@ -153,7 +153,7 @@ export default function TicketCard({
                   Additional Details:
                 </div>
                 <div className="ticket-card__ticket-detail-content">
-                  {description}
+                  {description ?? "No description"}
                 </div>
               </div>
             </div>

@@ -6,6 +6,7 @@ import TicketService from "../../../services/ticket.service";
 import { getTagColor } from "../../../utils";
 import moment from "moment";
 import { AuthContext } from "../../../context/AuthContext";
+import { toast } from "react-toastify";
 
 export default function TicketManagement() {
   const [ticketList, setTicketList] = useState([]);
@@ -38,6 +39,7 @@ export default function TicketManagement() {
       dataIndex: "soldQuantity",
       key: "soldQuantity",
     },
+
     {
       title: "Status",
       dataIndex: "status",
@@ -79,12 +81,16 @@ export default function TicketManagement() {
     {
       title: "Action",
       key: "action",
-      render: () => (
+      render: (_, record) => (
         <Space size="middle">
           <Button type="primary">Edit</Button>
-          <Button type="primary" style={{ backgroundColor: "red" }}>
+          {/* <Button
+            type="primary"
+            style={{ backgroundColor: "red" }}
+            onClick={() => handleRemoveTicket(record.key)}
+          >
             Delete
-          </Button>
+          </Button> */}
         </Space>
       ),
     },
@@ -132,9 +138,24 @@ export default function TicketManagement() {
     }
   };
 
+  // const handleRemoveTicket = async (id) => {
+  //   const response = await TicketService.deleteTicket(id);
+  //   if (response.success) {
+  //     const updateTickets = ticketList.filter((item) => item.key !== id);
+
+  //     setTicketList(updateTickets);
+
+  //     toast.success(response.message);
+  //   } else {
+  //     toast.error(response.message);
+  //   }
+  // };
+
   useEffect(() => {
     fetchApi();
   }, []);
+
+  useEffect(() => {}, [ticketList]);
 
   return (
     <div className="seller-ticket-management">
@@ -143,7 +164,7 @@ export default function TicketManagement() {
       <div className="seller-ticket-management__stats">
         <div className="seller-ticket-management__stat-item">
           <h2>Total Revenue</h2>
-          <p>${totalRevenue.toFixed(2)}</p>
+          <p>${totalRevenue}</p>
         </div>
         <div className="seller-ticket-management__stat-item">
           <h2>Sold Tickets</h2>

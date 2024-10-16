@@ -8,19 +8,17 @@ const CreateTicketPage = () => {
   const { user } = useContext(AuthContext);
 
   const [ticket, setTicket] = useState({
-    ID_Ticket: "",
-    iD_Customer: user.iD_Customer,
     price: "",
     ticket_category: "",
-    ticket_type: true, // Boolean for true/false
+    ticket_type: true,
     quantity: 1,
-    status: "",
     event_Date: "",
     show_Name: "",
     description: "",
     location: "",
-    seat: "",
-    Image: null,
+    seat: null,
+    image:
+      "https://copycatjm.com/wp-content/uploads/2022/08/Tickets-Prod-Image.jpg",
   });
 
   const [errors, setErrors] = useState({
@@ -123,33 +121,31 @@ const CreateTicketPage = () => {
       return;
     }
 
-    try {
-      const formData = new FormData();
-      for (const key in ticket) {
-        formData.append(key, ticket[key]);
-      }
+    console.log(ticket);
 
+    try {
       // Call the createTicket API
       const response = await TicketService.createTicket(
         user.iD_Customer,
-        formData
+        ticket
       );
+
+      console.log(response);
 
       if (response.success) {
         toast.success(response.message);
         setTicket({
-          ID_Ticket: "",
-          iD_Customer: user.iD_Customer,
           price: "",
           ticket_category: "",
-          ticket_type: true, // Reset to true
+          ticket_type: true,
           quantity: "",
           status: "",
           event_Date: "",
           show_Name: "",
           description: "",
-          seat: "",
-          Image: null,
+          seat: null,
+          location: "",
+          image: null,
         });
 
         setImagePreview(null);
@@ -224,7 +220,6 @@ const CreateTicketPage = () => {
             name="seat"
             value={ticket.seat}
             onChange={handleChange}
-            required
           />
         </div>
 
@@ -281,7 +276,7 @@ const CreateTicketPage = () => {
         </div>
         <div className="create-ticket-form__item">
           <label>Upload Image:</label>
-          <input type="file" name="Image" onChange={handleImageChange} />
+          <input type="file" name="image" onChange={handleImageChange} />
           {imagePreview && (
             <img src={imagePreview} alt="Preview" className="image-preview" />
           )}

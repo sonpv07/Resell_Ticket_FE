@@ -1,19 +1,23 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Form, Input, Button, Card, Typography, Space } from "antd";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { AuthContext } from "../../../../context/AuthContext";
+import UserService from "../../../../services/user.service";
 
 const { Title } = Typography;
 
 function EditProfile() {
+  const { user } = useContext(AuthContext);
+
   const [form] = Form.useForm();
   const [userInfo, setUserInfo] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    password: "",
+    name: user.name,
+    email: user.email,
+    phone: user?.contact,
+    password: user?.password,
   });
   const [editPassword, setEditPassword] = useState(false); // State for toggling password edit fields
   const navigate = useNavigate();
@@ -22,22 +26,22 @@ function EditProfile() {
   const [newPassword, setNewPassword] = useState("");
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
 
-  const fetchUserData = async () => {
-    try {
-      const response = await axios.get(
-        "https://66f646f8436827ced976737d.mockapi.io/profile/1"
-      );
-      setUserInfo(response.data);
-      form.setFieldsValue(response.data);
-    } catch (error) {
-      toast.error("Error fetching user data");
-      console.error("Error fetching user data:", error);
-    }
-  };
+  // const fetchUserData = async () => {
+  //   try {
+  //     const response = await axios.get(
+  //       "https://66f646f8436827ced976737d.mockapi.io/profile/1"
+  //     );
+  //     setUserInfo(response.data);
+  //     form.setFieldsValue(response.data);
+  //   } catch (error) {
+  //     toast.error("Error fetching user data");
+  //     console.error("Error fetching user data:", error);
+  //   }
+  // };
 
-  useEffect(() => {
-    fetchUserData();
-  }, []);
+  // useEffect(() => {
+  //   fetchUserData();
+  // }, []);
 
   const handleSave = async (values) => {
     if (editPassword) {
@@ -52,17 +56,35 @@ function EditProfile() {
       values.password = newPassword;
     }
 
-    try {
-      await axios.put(
-        "https://66f646f8436827ced976737d.mockapi.io/profile/1",
-        values
-      );
+    let body = {
+      ID_Customer: user.iD_Customer,
+      Name: values.name,
+      Contact: values.phone,
+      Password: values.password ?? null,
+      Avatar: null,
+    };
+
+    console.log(body);
+
+    const response = await UserService.editProfile(body);
+
+    console.log(response);
+
+    if (response.success) {
       toast.success("Profile updated successfully!");
-      navigate("/view-profile");
-    } catch (error) {
-      console.error("Error updating profile:", error);
-      toast.error("Failed to update profile");
     }
+
+    // try {
+    //   await axios.put(
+    //     "https://66f646f8436827ced976737d.mockapi.io/profile/1",
+    //     values
+    //   );
+    //   toast.success("Profile updated successfully!");
+    //   navigate("/view-profile");
+    // } catch (error) {
+    //   console.error("Error updating profile:", error);
+    //   toast.error("Failed to update profile");
+    // }
   };
 
   return (

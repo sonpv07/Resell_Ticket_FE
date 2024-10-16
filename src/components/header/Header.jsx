@@ -31,6 +31,9 @@ const Header = () => {
       case "Ticket alerts":
         navigate("/view-profile");
         break;
+      case "Seller Space":
+        navigate("/seller/management");
+        break;
       case "Logout":
         handleLogout();
         break;
@@ -103,7 +106,7 @@ const Header = () => {
 
           <button
             className="header__button"
-            // onClick={() => navigation(`/ticket/${id}`)}
+            onClick={() => navigate(`/seller/create-ticket`)}
           >
             Sell Ticket
           </button>

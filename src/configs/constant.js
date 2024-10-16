@@ -60,6 +60,11 @@ export const SETTING_DATA = [
   },
   {
     id: 4,
+    icon: <BellFilled />,
+    label: "Seller Space",
+  },
+  {
+    id: 5,
     icon: <LogoutOutlined />,
     label: "Logout",
   },
@@ -87,3 +92,7 @@ export const DATE_FILTER_DATA = [
     icon: <CalendarFilled style={{ color: "#FE4A49", fontSize: "24px" }} />,
   },
 ];
+
+export const PAYMENT_METHODS = {
+  VNPAY: "VNPay",
+};

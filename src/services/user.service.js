@@ -20,9 +20,9 @@ class UserService {
 
   static async editProfile(values) {
     try {
-      const response = await api.put(`${URL}`, values);
+      console.log(values);
 
-      console.log(response);
+      const response = await api.put(`${URL}`, values);
 
       if (response.status >= 200 && response.status < 300) {
         return returnValue(true, response.data, "Update profile successfully");

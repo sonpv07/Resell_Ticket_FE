@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import "./TicketDetail.scss";
 import { Skeleton, Tag } from "antd";
 import { getTagColor } from "../../../utils";
@@ -6,6 +6,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import TicketService from "../../../services/ticket.service";
 import UserService from "../../../services/user.service";
 import moment from "moment";
+import { AuthContext } from "../../../context/AuthContext";
 
 export default function TicketDetail() {
   const navigate = useNavigate();
@@ -18,6 +19,8 @@ export default function TicketDetail() {
 
   const { id } = useParams();
 
+  const { user } = useContext(AuthContext);
+
   const [selectedQuantity, setSelectedQuantity] = useState(1);
 
   const handleQuantityChange = (e) => {
@@ -25,7 +28,19 @@ export default function TicketDetail() {
   };
 
   const handleBuyNow = () => {
-    navigate("/cart", { state: { ticket: [ticketData] } });
+    navigate("/cart", {
+      state: {
+        ticket: [
+          {
+            id: id,
+            price: ticketData.price,
+            show_Name: ticketData.show_Name,
+            quantity: selectedQuantity,
+            seller: ticketData.iD_CustomerNavigation.name,
+          },
+        ],
+      },
+    });
   };
 
   const handleChatWithSeller = () => {
@@ -60,6 +75,8 @@ export default function TicketDetail() {
   useEffect(() => {
     fetchData();
   }, [id]);
+
+  console.log(ticketData, user);
 
   return (
     <div className="ticket-detail">
@@ -124,7 +141,9 @@ export default function TicketDetail() {
 
           <div className="ticket-detail__actions">
             <div className="ticket-detail__quantity">
-              {isLoading ? (
+              {ticketData?.iD_Customer === user?.iD_Customer ? (
+                ""
+              ) : isLoading ? (
                 <Skeleton.Input style={{ width: 100 }} active />
               ) : (
                 <>
@@ -147,7 +166,9 @@ export default function TicketDetail() {
               )}
             </div>
 
-            {isLoading ? (
+            {ticketData?.iD_Customer === user?.iD_Customer ? (
+              ""
+            ) : isLoading ? (
               <Skeleton.Button active />
             ) : (
               <>

@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import "./Shopping.scss";
 import TicketList from "../../../components/ticket/list/TicketList";
-import { Select } from "antd";
+import { Select, Spin } from "antd";
 import TicketService from "../../../services/ticket.service";
+import Loading from "../../../components/loading/Loading";
 
 export default function Shopping() {
   const [location, setLocation] = useState(null);
@@ -58,48 +59,50 @@ export default function Shopping() {
     fetchApi();
   }, []);
 
-  return (
-    <div>
-      <div className="shopping__container">
-        <div className="shopping__filter">
-          <h2>Filter Tickets</h2>
-          <div className="shopping__filter-option">
-            <div className="shopping__filter-option__item">
-              <Select
-                mode="multiple"
-                allowClear
-                style={{ width: "100%", height: "50px" }}
-                className="custom-select"
-                placeholder="Select locations..."
-                onChange={(value) => setLocation(value)}
-                options={options}
-              />
-            </div>
-            <div className="shopping__filter-option__item">
-              <Select
-                mode="multiple"
-                allowClear
-                style={{ width: "100%", height: "50px" }}
-                className="custom-select"
-                placeholder="Select ticket category..."
-                onChange={(value) => setCategory(value)}
-                options={categoryOptions}
-              />
-            </div>
-            <div className="shopping__filter-option__item">
-              <button
-                className="shopping__filter-option__item__button"
-                onClick={handleFilter}
-              >
-                Filter
-              </button>
-            </div>
-          </div>
+  if (isLoading) {
+    return <Loading />;
+  }
 
-          {/* Add filter options here */}
+  return (
+    <div className="shopping__container">
+      <div className="shopping__filter">
+        <h2>Filter Tickets</h2>
+        <div className="shopping__filter-option">
+          <div className="shopping__filter-option__item">
+            <Select
+              mode="multiple"
+              allowClear
+              style={{ width: "100%", height: "50px" }}
+              className="custom-select"
+              placeholder="Select locations..."
+              onChange={(value) => setLocation(value)}
+              options={options}
+            />
+          </div>
+          <div className="shopping__filter-option__item">
+            <Select
+              mode="multiple"
+              allowClear
+              style={{ width: "100%", height: "50px" }}
+              className="custom-select"
+              placeholder="Select ticket category..."
+              onChange={(value) => setCategory(value)}
+              options={categoryOptions}
+            />
+          </div>
+          <div className="shopping__filter-option__item">
+            <button
+              className="shopping__filter-option__item__button"
+              onClick={handleFilter}
+            >
+              Filter
+            </button>
+          </div>
         </div>
-        <TicketList isLoading={isLoading} ticketList={ticketList} />
+
+        {/* Add filter options here */}
       </div>
+      <TicketList isLoading={isLoading} ticketList={ticketList} />
     </div>
   );
 }
