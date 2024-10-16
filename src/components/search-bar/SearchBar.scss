@@ -1,0 +1,38 @@
+@import "../../styles/variables"; // Đảm bảo đường dẫn đúng
+
+.search-bar {
+  width: 45%;
+  margin: 40px auto;
+  position: relative;
+
+  &__input-icon {
+    position: absolute;
+    color: white;
+    font-size: 20px;
+    left: 13px;
+    top: 15px;
+  }
+
+  &__input {
+    padding: 15px 10px;
+    background-color: #00131a;
+    border: none;
+    color: white;
+    width: 100%;
+    padding-left: 50px;
+
+    &:hover {
+      background-color: #00131a24;
+    }
+
+    &::placeholder {
+      color: #667175;
+      font-size: 16px;
+      font-weight: 500;
+    }
+
+    &:focus {
+      background-color: #00131a24;
+    }
+  }
+}

@@ -1,36 +1,40 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Card, Typography, Space, Button, Spin } from "antd";
 import { useNavigate } from "react-router-dom";
 import UserService from "../../services/user.service";
+import { AuthContext } from "../../context/AuthContext";
 
 const { Title, Text } = Typography;
 
 function ViewProfile() {
-  const [userInfo, setUserInfo] = useState(null); 
-  const [loading, setLoading] = useState(true); 
+  const [userInfo, setUserInfo] = useState(null);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const { user } = useContext(AuthContext);
 
-  // Fetch user data 
-  const fetchUserData = async () => {
+  // Fetch user data
+  const fetchUserData = async (userId) => {
     try {
-      const response = await UserService.getProfile(1); // ID người dùng (1) cần được thay thế theo logic của bạn
+      const response = await UserService.getProfile(userId);
 
       if (response.success) {
-        setUserInfo(response.data);  // Set user data from API response
+        setUserInfo(response.data); // Set user data from API response
       } else {
         console.error("Error fetching user data");
       }
 
-      setLoading(false);  
+      setLoading(false);
     } catch (error) {
       console.error("Error fetching user data:", error);
-      setLoading(false);  
+      setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchUserData(); 
-  }, []);
+    if (user?.id) {
+      fetchUserData(user.id);
+    }
+  }, [user]);
 
   const handleEditProfile = () => {
     navigate("/edit");
@@ -76,7 +80,7 @@ function ViewProfile() {
         }}
         cover={
           <img
-            src={userInfo.avatar || "./avatar.jpg"}  // Sử dụng avatar từ API hoặc ảnh mặc định
+            src={userInfo.avatar || "./avatar.jpg"} // Use avatar from API or default image
             alt="Avatar"
             style={{
               width: 150,

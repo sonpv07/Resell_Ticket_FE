@@ -165,7 +165,7 @@ export default function EditForm({ path }) {
 
   const EmailForm = () => {
     const initialValues = {
-      email: user.email,
+      email: user?.email || "",
     };
     return (
       <Form

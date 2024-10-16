@@ -1,46 +1,27 @@
-import Home from "./Home/Home";
 import Package from "./Package/Package";
-import TicketsList from "./Ticket/TicketsList/TicketsList";
+// import TicketsList from "./Ticket/TicketsList/TicketsList";
 import EditProfile from "./User/EditProfile";  
 import ViewProfile from "./User/ViewProfile";  
+import HomePage from "./Home/HomePage";
+import Shopping from "./Ticket/Shopping/Shopping";
+import TicketDetail from "./Ticket/TicketDetail/TicketDetail";
+import TicketManagement from "./Seller/management/TicketManagement";
 
 const pagesData = [
   {
     path: "",
-    element: <Home />,
+    element: <HomePage />,
     title: "home",
   },
   {
     path: "tickets",
-    element: <TicketsList />,
+    element: <Shopping />,
     title: "tickets",
   },
   {
-    path: "edit",
+    path: "edit-profile",
     element: <EditProfile />,
-    title: "edit",
-    children: [
-      {
-        path: "email",
-        element: <EditProfile />,
-        title: "email",
-      },
-      {
-        path: "password",
-        element: <EditProfile />,
-        title: "password",
-      },
-      {
-        path: "name",
-        element: <EditProfile />,
-        title: "name",
-      },
-      {
-        path: "contact",
-        element: <EditProfile />,
-        title: "Contact",
-      },
-    ],
+    title: "edit-profile",
   },
   {
     path: "view-profile",  
@@ -51,6 +32,17 @@ const pagesData = [
     path: "package",  
     element: <Package />,
     title: "package",
+  },
+  {
+    path: "ticket/:id",
+    element: <TicketDetail />,
+    title: "ticket detail",
+  },
+
+  {
+    path: "seller/management",
+    element: <TicketManagement />,
+    title: "ticket management",
   },
 ];
 

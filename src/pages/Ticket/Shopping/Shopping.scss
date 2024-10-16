@@ -1,0 +1,82 @@
+.shopping {
+  &__container {
+    padding: 0 30px;
+    margin: 20px 0;
+    color: white;
+  }
+
+  &__filter {
+    width: 100%;
+    margin-bottom: 30px;
+    padding: 10px;
+    border-bottom: 1px solid #99a1a3;
+    padding-bottom: 30px;
+
+    h2 {
+      font-weight: 700;
+      font-size: 32px;
+      margin-bottom: 20px;
+    }
+
+    &-option {
+      width: 100%;
+      display: flex;
+      gap: 30px;
+      align-items: center;
+
+      &__item {
+        min-width: 350px;
+
+        &__button {
+          width: 100px;
+          height: 40px;
+          background-color: #1976d2;
+          color: #ffffff;
+          border: none;
+          border-radius: 4px;
+          font-size: 16px;
+          font-weight: 600;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          transition: background-color 0.3s ease;
+
+          &:hover {
+            background-color: #1565c0;
+          }
+        }
+      }
+    }
+  }
+}
+
+.custom-select .ant-select-selector {
+  background-color: #00131a !important;
+  border: none !important;
+  cursor: pointer !important;
+
+  .ant-select-selection-overflow {
+    padding: 0;
+    padding-left: 10px;
+  }
+
+  .ant-select-selection-placeholder {
+    color: white !important;
+    font-weight: 500;
+  }
+
+  .ant-select-selection-item {
+    background: #2196f3 !important;
+    border: 1px solid transparent;
+  }
+
+  .ant-select-selection-item-content {
+    color: white !important;
+  }
+}
+
+.ant-select-arrow {
+  color: white !important;
+  font-weight: 500;
+}

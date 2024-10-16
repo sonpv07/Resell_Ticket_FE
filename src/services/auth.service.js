@@ -1,4 +1,4 @@
-import returnValue from "../utils";
+import { returnValue } from "../utils";
 import api from "./axios/axios";
 
 const URL = "Auth";
