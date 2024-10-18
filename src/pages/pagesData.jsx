@@ -6,6 +6,7 @@ import HomePage from "./Home/HomePage";
 import Shopping from "./Ticket/Shopping/Shopping";
 import TicketDetail from "./Ticket/TicketDetail/TicketDetail";
 import TicketManagement from "./Seller/management/TicketManagement";
+import RequestPriceForm from "../components/request-price/RequestPriceForm";
 
 const pagesData = [
   {
@@ -43,6 +44,13 @@ const pagesData = [
     path: "seller/management",
     element: <TicketManagement />,
     title: "ticket management",
+  },
+
+  //test request price form
+  {
+    path: "components/request-price",
+    element: <RequestPriceForm />,
+    title: "request price",
   },
 ];
 
