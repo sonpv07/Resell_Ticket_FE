@@ -8,71 +8,71 @@ $table-hover-bg: #f0f0f0;
 $table-striped-bg: #f2f2f2;
 
 .order-history {
-    padding: 20px;
-    background-color: $order-background;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    max-width: 1000px; // Maximum width for the component
-    margin: 0 auto; // Center align the order history card
+  padding: 20px;
+  background-color: $order-background;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  width: 80%;
+  margin: 30px auto; // Center align the order history card
 
-    h1 {
-        margin-bottom: 20px;
-        color: #333;
-        text-align: center; // Center the title
-        font-size: 24px; // Increase font size
-        font-weight: bold; // Make the title bold
+  h1 {
+    margin-bottom: 20px;
+    color: #333;
+    text-align: center; // Center the title
+    font-size: 24px; // Increase font size
+    font-weight: bold; // Make the title bold
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px; // Add space above the table
+    border-radius: 8px; // Round the table corners
+    overflow: hidden; // Ensure the corners are visible
+
+    th {
+      background-color: $table-header-bg;
+      color: $table-header-color;
+      padding: 12px;
+      text-align: left; // Align text to the left
+      font-weight: bold; // Make header bold
+      font-size: 16px; // Set a larger font size
+
+      &:first-child {
+        border-top-left-radius: 8px; // Round top left corner
+      }
+
+      &:last-child {
+        border-top-right-radius: 8px; // Round top right corner
+      }
     }
 
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 20px; // Add space above the table
-        border-radius: 8px; // Round the table corners
-        overflow: hidden; // Ensure the corners are visible
+    td {
+      border: 1px solid $table-border-color;
+      padding: 12px;
+      text-align: left;
+      font-size: 14px; // Set a slightly smaller font size
+      color: #555; // Change text color for better readability
 
-        th {
-            background-color: $table-header-bg;
-            color: $table-header-color;
-            padding: 12px;
-            text-align: left; // Align text to the left
-            font-weight: bold; // Make header bold
-            font-size: 16px; // Set a larger font size
+      &:nth-child(even) {
+        background-color: $table-striped-bg;
+      }
 
-            &:first-child {
-                border-top-left-radius: 8px; // Round top left corner
-            }
+      &:hover {
+        background-color: $table-hover-bg;
+        transition: background-color 0.3s; // Smooth transition for hover effect
+      }
+    }
 
-            &:last-child {
-                border-top-right-radius: 8px; // Round top right corner
-            }
-        }
-
+    // Add a footer for the table if needed
+    tfoot {
+      tr {
         td {
-            border: 1px solid $table-border-color;
-            padding: 12px;
-            text-align: center;
-            font-size: 14px; // Set a slightly smaller font size
-            color: #555; // Change text color for better readability
-
-            &:nth-child(even) {
-                background-color: $table-striped-bg;
-            }
-
-            &:hover {
-                background-color: $table-hover-bg;
-                transition: background-color 0.3s; // Smooth transition for hover effect
-            }
+          font-weight: bold; // Make footer text bold
+          text-align: right; // Align footer text to the right
+          padding: 12px;
         }
-
-        // Add a footer for the table if needed
-        tfoot {
-            tr {
-                td {
-                    font-weight: bold; // Make footer text bold
-                    text-align: right; // Align footer text to the right
-                    padding: 12px;
-                }
-            }
-        }
+      }
     }
+  }
 }

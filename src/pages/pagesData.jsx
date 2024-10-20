@@ -24,37 +24,23 @@ const pagesData = [
   },
 
   {
-    path: "edit",
-    element: <EditProfile />,
-    title: "edit",
+    path: "profile",
+    allowedRoles: ["Customer"],
+    title: "profile",
     children: [
       {
-        path: "email",
-        element: <EditProfile />,
-        title: "email",
+        path: "",
+        element: <ViewProfile />,
+        title: "view profile",
       },
       {
-        path: "password",
+        path: "edit",
         element: <EditProfile />,
-        title: "password",
-      },
-      {
-        path: "name",
-        element: <EditProfile />,
-        title: "name",
-      },
-      {
-        path: "contact",
-        element: <EditProfile />,
-        title: "Contact",
+        title: "edit",
       },
     ],
   },
-  {
-    path: "view-profile", // Thêm route cho ViewProfile
-    element: <ViewProfile />,
-    title: "view-profile",
-  },
+
   {
     path: "ticket/:id",
     element: <TicketDetail />,
@@ -64,9 +50,10 @@ const pagesData = [
   {
     path: "seller",
     title: "Seller",
+    allowedRoles: ["Customer"],
     children: [
       {
-        path: "management",
+        path: "",
         element: <TicketManagement />,
         title: "email",
       },
@@ -100,7 +87,7 @@ const pagesData = [
   {
     path: "/order-history",
     title: "Order History",
-    element: <OrderHistory customerId="12345" />,
+    element: <OrderHistory />,
   },
 
   {

@@ -61,10 +61,15 @@ export const SETTING_DATA = [
   {
     id: 4,
     icon: <BellFilled />,
-    label: "Seller Space",
+    label: "Order History",
   },
   {
     id: 5,
+    icon: <BellFilled />,
+    label: "Seller Space",
+  },
+  {
+    id: 6,
     icon: <LogoutOutlined />,
     label: "Logout",
   },

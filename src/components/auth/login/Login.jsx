@@ -44,6 +44,7 @@ export default function Login() {
           toast.success(response.message);
         }
       } else {
+        toast.error(response.message);
         setErrorMessage(response.message);
       }
     } catch (err) {

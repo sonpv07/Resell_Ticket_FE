@@ -11,7 +11,7 @@ function ViewProfile() {
   const { user } = useContext(AuthContext);
 
   const handleEditProfile = () => {
-    navigate("/edit");
+    navigate("edit");
   };
 
   // Show spinner while loading data

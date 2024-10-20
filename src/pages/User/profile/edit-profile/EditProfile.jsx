@@ -10,7 +10,7 @@ import UserService from "../../../../services/user.service";
 const { Title } = Typography;
 
 function EditProfile() {
-  const { user } = useContext(AuthContext);
+  const { user, setUser } = useContext(AuthContext);
 
   const [form] = Form.useForm();
   const [userInfo, setUserInfo] = useState({
@@ -26,23 +26,6 @@ function EditProfile() {
   const [newPassword, setNewPassword] = useState("");
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
 
-  // const fetchUserData = async () => {
-  //   try {
-  //     const response = await axios.get(
-  //       "https://66f646f8436827ced976737d.mockapi.io/profile/1"
-  //     );
-  //     setUserInfo(response.data);
-  //     form.setFieldsValue(response.data);
-  //   } catch (error) {
-  //     toast.error("Error fetching user data");
-  //     console.error("Error fetching user data:", error);
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   fetchUserData();
-  // }, []);
-
   const handleSave = async (values) => {
     if (editPassword) {
       if (oldPassword !== userInfo.password) {
@@ -57,34 +40,23 @@ function EditProfile() {
     }
 
     let body = {
-      ID_Customer: user.iD_Customer,
-      Name: values.name,
-      Contact: values.phone,
-      Password: values.password ?? null,
-      Avatar: null,
+      iD_Customer: user.iD_Customer,
+      name: values.name,
+      contact: values.phone,
+      password: values.password ?? null,
+      avatar: null,
     };
-
-    console.log(body);
 
     const response = await UserService.editProfile(body);
 
-    console.log(response);
-
     if (response.success) {
-      toast.success("Profile updated successfully!");
+      toast.success(response.message);
+      const newUser = { ...user, ...body };
+      setUser(newUser);
+      localStorage.setItem("user", JSON.stringify(newUser));
+    } else {
+      toast.error(response.message);
     }
-
-    // try {
-    //   await axios.put(
-    //     "https://66f646f8436827ced976737d.mockapi.io/profile/1",
-    //     values
-    //   );
-    //   toast.success("Profile updated successfully!");
-    //   navigate("/view-profile");
-    // } catch (error) {
-    //   console.error("Error updating profile:", error);
-    //   toast.error("Failed to update profile");
-    // }
   };
 
   return (

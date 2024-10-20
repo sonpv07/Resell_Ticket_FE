@@ -5,6 +5,8 @@ const URL = "Report";
 
 class ReportService {
   static async sendReport(body) {
+    console.log(body);
+
     try {
       const response = await api.post(`${URL}`, body);
 

@@ -8,9 +8,11 @@ import { ShoppingCartOutlined, UserOutlined } from "@ant-design/icons";
 import { SETTING_DATA } from "../../configs/constant";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { DialogContext } from "../../context/DialogContext";
 
 const Header = () => {
   const { showForm, setShowForm, user, setUser } = useContext(AuthContext);
+  const { openDialog, closeDialog } = useContext(DialogContext);
 
   const navigate = useNavigate();
 
@@ -20,10 +22,24 @@ const Header = () => {
     toast.success("Logout Success");
   };
 
+  const handleOpenDialog = () => {
+    openDialog({
+      title: "Alert",
+      component: <p>You must register a package to sell ticket</p>,
+      okCallback: () => {
+        navigate("/package");
+        closeDialog();
+      },
+
+      okText: "Confirm",
+      cancelText: "Cancel",
+    });
+  };
+
   const handleOnClick = (label) => {
     switch (label) {
       case "Profile":
-        navigate("/view-profile");
+        navigate("/profile");
         break;
       case "Notifications":
         navigate("/view-profile");
@@ -31,8 +47,11 @@ const Header = () => {
       case "Ticket alerts":
         navigate("/view-profile");
         break;
+      case "Order History":
+        navigate("/order-history");
+        break;
       case "Seller Space":
-        navigate("/seller/management");
+        navigate("/seller");
         break;
       case "Logout":
         handleLogout();
@@ -71,6 +90,11 @@ const Header = () => {
     </Menu>
   );
 
+  const checkIsSeller = () => {
+    if (user?.iD_Package) return true;
+    return false;
+  };
+
   return (
     <>
       <header className="header">
@@ -103,13 +127,6 @@ const Header = () => {
           ) : (
             <p onClick={() => setShowForm("LOGIN")}>Login</p>
           )}
-
-          <button
-            className="header__button"
-            onClick={() => navigate(`/seller/create-ticket`)}
-          >
-            Sell Ticket
-          </button>
         </div>
       </header>
       {showForm === "LOGIN" && <Login />}

@@ -67,7 +67,6 @@ class TicketService {
   }
 
   static async createTicket(sellerId, body) {
-    console.log(`${URL}/${sellerId}`);
 
     try {
       const response = await api.post(`${URL}/${sellerId}`, body);

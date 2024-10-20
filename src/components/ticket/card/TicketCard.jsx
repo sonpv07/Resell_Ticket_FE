@@ -2,7 +2,7 @@ import React from "react";
 import "./TicketCard.scss";
 import { Skeleton, Tag } from "antd";
 import { ShoppingCartOutlined } from "@ant-design/icons";
-import { getTagColor } from "../../../utils";
+import { currencyFormatter, getTagColor } from "../../../utils";
 import { useNavigate } from "react-router-dom";
 import moment from "moment";
 
@@ -136,8 +136,7 @@ export default function TicketCard({
             </p>
 
             <div className="ticket-card__price">
-              <span className="ticket-card__currency">$</span>
-              {price}
+              {currencyFormatter(price)}
               <span className="ticket-card__price-note">per ticket</span>
             </div>
             <div className="ticket-card__availability">

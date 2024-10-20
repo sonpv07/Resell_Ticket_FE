@@ -36,7 +36,7 @@ export default function Cart() {
     let body = {
       iD_Customer: user.iD_Customer,
       payment_method: PAYMENT_METHODS.VNPAY,
-      ticketIds: [
+      ticketItems: [
         {
           iD_Ticket: state.ticket[0].id,
           quantity: state.ticket[0].quantity,
