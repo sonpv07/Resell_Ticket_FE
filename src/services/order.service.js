@@ -5,8 +5,6 @@ const URL = "Order";
 
 class OrderService {
   static async createOrder(body) {
-    console.log(body);
-
     try {
       const response = await api.post(`${URL}`, body);
 
@@ -21,7 +19,7 @@ class OrderService {
     }
   }
 
-  static async getOrderByUser() {
+  static async getOrderByUser(id) {
     try {
       const response = await api.get(`${URL}`);
 
@@ -34,8 +32,6 @@ class OrderService {
       return returnValue(false, null, "Get Order fail");
     }
   }
-
-  
 }
 
 export default OrderService;

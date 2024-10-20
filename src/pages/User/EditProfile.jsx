@@ -2,10 +2,8 @@ import React, { useState, useEffect, useContext } from "react";
 import { Form, Input, Button, Card, Typography, Space } from "antd";
 import { useNavigate } from "react-router-dom";
 import UserService from "../../services/user.service";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import { AuthContext } from "../../../../context/AuthContext";
-import UserService from "../../../../services/user.service";
+import { toast } from "react-toastify";
+import { AuthContext } from "../../context/AuthContext";
 
 const { Title } = Typography;
 
@@ -219,8 +217,6 @@ function EditProfile() {
           </Space>
         </Form>
       </Card>
-
-      <ToastContainer />
     </div>
   );
 }

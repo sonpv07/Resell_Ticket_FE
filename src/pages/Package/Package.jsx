@@ -1,56 +1,55 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Card, Button, Row, Col, Divider } from "antd";
-import axios from "axios";
-import "./Package.scss"; // Tạo file SCSS riêng cho custom styles
+import "./Package.scss";
+import { currencyFormatter } from "../../utils";
+import PackageService from "../../services/package.service";
+import TransactionService from "../../services/transaction.service";
+import { AuthContext } from "../../context/AuthContext";
 
 // Giả lập gọi API để lấy dữ liệu gói
-const fetchPackages = async () => {
-  return [
-    {
-      name: "Basic Package",
-      price: 100000,
-      time: 3,
-      ticket: 10,
-      description:
-        "Quyền lợi khi đăng ký gói này bạn sẽ được xài trong vòng 3 tháng và được đăng bán 10 bài",
-    },
-    {
-      name: "Standard Package",
-      price: 200000,
-      time: 6,
-      ticket: 25,
-      description:
-        "Quyền lợi khi đăng ký gói này bạn sẽ được xài trong vòng 6 tháng và được đăng bán 25 bài",
-    },
-    {
-      name: "Premium Package",
-      price: 300000,
-      time: 12,
-      ticket: 50,
-      description:
-        "Quyền lợi khi đăng ký gói này bạn sẽ được xài trong vòng 12 tháng và được đăng bán 50 bài",
-    },
-  ];
-};
 
 function Package() {
   const [packages, setPackages] = useState([]);
 
-  useEffect(() => {
-    const getPackages = async () => {
-      const response = await fetchPackages(); // Giả lập API call
-      setPackages(response);
+  const { user } = useContext(AuthContext);
+
+  const fetchData = async () => {
+    const response = await PackageService.getPackageList();
+
+    if (response.success) {
+      setPackages(response.data.slice(0, 3));
+    }
+  };
+
+  const handleBuyPackage = async (pkg) => {
+    let body = {
+      iD_Customer: user.iD_Customer,
+      iD_Package: pkg.iD_Package,
+      finalPrice: pkg.price,
+      iD_Payment: 1,
+      transaction_Type: "Package",
     };
-    getPackages();
+
+    console.log(body);
+
+    const response = await TransactionService.createPayment(body);
+
+    if (response.success) {
+      window.open(response.data.url);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
   }, []);
 
-  const getPackageStyle = (name) => {
-    switch (name) {
-      case "Basic Package":
+  const getPackageStyle = (index) => {
+    switch (index) {
+      case 1:
         return { borderColor: "#ff4d4f", backgroundColor: "#fff1f0" };
-      case "Standard Package":
+      case 2:
         return { borderColor: "#52c41a", backgroundColor: "#f6ffed" };
-      case "Premium Package":
+      case 3:
         return { borderColor: "#1890ff", backgroundColor: "#e6f7ff" };
       default:
         return {};
@@ -60,38 +59,41 @@ function Package() {
   return (
     <div className="package-container">
       <h1 className="title">Our Package</h1>
-      <Row gutter={[16, 16]} justify="center">
+      <Row gutter={[16, 16]} justify="space-between">
         {packages.map((pkg, index) => (
           <Col key={index} xs={24} sm={12} md={8}>
             <Card
               hoverable
               className="package-card"
               style={{
-                ...getPackageStyle(pkg.name),
+                ...getPackageStyle(index + 1),
                 borderRadius: "15px",
                 textAlign: "center",
                 boxShadow: "0 6px 12px rgba(0, 0, 0, 0.1)",
               }}
             >
               {/* Tên gói */}
-              <h3 className="package-name">{pkg.name}</h3>
+              <h3 className="package-name">{pkg.name_Package}</h3>
 
               {/* Đường gạch ngang */}
-              <Divider />
+              <hr />
 
               {/* Giá tiền */}
-              <h2 className="package-price">
-                {pkg.price.toLocaleString("vi-VN")} VNĐ
-              </h2>
+              <h2 className="package-price">{currencyFormatter(pkg.price)}</h2>
 
               {/* Thông tin chi tiết */}
-              <p>{pkg.description}</p>
-              <p>Thời gian sử dụng: {pkg.time} tháng</p>
-              <p>Đăng được: {pkg.ticket} bài viết</p>
+              <p className="package-des">{pkg.description}</p>
+              <p>
+                <span>Package Time: </span> {pkg.time_package} days
+              </p>
+              <p>
+                <span>Selling Limit:</span> {pkg.ticket_can_post} times
+              </p>
               <Button
                 type="primary"
                 size="large"
                 style={{ borderRadius: "20px", marginTop: "20px" }}
+                onClick={() => handleBuyPackage(pkg)}
               >
                 Get This Plan
               </Button>

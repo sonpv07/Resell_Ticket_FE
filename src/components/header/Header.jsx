@@ -19,21 +19,8 @@ const Header = () => {
   const handleLogout = () => {
     setUser(null);
     localStorage.removeItem("user");
+    navigate("/");
     toast.success("Logout Success");
-  };
-
-  const handleOpenDialog = () => {
-    openDialog({
-      title: "Alert",
-      component: <p>You must register a package to sell ticket</p>,
-      okCallback: () => {
-        navigate("/package");
-        closeDialog();
-      },
-
-      okText: "Confirm",
-      cancelText: "Cancel",
-    });
   };
 
   const handleOnClick = (label) => {
@@ -75,7 +62,7 @@ const Header = () => {
         return (
           <Menu.Item
             onClick={() => handleOnClick(item.label)}
-            key="item.label"
+            key={item.label}
             style={{
               width: "200px",
             }}
@@ -89,11 +76,6 @@ const Header = () => {
       })}
     </Menu>
   );
-
-  const checkIsSeller = () => {
-    if (user?.iD_Package) return true;
-    return false;
-  };
 
   return (
     <>

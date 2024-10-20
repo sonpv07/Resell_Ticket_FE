@@ -1,9 +1,9 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { Navigate, Outlet, useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import { DialogContext } from "../context/DialogContext";
 
-const ProtectedRoute = ({ element, allowedRoles }) => {
+const ProtectedRoute = ({ allowedRoles }) => {
   const { user } = useContext(AuthContext);
   const { openDialog, closeDialog } = useContext(DialogContext);
   const navigate = useNavigate();
@@ -24,13 +24,26 @@ const ProtectedRoute = ({ element, allowedRoles }) => {
         navigate("/");
         closeDialog();
       },
-
       okText: "Confirm",
     });
   };
 
+  useEffect(() => {
+    if (!user) {
+      handleOpenDialog(1);
+    } else if (
+      user?.iD_Package === null &&
+      user?.iD_RoleNavigation.name_role === "Customer" &&
+      allowedRoles.includes(user?.iD_RoleNavigation.name_role)
+    ) {
+      handleOpenDialog(2);
+    } else if (!allowedRoles.includes(user?.iD_RoleNavigation.name_role)) {
+      handleOpenDialog(3);
+    }
+  }, [user, allowedRoles, navigate, closeDialog]);
+
   if (!user) {
-    return handleOpenDialog(1);
+    return null;
   }
 
   if (
@@ -38,15 +51,7 @@ const ProtectedRoute = ({ element, allowedRoles }) => {
     user?.iD_RoleNavigation.name_role === "Customer" &&
     allowedRoles.includes(user?.iD_RoleNavigation.name_role)
   ) {
-    console.log("allow 1");
-
     return <Outlet />;
-  } else if (
-    user?.iD_Package === null &&
-    user?.iD_RoleNavigation.name_role === "Customer" &&
-    allowedRoles.includes(user?.iD_RoleNavigation.name_role)
-  ) {
-    return handleOpenDialog(2);
   }
 
   if (
@@ -54,9 +59,9 @@ const ProtectedRoute = ({ element, allowedRoles }) => {
     allowedRoles.includes(user?.iD_RoleNavigation.name_role)
   ) {
     return <Outlet />;
-  } else {
-    return handleOpenDialog(3);
   }
+
+  return null;
 };
 
 export default ProtectedRoute;

@@ -21,23 +21,15 @@ const handleBefore = (config) => {
 
 api.interceptors.request.use(handleBefore, null);
 
-export const getCompletedOrders = async () => {
-  try {
-    const response = await axios.get(`${baseUrl}/orders?status=success`);
-    return response.data; 
-  } catch (error) {
-    console.error('Error fetching completed orders', error);
-    throw error;
-  }
-};
-
-
 export const sendFeedback = async (orderId, feedbackData) => {
   try {
-    const response = await axios.post(`${baseUrl}/feedback/${orderId}`, feedbackData);
-    return response.data; 
+    const response = await axios.post(
+      `${baseUrl}/feedback/${orderId}`,
+      feedbackData
+    );
+    return response.data;
   } catch (error) {
-    console.error('Error sending feedback', error);
+    console.error("Error sending feedback", error);
     throw error;
   }
 };

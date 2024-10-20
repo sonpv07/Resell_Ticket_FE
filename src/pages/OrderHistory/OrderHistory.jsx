@@ -1,21 +1,33 @@
-import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { getCompletedOrders } from '../../services/axios/axios';
-import './OrderHistory.scss'; 
+import React, { useContext, useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import "./OrderHistory.scss";
+import OrderService from "../../services/order.service";
+import { AuthContext } from "../../context/AuthContext";
+import { SettingOutlined } from "@ant-design/icons";
+import moment from "moment";
+import { currencyFormatter } from "../../utils";
 
 const OrderHistory = () => {
   const [orders, setOrders] = useState([]);
 
-  useEffect(() => {
-    const fetchOrders = async () => {
-      try {
-        const data = await getCompletedOrders();
-        setOrders(data);
-      } catch (error) {
-        console.error('Error fetching orders:', error);
-      }
-    };
+  const { user } = useContext(AuthContext);
 
+  const fetchOrders = async () => {
+    const response = await OrderService.getOrderByUser(user.iD_Customer);
+
+    if (response.success) {
+      const data = response.data
+        .filter(
+          (item) =>
+            item?.iD_CustomerNavigation?.iD_Customer === user.iD_Customer
+        )
+        .reverse();
+
+      setOrders(data);
+    }
+  };
+
+  useEffect(() => {
     fetchOrders();
   }, []);
 
@@ -27,7 +39,7 @@ const OrderHistory = () => {
           <tr>
             <th>Order ID</th>
             <th>Show Name</th>
-            <th>Event Date</th>
+            <th>Date</th>
             <th>Seat</th>
             <th>Price</th>
             <th>Status</th>
@@ -35,17 +47,24 @@ const OrderHistory = () => {
           </tr>
         </thead>
         <tbody>
-          {orders.map((order) => (
-            <tr key={order.id}>
-              <td>{order.id}</td>
-              <td>{order.showName}</td>
-              <td>{new Date(order.eventDate).toLocaleDateString()}</td>
-              <td>{order.seat}</td>
-              <td>{order.price} VND</td>
+          {orders?.map((order, index) => (
+            <tr key={order?.iD_Order}>
+              <td>{index + 1}</td>
+              <td>{order.orderDetails[0]?.iD_TicketNavigation?.show_Name}</td>
+              <td>{moment(order?.create_At).format("LLL")}</td>
+              <td>
+                {order?.orderDetails[0]?.iD_TicketNavigation?.seat ?? "N/A"}
+              </td>
+              <td>
+                {order.totalPrice ? currencyFormatter(order.totalPrice) : "N/A"}
+              </td>
               <td>{order.status}</td>
               <td>
-                {order.status === 'successful' ? (
-                  <Link to={`/feedback/${order.id}`} className="feedback-btn">
+                {order.status === "COMPLETED" ? (
+                  <Link
+                    to={`/feedback/${order.iD_Order}`}
+                    className="feedback-btn"
+                  >
                     Give Feedback
                   </Link>
                 ) : (

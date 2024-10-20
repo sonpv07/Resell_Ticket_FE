@@ -49,6 +49,7 @@ export default function Cart() {
     if (response.success) {
       let paymentBody = {
         iD_Order: 21,
+        transaction_Type: "Ticket",
         iD_Customer: user.iD_Customer,
         iD_Payment: 1,
         finalPrice: getSubtotal() + DELIVERY_PRICE,

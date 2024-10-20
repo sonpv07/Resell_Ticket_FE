@@ -1,6 +1,4 @@
 import HomePage from "./Home/HomePage";
-import EditProfile from "./User/profile/edit-profile/EditProfile";
-import ViewProfile from "./User/profile/view-profile/ViewProfile"; // Import ViewProfile
 import Shopping from "./Ticket/Shopping/Shopping";
 import TicketDetail from "./Ticket/TicketDetail/TicketDetail";
 import TicketManagement from "./Seller/management/TicketManagement";
@@ -8,10 +6,12 @@ import SellerProfile from "./Seller/profile/SellerProfile";
 import Cart from "./User/cart/Cart";
 import CreateTicketPage from "./Ticket/CreateTicketPage";
 import Package from "./Package/Package";
-import OrderHistory from "../pages/OrderHistory/OrderHistory";
 import PaymentBill from "./Payment/PaymentBill";
 import Feedback from "../pages/Feedback/Feedback";
 import RequestPriceForm from "../components/request-price/RequestPriceForm";
+import OrderHistory from "./OrderHistory/OrderHistory";
+import EditProfile from "./User/EditProfile";
+import ViewProfile from "./User/ViewProfile";
 
 const pagesData = [
   {
@@ -88,6 +88,7 @@ const pagesData = [
   {
     path: "/order-history",
     title: "Order History",
+    // allowedRoles: ["Customer"],
     element: <OrderHistory />,
   },
 
@@ -103,7 +104,7 @@ const pagesData = [
     title: "fail-payment",
   },
   {
-    path: "Feedback",
+    path: "feedback/:orderId",
     element: <Feedback />,
     title: "Feedback",
   },

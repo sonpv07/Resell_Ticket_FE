@@ -1,7 +1,7 @@
-import returnValue from "../utils";
+import { returnValue } from "../utils";
 import api from "./axios/axios";
 
-const URL = "packages"; // Endpoint cho packages
+const URL = "Package";
 
 class PackageService {
   static async getPackageList() {
@@ -9,14 +9,9 @@ class PackageService {
       const response = await api.get(`${URL}`);
 
       if (response.status >= 200 && response.status < 300) {
-        return returnValue(
-          true,
-          response.data,
-          "Fetch package list successfully"
-        );
+        return returnValue(true, response.data, "Get Packages successfully");
       } else {
-        console.error("Failed to fetch packages", response.data);
-        return returnValue(false, null, "Failed to fetch packages");
+        return returnValue(false, null, "Get Packages fail");
       }
     } catch (error) {
       console.error("Error fetching package list", error);
