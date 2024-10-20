@@ -8,8 +8,9 @@ import SellerProfile from "./Seller/profile/SellerProfile";
 import Cart from "./User/cart/Cart";
 import CreateTicketPage from "./Ticket/CreateTicketPage";
 import Package from "./Package/Package";
-import OrderHistory from "../components/OrderHistory";
+import OrderHistory from "../pages/OrderHistory/OrderHistory";
 import PaymentBill from "./Payment/PaymentBill";
+import Feedback from "../pages/Feedback/Feedback";
 
 const pagesData = [
   {
@@ -100,6 +101,11 @@ const pagesData = [
     path: "fail-payment",
     element: <PaymentBill />,
     title: "fail-payment",
+  },
+  {
+    path: "Feedback",
+    element: <Feedback />,
+    title: "Feedback",
   },
 ];
 
