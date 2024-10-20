@@ -1,85 +1,84 @@
-import React from "react";
-import { Form, Input, InputNumber, Button, Select, DatePicker } from "antd";
-
-const { Option } = Select;
+import React, { useContext, useState, useEffect } from "react";
+import { Form, Input, InputNumber, Button } from "antd";
+import { toast, ToastContainer } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
+import RequestPriceService from "../../services/requestPrice.service";
+import { AuthContext } from "../../context/AuthContext"; 
 
 const RequestPriceForm = () => {
   const [form] = Form.useForm();
+  const { user } = useContext(AuthContext); // Lấy user info từ context
+  const [currentTime, setCurrentTime] = useState("");
 
-  const handleSubmit = (values) => {
-    console.log("Received values of form: ", values);
-    // Xử lý logic gửi yêu cầu giá ở đây, có thể gọi API
+  useEffect(() => {
+    // Lấy thời gian hiện tại
+    const now = new Date();
+    setCurrentTime(now.toISOString());
+  }, []);
+
+  const handleSubmit = async (values) => {
+    const requestData = {
+      iD_Customer: user?.id,  // Lấy ID cus từ context
+      price_want: values.priceWant || null,  
+      history: currentTime,  // Sử dụng thời gian hiện tại
+    };
+
+    try {
+      const response = await RequestPriceService.sendRequestPrice(requestData);
+
+      if (response.success) {
+        toast.success("Request submitted successfully!");
+      } else {
+        toast.error("Failed to submit request: " + response.message);
+      }
+    } catch (error) {
+      toast.error("An error occurred while submitting the request.");
+      console.error("Error when submitting request:", error);
+    }
   };
 
   return (
-    <Form
-      form={form}
-      layout="vertical"
-      onFinish={handleSubmit}
-      style={{ maxWidth: 600, margin: "0 auto", padding: "20px", background: "#f0f2f5", borderRadius: "10px" }}
-    >
-      <Form.Item
-        label="Tên vé (Show Name)"
-        name="showName"
-        rules={[{ required: true, message: "Vui lòng nhập tên vé!" }]}
+    <div>
+      <ToastContainer /> 
+      <Form
+        form={form}
+        layout="vertical"
+        onFinish={handleSubmit}
+        style={{ maxWidth: 600, margin: "0 auto", padding: "20px", marginTop: "80px", background: "#f0f2f5", borderRadius: "10px" }}
       >
-        <Input placeholder="Nhập tên sự kiện hoặc buổi diễn" />
-      </Form.Item>
+        <Form.Item
+          label="Customer ID"
+          name="customerId"
+        >
+          <Input value={user?.id} disabled /> 
+        </Form.Item>
 
-      <Form.Item
-        label="Ngày sự kiện (Event Date)"
-        name="eventDate"
-        rules={[{ required: true, message: "Vui lòng chọn ngày sự kiện!" }]}
-      >
-        <DatePicker style={{ width: "100%" }} />
-      </Form.Item>
+        <Form.Item
+          label="Negotiated Price"
+          name="priceWant"
+          rules={[{ required: true, message: "Please input the negotiated price!" }]}
+        >
+          <InputNumber
+            min={0}
+            placeholder="Enter the negotiated price"
+            style={{ width: "100%" }}
+          />
+        </Form.Item>
 
-      <Form.Item
-        label="Số lượng vé (Quantity)"
-        name="quantity"
-        rules={[{ required: true, message: "Vui lòng nhập số lượng vé!" }]}
-      >
-        <InputNumber min={1} placeholder="Nhập số lượng vé muốn mua" style={{ width: "100%" }} />
-      </Form.Item>
+        <Form.Item
+          label="History (Current Date)"
+          name="history"
+        >
+          <Input value={currentTime} disabled />
+        </Form.Item>
 
-      <Form.Item
-        label="Vị trí ghế (Seat)"
-        name="seat"
-      >
-        <Input placeholder="Nhập vị trí ghế (nếu có)" />
-      </Form.Item>
-
-      <Form.Item
-        label="Người bán (Seller)"
-        name="sellerId"
-        rules={[{ required: true, message: "Vui lòng chọn người bán!" }]}
-      >
-        <Select placeholder="Chọn người bán">
-          {/* Thay thế các Option này bằng dữ liệu người bán từ backend */}
-          <Option value="1">Người bán 1</Option>
-          <Option value="2">Người bán 2</Option>
-          <Option value="3">Người bán 3</Option>
-        </Select>
-      </Form.Item>
-
-      <Form.Item
-        label="Giá thương lượng (Negotiated Price)"
-        name="negotiatedPrice"
-        rules={[{ required: true, message: "Vui lòng nhập giá thương lượng!" }]}
-      >
-        <InputNumber
-          min={0}
-          placeholder="Nhập giá bạn muốn thương lượng"
-          style={{ width: "100%" }}
-        />
-      </Form.Item>
-
-      <Form.Item>
-        <Button type="primary" htmlType="submit">
-          Gửi yêu cầu giá
-        </Button>
-      </Form.Item>
-    </Form>
+        <Form.Item>
+          <Button type="primary" htmlType="submit">
+            Submit Request
+          </Button>
+        </Form.Item>
+      </Form>
+    </div>
   );
 };
 
