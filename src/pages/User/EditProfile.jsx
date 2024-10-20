@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
 import { Form, Input, Button, Card, Typography, Space } from "antd";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import UserService from "../../services/user.service";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { AuthContext } from "../../../../context/AuthContext";
@@ -19,7 +19,7 @@ function EditProfile() {
     phone: user?.contact,
     password: user?.password,
   });
-  const [editPassword, setEditPassword] = useState(false); // State for toggling password edit fields
+  const [editPassword, setEditPassword] = useState(false);
   const navigate = useNavigate();
 
   const [oldPassword, setOldPassword] = useState("");

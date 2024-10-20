@@ -2,8 +2,6 @@ import React, { useEffect, useState } from "react";
 import { Card, Button, Row, Col, Divider } from "antd";
 import axios from "axios";
 import "./Package.scss"; // Tạo file SCSS riêng cho custom styles
-import PackageService from "../../services/package.service";
-import { currencyFormatter } from "../../utils";
 
 // Giả lập gọi API để lấy dữ liệu gói
 const fetchPackages = async () => {
@@ -38,16 +36,12 @@ const fetchPackages = async () => {
 function Package() {
   const [packages, setPackages] = useState([]);
 
-  const fetchData = async () => {
-    const response = await PackageService.getAllPackage();
-
-    if (response.success) {
-      setPackages(response.data.slice(0, 3));
-    }
-  };
-
   useEffect(() => {
-    fetchData();
+    const getPackages = async () => {
+      const response = await fetchPackages(); // Giả lập API call
+      setPackages(response);
+    };
+    getPackages();
   }, []);
 
   const getPackageStyle = (name) => {
@@ -65,8 +59,8 @@ function Package() {
 
   return (
     <div className="package-container">
-      <h1 className="package-container___title">Our Package</h1>
-      <Row gutter={[16, 16]} justify="space-between">
+      <h1 className="title">Our Package</h1>
+      <Row gutter={[16, 16]} justify="center">
         {packages.map((pkg, index) => (
           <Col key={index} xs={24} sm={12} md={8}>
             <Card
@@ -80,22 +74,20 @@ function Package() {
               }}
             >
               {/* Tên gói */}
-              <h3 className="package-name">{pkg.name_Package}</h3>
+              <h3 className="package-name">{pkg.name}</h3>
 
               {/* Đường gạch ngang */}
-              <hr />
+              <Divider />
 
               {/* Giá tiền */}
-              <h2 className="package-price">{currencyFormatter(pkg.price)}</h2>
+              <h2 className="package-price">
+                {pkg.price.toLocaleString("vi-VN")} VNĐ
+              </h2>
 
               {/* Thông tin chi tiết */}
-              <p className="package-des">{pkg.description}</p>
-              <p>
-                <span>Package Time: </span> {pkg.time_package} days
-              </p>
-              <p>
-                <span>Selling Limit:</span> {pkg.ticket_can_post} times
-              </p>
+              <p>{pkg.description}</p>
+              <p>Thời gian sử dụng: {pkg.time} tháng</p>
+              <p>Đăng được: {pkg.ticket} bài viết</p>
               <Button
                 type="primary"
                 size="large"

@@ -11,6 +11,7 @@ import Package from "./Package/Package";
 import OrderHistory from "../pages/OrderHistory/OrderHistory";
 import PaymentBill from "./Payment/PaymentBill";
 import Feedback from "../pages/Feedback/Feedback";
+import RequestPriceForm from "../components/request-price/RequestPriceForm";
 
 const pagesData = [
   {
@@ -23,7 +24,6 @@ const pagesData = [
     element: <Shopping />,
     title: "tickets",
   },
-
   {
     path: "profile",
     allowedRoles: ["Customer"],
@@ -106,6 +106,12 @@ const pagesData = [
     path: "Feedback",
     element: <Feedback />,
     title: "Feedback",
+  },
+
+  {
+    path: "request-price",
+    element: <RequestPriceForm />,
+    title: "request price",
   },
 ];
 
