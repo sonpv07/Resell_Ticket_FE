@@ -1,8 +1,6 @@
 import React from "react";
 import "./Overlay.scss";
 export default function Overlay({ onClose, isOpen, children }) {
-  console.log(children);
-
   return (
     <>
       {isOpen ? (

@@ -36,7 +36,7 @@ export default function Cart() {
     let body = {
       iD_Customer: user.iD_Customer,
       payment_method: PAYMENT_METHODS.VNPAY,
-      ticketIds: [
+      ticketItems: [
         {
           iD_Ticket: state.ticket[0].id,
           quantity: state.ticket[0].quantity,
@@ -49,6 +49,7 @@ export default function Cart() {
     if (response.success) {
       let paymentBody = {
         iD_Order: 21,
+        transaction_Type: "Ticket",
         iD_Customer: user.iD_Customer,
         iD_Payment: 1,
         finalPrice: getSubtotal() + DELIVERY_PRICE,

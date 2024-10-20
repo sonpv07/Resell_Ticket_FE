@@ -1,9 +1,9 @@
 import axios from "axios";
 
 // API LOCAL
-//const baseUrl = "http://localhost:5212/api/";
+const baseUrl = "http://localhost:5212/api/";
 
- const baseUrl = "http://14.225.204.144:7070/api/";
+// const baseUrl = "http://14.225.204.144:7070/api/";
 
 const config = {
   baseUrl: baseUrl,
@@ -23,7 +23,7 @@ api.interceptors.request.use(handleBefore, null);
 
 export const getCustomerOrders = async (customerId) => {
   try {
-    const response = await axios.get(`${baseUrl}/Order`, {
+    const response = await axios.get(`${baseUrl}/orders`, {
       params: {
         status: 'success',
         customerId: customerId, 
@@ -36,6 +36,7 @@ export const getCustomerOrders = async (customerId) => {
     throw error;
   }
 };
+
 
 
 

@@ -1,6 +1,4 @@
 import HomePage from "./Home/HomePage";
-import EditProfile from "./User/profile/edit-profile/EditProfile";
-import ViewProfile from "./User/profile/view-profile/ViewProfile"; // Import ViewProfile
 import Shopping from "./Ticket/Shopping/Shopping";
 import TicketDetail from "./Ticket/TicketDetail/TicketDetail";
 import TicketManagement from "./Seller/management/TicketManagement";
@@ -8,9 +6,12 @@ import SellerProfile from "./Seller/profile/SellerProfile";
 import Cart from "./User/cart/Cart";
 import CreateTicketPage from "./Ticket/CreateTicketPage";
 import Package from "./Package/Package";
-import OrderHistory from '../pages/OrderHistory/OrderHistory';
 import PaymentBill from "./Payment/PaymentBill";
-import Feedback from '../pages/Feedback/Feedback';
+import Feedback from "../pages/Feedback/Feedback";
+import RequestPriceForm from "../components/request-price/RequestPriceForm";
+import OrderHistory from "./OrderHistory/OrderHistory";
+import EditProfile from "./User/EditProfile";
+import ViewProfile from "./User/ViewProfile";
 
 const pagesData = [
   {
@@ -23,39 +24,24 @@ const pagesData = [
     element: <Shopping />,
     title: "tickets",
   },
-
   {
-    path: "edit",
-    element: <EditProfile />,
-    title: "edit",
+    path: "profile",
+    allowedRoles: ["Customer"],
+    title: "profile",
     children: [
       {
-        path: "email",
-        element: <EditProfile />,
-        title: "email",
+        path: "",
+        element: <ViewProfile />,
+        title: "view profile",
       },
       {
-        path: "password",
+        path: "edit",
         element: <EditProfile />,
-        title: "password",
-      },
-      {
-        path: "name",
-        element: <EditProfile />,
-        title: "name",
-      },
-      {
-        path: "contact",
-        element: <EditProfile />,
-        title: "Contact",
+        title: "edit",
       },
     ],
   },
-  {
-    path: "view-profile", // Thêm route cho ViewProfile
-    element: <ViewProfile />,
-    title: "view-profile",
-  },
+
   {
     path: "ticket/:id",
     element: <TicketDetail />,
@@ -65,9 +51,10 @@ const pagesData = [
   {
     path: "seller",
     title: "Seller",
+    allowedRoles: ["Customer"],
     children: [
       {
-        path: "management",
+        path: "",
         element: <TicketManagement />,
         title: "email",
       },
@@ -99,9 +86,10 @@ const pagesData = [
   },
 
   {
-    path: "OrderHistory",
+    path: "/order-history",
+    title: "Order History",
+    // allowedRoles: ["Customer"],
     element: <OrderHistory />,
-    title: "OrderHistory",
   },
 
   {
@@ -115,10 +103,16 @@ const pagesData = [
     element: <PaymentBill />,
     title: "fail-payment",
   },
-   {
-    path: "Feedback",
+  {
+    path: "feedback/:orderId",
     element: <Feedback />,
     title: "Feedback",
+  },
+
+  {
+    path: "request-price",
+    element: <RequestPriceForm />,
+    title: "request price",
   },
 ];
 

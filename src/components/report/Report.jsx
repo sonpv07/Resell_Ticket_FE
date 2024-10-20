@@ -12,7 +12,11 @@ export default function Report({ isShow, setIsShow, sellerId, orderId }) {
   const [report, setReport] = useState("");
 
   const handleSendReport = async () => {
-    let body = {};
+    let body = {
+      iD_Customer: sellerId,
+      comment: report,
+      history: new Date().toISOString(),
+    };
 
     const response = await ReportService.sendReport(body);
 
@@ -23,6 +27,8 @@ export default function Report({ isShow, setIsShow, sellerId, orderId }) {
       toast.error(response.message);
     }
   };
+
+  console.log(report, sellerId);
 
   return (
     <Overlay isOpen={isShow} onClose={() => setIsShow(false)}>
@@ -39,7 +45,7 @@ export default function Report({ isShow, setIsShow, sellerId, orderId }) {
           <TextArea
             placeholder="Write your report here..."
             rows={5}
-            onChange={(value) => setReport(value)}
+            onChange={(e) => setReport(e.target.value)}
           />
 
           <button onClick={handleSendReport}>Submit</button>

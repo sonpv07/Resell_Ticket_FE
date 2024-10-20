@@ -14,30 +14,24 @@ class OrderService {
         return returnValue(false, null, "Create Order fail");
       }
     } catch (error) {
-      console.error("Error Login", error);
+      console.error("Error Create Order", error);
       return returnValue(false, null, "Create Order fail");
     }
   }
 
-  static async getOrderByUser(body) {
+  static async getOrderByUser(id) {
     try {
-      const response = await api.post(
-        `http://14.225.204.144:7070/create/order`,
-        body
-      );
+      const response = await api.get(`${URL}`);
 
       if (response.status >= 200 && response.status < 300) {
-        return returnValue(true, response.data, "Create Order successfully");
+        return returnValue(true, response.data, "Get Order successfully");
       } else {
-        return returnValue(false, null, "Create Order fail");
+        return returnValue(false, null, "Get Order fail");
       }
     } catch (error) {
-      console.error("Error Login", error);
-      return returnValue(false, null, "Create Order fail");
+      return returnValue(false, null, "Get Order fail");
     }
   }
-
-  
 }
 
 export default OrderService;

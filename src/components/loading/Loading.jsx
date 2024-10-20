@@ -11,7 +11,7 @@ export default function Loading() {
         alignItems: "center",
       }}
     >
-      <Spin tip="Loading" size="large" />;
+      <Spin size="large" />;
     </div>
   );
 }

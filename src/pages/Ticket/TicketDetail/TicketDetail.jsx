@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import "./TicketDetail.scss";
 import { Skeleton, Tag } from "antd";
-import { getTagColor } from "../../../utils";
+import { currencyFormatter, getTagColor } from "../../../utils";
 import { useNavigate, useParams } from "react-router-dom";
 import TicketService from "../../../services/ticket.service";
 import UserService from "../../../services/user.service";
@@ -34,7 +34,7 @@ export default function TicketDetail() {
           {
             id: id,
             price: ticketData.price,
-            show_Name: ticketData.show_Name,
+            show_Name: ticketData.Show_Name,
             quantity: selectedQuantity,
             seller: ticketData.iD_CustomerNavigation.name,
           },
@@ -117,7 +117,7 @@ export default function TicketDetail() {
               <Skeleton.Input active size="large" />
             ) : (
               <>
-                ${ticketData?.price}
+                {currencyFormatter(ticketData?.price)}
                 <span className="ticket-detail__price-note">per ticket</span>
               </>
             )}

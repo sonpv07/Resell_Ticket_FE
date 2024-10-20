@@ -8,22 +8,25 @@ import { ShoppingCartOutlined, UserOutlined } from "@ant-design/icons";
 import { SETTING_DATA } from "../../configs/constant";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { DialogContext } from "../../context/DialogContext";
 
 const Header = () => {
   const { showForm, setShowForm, user, setUser } = useContext(AuthContext);
+  const { openDialog, closeDialog } = useContext(DialogContext);
 
   const navigate = useNavigate();
 
   const handleLogout = () => {
     setUser(null);
     localStorage.removeItem("user");
+    navigate("/");
     toast.success("Logout Success");
   };
 
   const handleOnClick = (label) => {
     switch (label) {
       case "Profile":
-        navigate("/view-profile");
+        navigate("/profile");
         break;
       case "Notifications":
         navigate("/view-profile");
@@ -31,8 +34,11 @@ const Header = () => {
       case "Ticket alerts":
         navigate("/view-profile");
         break;
+      case "Order History":
+        navigate("/order-history");
+        break;
       case "Seller Space":
-        navigate("/seller/management");
+        navigate("/seller");
         break;
       case "Logout":
         handleLogout();
@@ -56,7 +62,7 @@ const Header = () => {
         return (
           <Menu.Item
             onClick={() => handleOnClick(item.label)}
-            key="item.label"
+            key={item.label}
             style={{
               width: "200px",
             }}
@@ -103,13 +109,6 @@ const Header = () => {
           ) : (
             <p onClick={() => setShowForm("LOGIN")}>Login</p>
           )}
-
-          <button
-            className="header__button"
-            onClick={() => navigate(`/seller/create-ticket`)}
-          >
-            Sell Ticket
-          </button>
         </div>
       </header>
       {showForm === "LOGIN" && <Login />}

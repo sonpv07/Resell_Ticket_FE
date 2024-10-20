@@ -27,7 +27,7 @@ const Feedback = () => {
       await feedbackService.sendFeedback(feedbackData);  
 
       alert('Feedback sent successfully!');
-      navigate('/OrderHistory');
+      navigate('/order-history');
     } catch (error) {
       console.error('Error sending feedback:', error);
       alert('Failed to send feedback. Please try again.');

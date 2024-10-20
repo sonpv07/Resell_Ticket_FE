@@ -3,16 +3,19 @@ import React, { useContext, useEffect, useState } from "react";
 import "./TicketManagement.scss";
 import { Button, Space, Table, Tag } from "antd";
 import TicketService from "../../../services/ticket.service";
-import { getTagColor } from "../../../utils";
+import { currencyFormatter, getTagColor } from "../../../utils";
 import moment from "moment";
 import { AuthContext } from "../../../context/AuthContext";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 export default function TicketManagement() {
   const [ticketList, setTicketList] = useState([]);
   const [totalActive, setTotalActive] = useState(0);
   const [totalSold, setTotalSold] = useState(0);
   const [totalRevenue, setTotalRevenue] = useState(0);
+
+  const navigate = useNavigate();
 
   const { user } = useContext(AuthContext);
 
@@ -27,7 +30,7 @@ export default function TicketManagement() {
       title: "Price",
       dataIndex: "price",
       key: "price",
-      render: (text) => <p>{text} $</p>,
+      render: (text) => <p>{currencyFormatter(text)}</p>,
     },
     {
       title: "Quantity",
@@ -164,7 +167,7 @@ export default function TicketManagement() {
       <div className="seller-ticket-management__stats">
         <div className="seller-ticket-management__stat-item">
           <h2>Total Revenue</h2>
-          <p>${totalRevenue}</p>
+          <p>{currencyFormatter(totalRevenue)}</p>
         </div>
         <div className="seller-ticket-management__stat-item">
           <h2>Sold Tickets</h2>
@@ -176,7 +179,23 @@ export default function TicketManagement() {
         </div>
       </div>
 
-      <h2 className="seller-ticket-management__subtitle">Tickets List</h2>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
+        <h2 className="seller-ticket-management__subtitle">Tickets List</h2>
+        <button
+          className="header__button"
+          onClick={() => {
+            navigate("/seller/create-ticket");
+          }}
+        >
+          Sell Ticket
+        </button>
+      </div>
       <Table
         columns={columns}
         dataSource={ticketList}

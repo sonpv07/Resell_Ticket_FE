@@ -11,13 +11,7 @@ export default function SellerProfile() {
 
   const [loading, setLoading] = useState(false);
 
-  const [seller, setSeller] = useState({
-    id: "1",
-    name: "John's Ticket Shop",
-    joinDate: "2022-01-15",
-    rating: 4.7,
-    totalSales: 1234,
-  });
+  const [seller, setSeller] = useState(null);
 
   const [tickets, setTickets] = useState([
     {
@@ -111,7 +105,11 @@ export default function SellerProfile() {
         <TicketList ticketList={tickets} isLoading={loading} />
       </div>
       {showReportModal && (
-        <Report isShow={showReportModal} setIsShow={setShowReportModal} />
+        <Report
+          isShow={showReportModal}
+          setIsShow={setShowReportModal}
+          sellerId={seller.iD_Customer}
+        />
       )}
     </div>
   );

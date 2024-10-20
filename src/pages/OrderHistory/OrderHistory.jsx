@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { getCustomerOrders } from '../../services/axios/axios';
+import { getCustomerOrders  } from '../../services/axios/axios';
 import './OrderHistory.scss'; 
 
 const OrderHistory = ({ customerId }) => {  
@@ -9,7 +9,7 @@ const OrderHistory = ({ customerId }) => {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const data = await getCustomerOrders(customerId);  
+        const data = await getCustomerOrders (customerId);  
         setOrders(data);
       } catch (error) {
         console.error('Error fetching orders:', error);
@@ -59,7 +59,7 @@ const OrderHistory = ({ customerId }) => {
             ))
           ) : (
             <tr>
-              <td className="no-order" colSpan="7">No completed orders found.</td>
+              <td colSpan="7">No completed orders found.</td>
             </tr>
           )}
         </tbody>

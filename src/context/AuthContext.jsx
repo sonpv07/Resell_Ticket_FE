@@ -8,11 +8,34 @@ export const AuthProvider = ({ children }) => {
     return savedUser ? JSON.parse(savedUser) : null;
   });
 
-  const [accessToken, setAccessToken] = useState(null);
+  const [accessToken, setAccessToken] = useState(() => {
+    return localStorage.getItem("token") || null;
+  });
 
-  const [refreshToken, setRefreshToken] = useState(null);
+  const [refreshToken, setRefreshToken] = useState(() => {
+    return localStorage.getItem("refreshToken") || null;
+  });
 
   const [showForm, setShowForm] = useState("");
+
+  // Khi set accessToken hoặc refreshToken, lưu vào localStorage để duy trì khi làm mới trang
+  const handleSetAccessToken = (token) => {
+    setAccessToken(token);
+    if (token) {
+      localStorage.setItem("token", token);
+    } else {
+      localStorage.removeItem("token");
+    }
+  };
+
+  const handleSetRefreshToken = (token) => {
+    setRefreshToken(token);
+    if (token) {
+      localStorage.setItem("refreshToken", token);
+    } else {
+      localStorage.removeItem("refreshToken");
+    }
+  };
 
   return (
     <AuthContext.Provider
@@ -20,9 +43,9 @@ export const AuthProvider = ({ children }) => {
         user,
         setUser,
         accessToken,
-        setAccessToken,
+        setAccessToken: handleSetAccessToken,
         refreshToken,
-        setRefreshToken,
+        setRefreshToken: handleSetRefreshToken,
         showForm,
         setShowForm,
       }}

@@ -3,12 +3,14 @@ import "./CreateTicketPage.scss";
 import { toast } from "react-toastify";
 import TicketService from "../../services/ticket.service";
 import { AuthContext } from "../../context/AuthContext";
+import FirebaseService from "../../services/firebase.service";
 
 const CreateTicketPage = () => {
   const { user } = useContext(AuthContext);
 
   const [ticket, setTicket] = useState({
     price: "",
+    status: "Available",
     ticket_category: "",
     ticket_type: true,
     quantity: 1,
@@ -17,9 +19,10 @@ const CreateTicketPage = () => {
     description: "",
     location: "",
     seat: null,
-    image:
-      "https://copycatjm.com/wp-content/uploads/2022/08/Tickets-Prod-Image.jpg",
+    image: "",
   });
+
+  const [ticketImage, setTicketImage] = useState(null);
 
   const [errors, setErrors] = useState({
     price: "",
@@ -82,16 +85,29 @@ const CreateTicketPage = () => {
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      setTicket({
-        ...ticket,
-        Image: file,
-      });
+      setTicketImage(file);
 
       const reader = new FileReader();
       reader.onloadend = () => {
         setImagePreview(reader.result);
       };
       reader.readAsDataURL(file);
+    }
+  };
+
+  const uploadImagesFile = async () => {
+    try {
+      const formData = new FormData();
+      formData.append("Image", ticketImage);
+
+      const response = await FirebaseService.uploadImage(formData);
+
+      if (response.success) {
+        console.log(response);
+        return response.data;
+      }
+    } catch (err) {
+      console.log(err);
     }
   };
 
@@ -121,34 +137,43 @@ const CreateTicketPage = () => {
       return;
     }
 
-    console.log(ticket);
-
     try {
-      // Call the createTicket API
-      const response = await TicketService.createTicket(
-        user.iD_Customer,
-        ticket
-      );
+      let imgURL = null;
 
-      console.log(response);
+      imgURL = await uploadImagesFile();
 
-      if (response.success) {
-        toast.success(response.message);
-        setTicket({
-          price: "",
-          ticket_category: "",
-          ticket_type: true,
-          quantity: "",
-          status: "",
-          event_Date: "",
-          show_Name: "",
-          description: "",
-          seat: null,
-          location: "",
-          image: null,
-        });
+      console.log(imgURL);
 
-        setImagePreview(null);
+      if (imgURL !== null) {
+        let body = { ...ticket };
+
+        body.image = imgURL;
+
+        const response = await TicketService.createTicket(
+          user.iD_Customer,
+          body
+        );
+
+        console.log(response);
+
+        if (response.success) {
+          toast.success(response.message);
+          setTicket({
+            price: "",
+            ticket_category: "",
+            ticket_type: true,
+            quantity: "",
+            status: "",
+            event_Date: "",
+            show_Name: "",
+            description: "",
+            seat: null,
+            location: "",
+            image: null,
+          });
+
+          setImagePreview(null);
+        }
       }
     } catch (error) {
       toast.error("Failed to create ticket. Please try again later.");

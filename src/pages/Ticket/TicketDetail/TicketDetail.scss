@@ -15,11 +15,8 @@
   }
 
   &__image-container {
-    max-width: 500px;
-
-    @media (max-width: 768px) {
-      max-width: 100%;
-    }
+    width: 300px;
+    height: 425px;
   }
 
   &__image {

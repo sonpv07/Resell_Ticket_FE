@@ -21,4 +21,14 @@ const getTagColor = (category) => {
   }
 };
 
-module.exports = { returnValue, getTagColor };
+const currencyFormatter = (amount) => {
+  const formatter = new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "VND",
+    minimumFractionDigits: 0,
+  }).format(amount);
+
+  return formatter;
+};
+
+module.exports = { returnValue, getTagColor, currencyFormatter };

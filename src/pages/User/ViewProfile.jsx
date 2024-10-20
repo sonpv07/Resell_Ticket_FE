@@ -1,7 +1,7 @@
 import React, { useState, useContext } from "react";
 import { Card, Typography, Space, Button, Spin } from "antd";
 import { useNavigate } from "react-router-dom";
-import { AuthContext } from "../../../../context/AuthContext";
+import { AuthContext } from "../../context/AuthContext";
 
 const { Title, Text } = Typography;
 
@@ -11,25 +11,8 @@ function ViewProfile() {
   const { user } = useContext(AuthContext);
 
   const handleEditProfile = () => {
-    navigate("/edit");
+    navigate("edit");
   };
-
-  // Show spinner while loading data
-  // if (loading) {
-  //   return (
-  //     <div
-  //       style={{
-  //         display: "flex",
-  //         justifyContent: "center",
-  //         alignItems: "center",
-  //         height: "100vh",
-  //         backgroundColor: "#1A2129",
-  //       }}
-  //     >
-  //       <Spin size="large" />
-  //     </div>
-  //   );
-  // }
 
   return (
     <div
