@@ -1,22 +1,30 @@
 import React, { useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom'; 
-import { sendFeedback } from '../../services/axios/axios';
+import { useParams, useNavigate } from 'react-router-dom';
+import { FaStar, FaUser } from 'react-icons/fa';
+import FeedbackService from '../../services/feedback.service';  
 import './Feedback.scss';
+
+const feedbackService = new FeedbackService('http://14.225.204.144:7070/api/');  
 
 const Feedback = () => {
   const { orderId } = useParams();
   const [feedback, setFeedback] = useState('');
   const [rating, setRating] = useState(5);
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
+
+  const handleRatingClick = (value) => {
+    setRating(value);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const feedbackData = {
-        rating: parseInt(rating, 10),
-        feedback,
+        orderId,  
+        comment: feedback,
+        stars: rating
       };
-      await sendFeedback(orderId, feedbackData);
+      await feedbackService.sendFeedback(feedbackData);  
 
       alert('Feedback sent successfully!');
       navigate('/OrderHistory');
@@ -28,29 +36,32 @@ const Feedback = () => {
 
   return (
     <div className="feedback-container">
-      <h1>Leave Feedback for Order {orderId}</h1>
+      <h1><FaUser /> Leave Feedback for Order {orderId}</h1>
       <form onSubmit={handleSubmit} className="feedback-form">
-        <label>
+        <label className="feedback-form__label">
           Rating:
-          <select value={rating} onChange={(e) => setRating(e.target.value)}>
-            <option value={5}>5 - Excellent</option>
-            <option value={4}>4 - Good</option>
-            <option value={3}>3 - Average</option>
-            <option value={2}>2 - Poor</option>
-            <option value={1}>1 - Terrible</option>
-          </select>
+          <div className="rating-stars">
+            {[...Array(5)].map((_, index) => (
+              <FaStar
+                key={index}
+                className={`star ${index < rating ? 'filled' : ''}`}
+                onClick={() => handleRatingClick(index + 1)}
+              />
+            ))}
+          </div>
         </label>
 
-        <label>
+        <label className="feedback-form__label">
           Feedback:
           <textarea
             value={feedback}
             onChange={(e) => setFeedback(e.target.value)}
             required
+            className="feedback-form__textarea"
           />
         </label>
 
-        <button type="submit" className="submit-btn">Submit Feedback</button>
+        <button type="submit" className="feedback-form__submit-btn">Submit Feedback</button>
       </form>
     </div>
   );

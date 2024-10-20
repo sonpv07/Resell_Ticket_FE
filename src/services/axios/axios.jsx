@@ -1,9 +1,9 @@
 import axios from "axios";
 
 // API LOCAL
-const baseUrl = "http://localhost:5212/api/";
+//const baseUrl = "http://localhost:5212/api/";
 
-// const baseUrl = "http://14.225.204.144:7070/api/";
+ const baseUrl = "http://14.225.204.144:7070/api/";
 
 const config = {
   baseUrl: baseUrl,
@@ -21,25 +21,22 @@ const handleBefore = (config) => {
 
 api.interceptors.request.use(handleBefore, null);
 
-export const getCompletedOrders = async () => {
+export const getCustomerOrders = async (customerId) => {
   try {
-    const response = await axios.get(`${baseUrl}/orders?status=success`);
-    return response.data; 
+    const response = await axios.get(`${baseUrl}/Order`, {
+      params: {
+        status: 'success',
+        customerId: customerId, 
+      },
+    });
+    console.log('Response from customer orders:', response); 
+    return response.data;
   } catch (error) {
-    console.error('Error fetching completed orders', error);
+    console.error('Error fetching customer orders:', error.response?.data || error.message); 
     throw error;
   }
 };
 
 
-export const sendFeedback = async (orderId, feedbackData) => {
-  try {
-    const response = await axios.post(`${baseUrl}/feedback/${orderId}`, feedbackData);
-    return response.data; 
-  } catch (error) {
-    console.error('Error sending feedback', error);
-    throw error;
-  }
-};
 
 export default api;

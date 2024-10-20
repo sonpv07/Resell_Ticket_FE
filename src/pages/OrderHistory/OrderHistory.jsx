@@ -1,23 +1,25 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { getCompletedOrders } from '../../services/axios/axios';
+import { getCustomerOrders } from '../../services/axios/axios';
 import './OrderHistory.scss'; 
 
-const OrderHistory = () => {
+const OrderHistory = ({ customerId }) => {  
   const [orders, setOrders] = useState([]);
 
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const data = await getCompletedOrders();
+        const data = await getCustomerOrders(customerId);  
         setOrders(data);
       } catch (error) {
         console.error('Error fetching orders:', error);
       }
     };
 
-    fetchOrders();
-  }, []);
+    if (customerId) { 
+      fetchOrders();
+    }
+  }, [customerId]);
 
   return (
     <div className="order-history-container">
@@ -35,25 +37,31 @@ const OrderHistory = () => {
           </tr>
         </thead>
         <tbody>
-          {orders.map((order) => (
-            <tr key={order.id}>
-              <td>{order.id}</td>
-              <td>{order.showName}</td>
-              <td>{new Date(order.eventDate).toLocaleDateString()}</td>
-              <td>{order.seat}</td>
-              <td>{order.price} VND</td>
-              <td>{order.status}</td>
-              <td>
-                {order.status === 'successful' ? (
-                  <Link to={`/feedback/${order.id}`} className="feedback-btn">
-                    Give Feedback
-                  </Link>
-                ) : (
-                  <span className="no-feedback">No Feedback Available</span>
-                )}
-              </td>
+          {orders.length > 0 ? (
+            orders.map((order) => (
+              <tr key={order.id}>
+                <td>{order.id}</td>
+                <td>{order.showName}</td>
+                <td>{new Date(order.eventDate).toLocaleDateString()}</td>
+                <td>{order.seat}</td>
+                <td>{order.price} VND</td>
+                <td>{order.status}</td>
+                <td>
+                  {order.status === 'successful' ? (
+                    <Link to={`/feedback/${order.id}`} className="feedback-btn">
+                      Give Feedback
+                    </Link>
+                  ) : (
+                    <span className="no-feedback">No Feedback Available</span>
+                  )}
+                </td>
+              </tr>
+            ))
+          ) : (
+            <tr>
+              <td className="no-order" colSpan="7">No completed orders found.</td>
             </tr>
-          ))}
+          )}
         </tbody>
       </table>
     </div>
