@@ -58,54 +58,6 @@ export default function PaymentBill() {
           )}
         </div>
 
-        <div className="successful-payment__details">
-          <h2>Payment Details</h2>
-          <ul>
-            <li>
-              <strong>Order ID:</strong> {paymentDetails.orderId}
-            </li>
-            <li>
-              <strong>Amount Paid:</strong> ${paymentDetails.amount.toFixed(2)}
-            </li>
-            <li>
-              <strong>Date:</strong> {paymentDetails.date}
-            </li>
-            <li>
-              <strong>Payment Method:</strong> {paymentDetails.paymentMethod}
-            </li>
-          </ul>
-        </div>
-
-        <div className="successful-payment__ticket-info">
-          <h2>Ticket Information</h2>
-          <ul>
-            <li>
-              <strong>Event:</strong> {ticketDetails.eventName}
-            </li>
-            <li>
-              <strong>Date:</strong> {ticketDetails.eventDate}
-            </li>
-            <li>
-              <strong>Quantity:</strong> {ticketDetails.quantity}
-            </li>
-            <li>
-              <strong>Type:</strong> {ticketDetails.ticketType}
-            </li>
-          </ul>
-        </div>
-
-        <div className="successful-payment__actions">
-          <button className="successful-payment__button successful-payment__button--primary">
-            View E-Tickets
-          </button>
-          <button
-            className="successful-payment__button successful-payment__button--secondary"
-            onClick={() => navigate("/")}
-          >
-            Back to Home
-          </button>
-        </div>
-
         <div className="successful-payment__support">
           <p>
             If you have any questions, please contact our support team at

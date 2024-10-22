@@ -33,7 +33,7 @@ const ProtectedRoute = ({ allowedRoles }) => {
       handleOpenDialog(1);
     } else if (
       user?.iD_Package === null &&
-      user?.iD_RoleNavigation.name_role === "Customer" &&
+      user?.iD_RoleNavigation.name_role === "Seller" &&
       allowedRoles.includes(user?.iD_RoleNavigation.name_role)
     ) {
       handleOpenDialog(2);
@@ -47,9 +47,16 @@ const ProtectedRoute = ({ allowedRoles }) => {
   }
 
   if (
+    user?.iD_RoleNavigation.name_role === "Customer" &&
+    allowedRoles.includes("Customer")
+  ) {
+    return <Outlet />;
+  }
+
+  if (
     user?.iD_Package !== null &&
     user?.iD_RoleNavigation.name_role === "Customer" &&
-    allowedRoles.includes(user?.iD_RoleNavigation.name_role)
+    allowedRoles.includes("Seller")
   ) {
     return <Outlet />;
   }

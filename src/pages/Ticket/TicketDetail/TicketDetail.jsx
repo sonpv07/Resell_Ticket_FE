@@ -7,6 +7,7 @@ import TicketService from "../../../services/ticket.service";
 import UserService from "../../../services/user.service";
 import moment from "moment";
 import { AuthContext } from "../../../context/AuthContext";
+import RequestPriceForm from "../../../components/request-price/RequestPriceForm";
 
 export default function TicketDetail() {
   const navigate = useNavigate();
@@ -16,6 +17,8 @@ export default function TicketDetail() {
   const [sellerInfo, setSellerInfo] = useState(null);
 
   const [isLoading, setIsLoading] = useState(true);
+
+  const [isOpenRequest, setIsOpenRequest] = useState(false);
 
   const { id } = useParams();
 
@@ -182,6 +185,7 @@ export default function TicketDetail() {
                 <button
                   className="ticket-detail__button ticket-detail__button--secondary"
                   disabled={ticketData?.quantity === 0}
+                  onClick={() => setIsOpenRequest(true)}
                 >
                   Create Negotiation
                 </button>
@@ -258,6 +262,14 @@ export default function TicketDetail() {
           </>
         )}
       </div>
+
+      {isOpenRequest && (
+        <RequestPriceForm
+          isOpen={isOpenRequest}
+          setIsOpen={setIsOpenRequest}
+          ticketId={id}
+        />
+      )}
     </div>
   );
 }

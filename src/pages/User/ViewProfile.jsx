@@ -124,6 +124,10 @@ function ViewProfile() {
                 </Text>
               </div>
             </div>
+
+            <Button type="primary" onClick={() => navigate("/package")}>
+              Upgrade Package
+            </Button>
           </div>
         </Space>
       </Card>

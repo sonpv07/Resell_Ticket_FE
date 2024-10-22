@@ -51,7 +51,7 @@ const pagesData = [
   {
     path: "seller",
     title: "Seller",
-    allowedRoles: ["Customer"],
+    allowedRoles: ["Seller"],
     children: [
       {
         path: "",
