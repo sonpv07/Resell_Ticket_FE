@@ -8,8 +8,12 @@ import moment from "moment";
 import { AuthContext } from "../../../context/AuthContext";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import RequestPriceService from "../../../services/requestPrice.service";
+import OrderService from "../../../services/order.service";
+import { PAYMENT_METHODS } from "../../../configs/constant";
 
 export default function TicketManagement() {
+  const [requestList, setRequestList] = useState([]);
   const [ticketList, setTicketList] = useState([]);
   const [totalActive, setTotalActive] = useState(0);
   const [totalSold, setTotalSold] = useState(0);
@@ -99,6 +103,91 @@ export default function TicketManagement() {
     },
   ];
 
+  const requestColumns = [
+    {
+      title: "Ticket",
+      dataIndex: "name",
+      key: "name",
+      render: (text) => <p style={{ fontWeight: 600 }}>{text}</p>,
+    },
+    {
+      title: "Current Price",
+      dataIndex: "currentPrice",
+      key: "price",
+      render: (text) => <p>{currencyFormatter(text)}</p>,
+    },
+    {
+      title: "Request Price",
+      dataIndex: "requestPrice",
+      key: "price",
+      render: (text) => <p>{currencyFormatter(text)}</p>,
+    },
+    {
+      title: "Quantity",
+      dataIndex: "quantity",
+      key: "quantity",
+    },
+
+    {
+      title: "Action",
+      key: "action",
+      render: (_, record) =>
+        record.status === "Pending" ? (
+          <Space size="middle">
+            <Button
+              type="primary"
+              onClick={() => {
+                console.log(record);
+                handleApproveRequest(
+                  record.buyerId,
+                  record.ticketId,
+                  record.quantity,
+                  record.key
+                );
+              }}
+            >
+              Approve
+            </Button>
+            <Button
+              type="primary"
+              style={{ backgroundColor: "red" }}
+              onClick={() =>
+                handleRejectRequest(
+                  record.buyerId,
+                  record.ticketId,
+                  record.quantity,
+                  record.key
+                )
+              }
+            >
+              Reject
+            </Button>
+          </Space>
+        ) : record.status === "Completed" ? (
+          <Tag color={"#2196f3"} key={"Approve"}>
+            {"Approved".toUpperCase()}
+          </Tag>
+        ) : (
+          <Tag color={"red"} key={"Reject"}>
+            {"Rejected".toUpperCase()}
+          </Tag>
+        ),
+    },
+
+    // {
+    //   title: "Status",
+    //   dataIndex: "status",
+    //   key: "status",
+    //   render: (tag) => (
+    //     <>
+    //       <Tag color={tag === "Available" ? "#2196f3" : "#ff9800"} key={tag}>
+    //         {tag.toUpperCase()}
+    //       </Tag>
+    //     </>
+    //   ),
+    // },
+  ];
+
   const fetchApi = async () => {
     try {
       const response = await TicketService.getTicketListBySeller(
@@ -141,6 +230,88 @@ export default function TicketManagement() {
     }
   };
 
+  const fetchRequestData = async () => {
+    const response = await RequestPriceService.getRequestPrice(
+      user.iD_Customer
+    );
+
+    if (response.success) {
+      const transformedData = response.data.map((request) => ({
+        key: request?.iD_Request,
+        ticketId: request?.iD_Ticket,
+        buyerId: request?.iD_Customer,
+        name: request?.ticketNavigation?.show_Name,
+        currentPrice: request?.ticketNavigation?.price,
+        requestPrice: request?.price_want,
+        quantity: request?.quantity,
+        status: request?.status,
+      }));
+
+      setRequestList(transformedData);
+    }
+  };
+
+  const handleApproveRequest = async (
+    buyerId,
+    ticketId,
+    quantity,
+    requestId
+  ) => {
+    let body = {
+      iD_Customer: buyerId,
+      payment_method: PAYMENT_METHODS.VNPAY,
+      ticketItems: [
+        {
+          iD_Ticket: ticketId,
+          quantity: quantity,
+        },
+      ],
+    };
+
+    const response = await OrderService.createOrder(body);
+
+    if (response.success) {
+      const request = requestList.findIndex(
+        (request) => request.key === requestId
+      );
+
+      if (request >= 0) {
+        const updatedRequestList = [...requestList];
+        updatedRequestList[request] = {
+          ...updatedRequestList[request],
+          status: "Completed",
+        };
+        setRequestList(updatedRequestList);
+        toast.success("Approve request successfully!");
+      } else {
+        toast.error("Approve request fail!");
+      }
+    }
+  };
+
+  const handleRejectRequest = async (
+    buyerId,
+    ticketId,
+    quantity,
+    requestId
+  ) => {
+    const request = requestList.findIndex(
+      (request) => request.key === requestId
+    );
+
+    if (request >= 0) {
+      const updatedRequestList = [...requestList];
+      updatedRequestList[request] = {
+        ...updatedRequestList[request],
+        status: "Rejected",
+      };
+      setRequestList(updatedRequestList);
+      toast.success("Reject request successfully!");
+    } else {
+      toast.error("Reject request fail!");
+    }
+  };
+
   // const handleRemoveTicket = async (id) => {
   //   const response = await TicketService.deleteTicket(id);
   //   if (response.success) {
@@ -155,13 +326,38 @@ export default function TicketManagement() {
   // };
 
   useEffect(() => {
-    fetchApi();
+    const fetchDataAndTickets = async () => {
+      await Promise.all([fetchApi(), fetchRequestData()]);
+    };
+    fetchDataAndTickets();
+
+    return () => {
+      setRequestList([]);
+      setTicketList([]);
+    };
   }, []);
 
-  useEffect(() => {}, [ticketList]);
+  console.log(requestList);
 
   return (
     <div className="seller-ticket-management">
+      <div style={{ marginBottom: "30px" }}>
+        <h1 className="seller-ticket-management__title">Package Information</h1>
+        <div className="seller-ticket-management__package">
+          <p>
+            <span>Current Package:</span>{" "}
+            {user?.iD_PackageNavigation?.name_Package}
+          </p>
+          <p>
+            <span>Selling Post:</span> {user?.number_of_tickets_can_posted}
+          </p>
+          <p>
+            <span>End Time: </span>
+            {moment(user?.package_expiration_date).format("MMMM D, YYYY")}
+          </p>
+        </div>
+      </div>
+
       <h1 className="seller-ticket-management__title">Ticket Management</h1>
 
       <div className="seller-ticket-management__stats">
@@ -200,7 +396,15 @@ export default function TicketManagement() {
         columns={columns}
         dataSource={ticketList}
         style={{ backgroundColor: "#ccc" }}
-        className="custom-table" // Apply the custom class
+        className="custom-table"
+      />
+
+      <h2 className="seller-ticket-management__subtitle">Request List</h2>
+      <Table
+        columns={requestColumns}
+        dataSource={requestList}
+        style={{ backgroundColor: "#ccc" }}
+        className="custom-table"
       />
     </div>
   );

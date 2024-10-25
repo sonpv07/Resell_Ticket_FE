@@ -33,11 +33,14 @@ const ProtectedRoute = ({ allowedRoles }) => {
       handleOpenDialog(1);
     } else if (
       user?.iD_Package === null &&
-      user?.iD_RoleNavigation.name_role === "Seller" &&
-      allowedRoles.includes(user?.iD_RoleNavigation.name_role)
+      user?.iD_RoleNavigation.name_role === "Customer" &&
+      allowedRoles.includes("Seller")
     ) {
       handleOpenDialog(2);
-    } else if (!allowedRoles.includes(user?.iD_RoleNavigation.name_role)) {
+    } else if (
+      user?.iD_RoleNavigation.name_role !== "Customer" &&
+      !allowedRoles.includes(user?.iD_RoleNavigation.name_role)
+    ) {
       handleOpenDialog(3);
     }
   }, [user, allowedRoles, navigate, closeDialog]);

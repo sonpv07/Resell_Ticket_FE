@@ -7,9 +7,7 @@ class TransactionService {
   static async createPayment(body) {
     try {
       const response = await api.post(
-        // `http://14.225.204.144:7070/create/payment`,
-
-        "http://localhost:5212/create/payment",
+        `http://14.225.204.144:7070/create/payment`,
         body
       );
 

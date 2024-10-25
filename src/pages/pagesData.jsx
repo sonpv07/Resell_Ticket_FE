@@ -12,6 +12,7 @@ import RequestPriceForm from "../components/request-price/RequestPriceForm";
 import OrderHistory from "./OrderHistory/OrderHistory";
 import EditProfile from "./User/EditProfile";
 import ViewProfile from "./User/ViewProfile";
+import Layout from "../layout/Layout";
 
 const pagesData = [
   {

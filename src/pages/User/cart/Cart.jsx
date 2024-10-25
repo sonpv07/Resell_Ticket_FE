@@ -114,7 +114,7 @@ export default function Cart() {
 
             <div className="cart__total__detail">
               <p>Delivery Fee </p>
-              <p>{DELIVERY_PRICE} $</p>
+              <p>{currencyFormatter(DELIVERY_PRICE)}</p>
             </div>
             <hr />
 

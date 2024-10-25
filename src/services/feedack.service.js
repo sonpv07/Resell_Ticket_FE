@@ -20,6 +20,23 @@ class FeedbackService {
       return returnValue(false, null, "Create Feedback fail");
     }
   }
+
+  static async getFeedbackByCustomer(customerId) {
+    try {
+      const response = await api.get(
+        `${URL}/customer-received-feedbacks?customerId=${customerId}`
+      );
+
+      if (response.status >= 200 && response.status < 300) {
+        return returnValue(true, response.data, "Get Feedback successfully");
+      } else {
+        return returnValue(false, null, "Get Feedback fail");
+      }
+    } catch (error) {
+      console.error("Error Create Feedback", error);
+      return returnValue(false, null, "Get Feedback fail");
+    }
+  }
 }
 
 export default FeedbackService;

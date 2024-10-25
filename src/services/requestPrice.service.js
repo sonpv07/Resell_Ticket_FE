@@ -1,17 +1,20 @@
-import { returnValue } from "../utils"; 
-import api from "./axios/axios"; 
+import { returnValue } from "../utils";
+import api from "./axios/axios";
 
 const URL = "Request"; // Assuming "RequestPrice" is the correct endpoint
 
 class RequestPriceService {
-  
   // Function to send a new request price
   static async sendRequestPrice(requestData) {
     try {
       const response = await api.post(`${URL}`, requestData);
 
       if (response.status >= 200 && response.status < 300) {
-        return returnValue(true, response.data, "Request price submitted successfully");
+        return returnValue(
+          true,
+          response.data,
+          "Request price submitted successfully"
+        );
       } else {
         return returnValue(false, null, "Failed to submit request price");
       }
@@ -24,7 +27,7 @@ class RequestPriceService {
   // Function to get request price details by ID
   static async getRequestPrice(id) {
     try {
-      const response = await api.get(`${URL}/${id}`);
+      const response = await api.get(`${URL}/sellerId?sellerId=${id}`);
 
       if (response.status >= 200 && response.status < 300) {
         return returnValue(true, response.data, "");
@@ -43,7 +46,11 @@ class RequestPriceService {
       const response = await api.put(`${URL}/${id}`, updatedData);
 
       if (response.status >= 200 && response.status < 300) {
-        return returnValue(true, response.data, "Request price updated successfully");
+        return returnValue(
+          true,
+          response.data,
+          "Request price updated successfully"
+        );
       } else {
         return returnValue(false, null, "Failed to update request price");
       }

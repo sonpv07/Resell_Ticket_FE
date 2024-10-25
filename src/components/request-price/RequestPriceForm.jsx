@@ -8,20 +8,14 @@ import Overlay from "../overlay/Overlay";
 
 const RequestPriceForm = ({ isOpen, setIsOpen, ticketId }) => {
   const [form] = Form.useForm();
-  const { user } = useContext(AuthContext); // Lấy user info từ context
-  const [currentTime, setCurrentTime] = useState("");
-
-  useEffect(() => {
-    // Lấy thời gian hiện tại
-    const now = new Date();
-    setCurrentTime(now.toISOString());
-  }, []);
+  const { user } = useContext(AuthContext);
 
   const handleSubmit = async (values) => {
     const requestData = {
-      iD_Customer: user?.iD_Customer, // Lấy ID cus từ context
+      iD_Customer: user?.iD_Customer,
       price_want: values.priceWant,
-      history: currentTime, // Sử dụng thời gian hiện tại
+      quantity: values.quantity,
+      history: new Date().toISOString(),
       iD_Ticket: ticketId,
     };
 
@@ -62,6 +56,19 @@ const RequestPriceForm = ({ isOpen, setIsOpen, ticketId }) => {
             <Input value={user?.id} disabled />
           </Form.Item> */}
 
+          <Form.Item
+            label="Quantity"
+            name="quantity"
+            rules={[
+              { required: true, message: "Please input ticket quantity!" },
+            ]}
+          >
+            <InputNumber
+              min={1}
+              placeholder="Enter the quantity"
+              style={{ width: "100%" }}
+            />
+          </Form.Item>
           <Form.Item
             label="Negotiated Price"
             name="priceWant"

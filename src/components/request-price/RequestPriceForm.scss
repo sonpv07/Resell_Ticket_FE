@@ -1,5 +1,5 @@
 .request-form__container {
-  position: absolute;
+  position: fixed;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
@@ -10,5 +10,5 @@
   gap: 30px;
   padding: 20px;
   z-index: 10;
-  background: #f0f2f5;
+  background: #fff;
 }

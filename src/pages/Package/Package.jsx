@@ -89,14 +89,25 @@ function Package() {
               <p>
                 <span>Selling Limit:</span> {pkg.ticket_can_post} times
               </p>
-              <Button
-                type="primary"
-                size="large"
-                style={{ borderRadius: "20px", marginTop: "20px" }}
-                onClick={() => handleBuyPackage(pkg)}
-              >
-                Get This Plan
-              </Button>
+
+              {pkg.iD_Package === user?.iD_Package ? (
+                <Button
+                  type="primary"
+                  size="large"
+                  style={{ borderRadius: "20px", marginTop: "20px" }}
+                >
+                  Your current package
+                </Button>
+              ) : (
+                <Button
+                  type="primary"
+                  size="large"
+                  style={{ borderRadius: "20px", marginTop: "20px" }}
+                  onClick={() => handleBuyPackage(pkg)}
+                >
+                  Get This Plan
+                </Button>
+              )}
             </Card>
           </Col>
         ))}
