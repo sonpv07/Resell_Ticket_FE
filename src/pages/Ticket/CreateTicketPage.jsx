@@ -6,7 +6,7 @@ import { AuthContext } from "../../context/AuthContext";
 import FirebaseService from "../../services/firebase.service";
 
 const CreateTicketPage = () => {
-  const { user } = useContext(AuthContext);
+  const { user, setUser } = useContext(AuthContext);
 
   const [ticket, setTicket] = useState({
     price: "",
@@ -136,42 +136,46 @@ const CreateTicketPage = () => {
 
     try {
       let imgURL = null;
-
       imgURL = await uploadImagesFile();
-
       console.log(imgURL);
+      if (imgURL?.length > 0) {
+        let body = { ...ticket };
+        body.image = imgURL;
+        const response = await TicketService.createTicket(
+          user.iD_Customer,
+          body
+        );
+        console.log(response);
+        if (response.success) {
+          toast.success(response.message);
+          setTicket({
+            price: "",
+            ticket_category: "",
+            ticket_type: true,
+            quantity: "",
+            status: "",
+            event_Date: "",
+            show_Name: "",
+            description: "",
+            seat: null,
+            location: "",
+            image: null,
+          });
+          setImagePreview(null);
 
-      // if (imgURL !== null) {
-      //   let body = { ...ticket };
+          const newUser = {
+            ...user,
+            number_of_tickets_can_posted:
+              user?.number_of_tickets_can_posted - 1,
+          };
 
-      //   body.image = imgURL;
+          console.log(newUser);
 
-      //   const response = await TicketService.createTicket(
-      //     user.iD_Customer,
-      //     body
-      //   );
+          setUser(newUser);
 
-      //   console.log(response);
-
-      //   if (response.success) {
-      //     toast.success(response.message);
-      //     setTicket({
-      //       price: "",
-      //       ticket_category: "",
-      //       ticket_type: true,
-      //       quantity: "",
-      //       status: "",
-      //       event_Date: "",
-      //       show_Name: "",
-      //       description: "",
-      //       seat: null,
-      //       location: "",
-      //       image: null,
-      //     });
-
-      //     setImagePreview(null);
-      //   }
-      // }
+          localStorage.setItem("user", JSON.stringify(newUser));
+        }
+      }
     } catch (error) {
       toast.error("Failed to create ticket. Please try again later.");
       console.error("API Error:", error);

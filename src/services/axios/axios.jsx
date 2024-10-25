@@ -4,10 +4,10 @@ import axios from "axios";
 // const baseUrl = "http://localhost:5212/api/";
 // const baseUrl = "https://localhost:7216/api/";
 
-const baseUrl = "http://14.225.204.144:7070/api/";
+// const baseUrl = "http://14.225.204.144:7070/api/";
 
 // HTTPS SERVER
-// const baseUrl = "https://swp.vinhuser.one/api/";
+const baseUrl = "https://swp.vinhuser.one/api/";
 
 const config = {
   baseUrl: baseUrl,
