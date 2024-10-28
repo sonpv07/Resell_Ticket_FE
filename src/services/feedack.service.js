@@ -37,6 +37,20 @@ class FeedbackService {
       return returnValue(false, null, "Get Feedback fail");
     }
   }
+
+  static async getSellerRating(body) {
+    try {
+      const response = await api.post(`${URL}/average-feedback`, body);
+
+      if (response.status >= 200 && response.status < 300) {
+        return returnValue(true, response.data, "");
+      } else {
+        return returnValue(false, null, "");
+      }
+    } catch (error) {
+      console.error("Error Get average", error);
+    }
+  }
 }
 
 export default FeedbackService;

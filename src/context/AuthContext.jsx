@@ -1,5 +1,6 @@
 import React, { createContext, useEffect, useState } from "react";
 import UserService from "../services/user.service";
+import NotificationService from "../services/notification.service";
 
 export const AuthContext = createContext();
 
@@ -16,6 +17,8 @@ export const AuthProvider = ({ children }) => {
   const [refreshToken, setRefreshToken] = useState(() => {
     return localStorage.getItem("refreshToken") || null;
   });
+
+  const [notification, setNotification] = useState([]);
 
   const [showForm, setShowForm] = useState("");
 
@@ -44,6 +47,13 @@ export const AuthProvider = ({ children }) => {
     if (userData) {
       setUser(userData.data);
       localStorage.setItem("user", JSON.stringify(userData.data));
+
+      const notificationResponse =
+        await NotificationService.getNotificationByUser(user?.iD_Customer);
+
+      if (notificationResponse.success) {
+        setNotification(notificationResponse.data.reverse());
+      }
     }
   };
 
@@ -62,6 +72,8 @@ export const AuthProvider = ({ children }) => {
         setRefreshToken: handleSetRefreshToken,
         showForm,
         setShowForm,
+        notification,
+        setNotification,
       }}
     >
       {children}

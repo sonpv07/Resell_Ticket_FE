@@ -7,11 +7,18 @@ import { Rate } from "antd";
 import { toast } from "react-toastify";
 import Overlay from "../../components/overlay/Overlay";
 
-const Feedback = ({ isOpen, setIsOpen, orderId, feedbackData }) => {
+const Feedback = ({
+  isOpen,
+  setIsOpen,
+  orderId,
+  feedbackData,
+  orderList,
+  setOrderList,
+}) => {
   const [feedback, setFeedback] = useState(feedbackData?.comment ?? "");
   const [rating, setRating] = useState(feedbackData?.stars ?? 0);
 
-  console.log(feedbackData);
+  console.log(orderList);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -25,7 +32,18 @@ const Feedback = ({ isOpen, setIsOpen, orderId, feedbackData }) => {
     const response = await FeedbackService.createFeedback(body);
 
     if (response.success) {
-      toast.success(response.message);
+      const orderClone = [...orderList];
+
+      const index = orderClone.findIndex((order) => order.iD_Order === orderId);
+
+      if (index >= 0) {
+        orderClone[index].feedback = response.data;
+        setOrderList(orderClone);
+        setIsOpen(false);
+        toast.success(response.message);
+      } else {
+        toast.error(response.message);
+      }
     } else {
       toast.error(response.message);
     }
@@ -56,7 +74,6 @@ const Feedback = ({ isOpen, setIsOpen, orderId, feedbackData }) => {
           <div className="feedback-form__item">
             <label>Rating:</label>
             <Rate
-              allowHalf
               onChange={(value) => setRating(value)}
               disabled={feedbackData !== null}
               value={rating}

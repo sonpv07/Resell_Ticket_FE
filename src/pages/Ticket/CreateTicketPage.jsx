@@ -101,7 +101,7 @@ const CreateTicketPage = () => {
 
       if (response.success) {
         console.log(response);
-        return response.data;
+        return response.data.join(",");
       }
     } catch (err) {
       console.log(err);
@@ -138,7 +138,7 @@ const CreateTicketPage = () => {
       let imgURL = null;
       imgURL = await uploadImagesFile();
       console.log(imgURL);
-      if (imgURL?.length > 0) {
+      if (imgURL !== null) {
         let body = { ...ticket };
         body.image = imgURL;
         const response = await TicketService.createTicket(

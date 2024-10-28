@@ -13,6 +13,7 @@ import OrderHistory from "./OrderHistory/OrderHistory";
 import EditProfile from "./User/EditProfile";
 import ViewProfile from "./User/ViewProfile";
 import Layout from "../layout/Layout";
+import Notification from "./Notification/Notification";
 
 const pagesData = [
   {
@@ -114,6 +115,11 @@ const pagesData = [
     path: "request-price",
     element: <RequestPriceForm />,
     title: "request price",
+  },
+  {
+    path: "notification",
+    element: <Notification />,
+    title: "notification",
   },
 ];
 

@@ -21,24 +21,26 @@ const OrderHistory = () => {
     const response = await FeedbackService.getFeedbackByCustomer(
       user.iD_Customer
     );
-    if (response.success) {
-      setFeedbacks(response.data);
 
-      const responseOrders = await OrderService.getOrderByUser();
+    setFeedbacks(response.data);
 
-      if (responseOrders.success) {
-        const data = responseOrders.data.filter(
-          (item) =>
-            item?.iD_CustomerNavigation?.iD_Customer === user?.iD_Customer
-        );
+    const responseOrders = await OrderService.getOrderByUser();
 
-        const updatedOrders = data.map((order) => ({
-          ...order,
-          feedback: response.data.find((fb) => fb.iD_Order === order.iD_Order),
-        }));
+    console.log(responseOrders);
 
-        setOrders(updatedOrders);
-      }
+    if (responseOrders.success) {
+      const data = responseOrders.data.filter(
+        (item) => item?.iD_CustomerNavigation?.iD_Customer === user?.iD_Customer
+      );
+
+      const updatedOrders = data.map((order) => ({
+        ...order,
+        feedback: response.data
+          ? response.data.find((fb) => fb.iD_Order === order.iD_Order)
+          : null,
+      }));
+
+      setOrders(updatedOrders.reverse());
     }
   };
 
@@ -126,6 +128,8 @@ const OrderHistory = () => {
           setIsOpen={setIsOpenFeedback}
           orderId={chosenOrder}
           feedbackData={chosenFeedback}
+          orderList={orders}
+          setOrderList={setOrders}
         />
       )}
     </div>

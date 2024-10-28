@@ -10,9 +10,11 @@ import TransactionService from "../../../services/transaction.service";
 import { toast } from "react-toastify";
 import { currencyFormatter } from "../../../utils";
 export default function Cart() {
-  const DELIVERY_PRICE = 10000;
+  const DELIVERY_PRICE = 0;
 
   const { state } = useLocation();
+
+  console.log(state);
 
   const { user } = useContext(AuthContext);
 
@@ -31,29 +33,55 @@ export default function Cart() {
 
   if (!state) {
     return <h1 className="null">Nothing to checkout</h1>;
+  } else if (
+    state.order &&
+    state?.order?.status.toUpperCase() !== "Pending".toUpperCase()
+  ) {
+    return <h1 className="null">This order is already completed</h1>;
   }
 
   const handleCreateOrder = async () => {
-    let body = {
-      iD_Customer: user.iD_Customer,
-      payment_method: PAYMENT_METHODS.VNPAY,
-      ticketItems: [
-        {
-          iD_Ticket: state.ticket[0].id,
-          quantity: state.ticket[0].quantity,
-        },
-      ],
-    };
-
-    const response = await OrderService.createOrder(body);
-
-    console.log(response.data);
-
-    if (response.success) {
-      let paymentBody = {
-        iD_Order: response.data.orderId,
-        transaction_Type: "Ticket",
+    if (!state.order) {
+      let body = {
         iD_Customer: user.iD_Customer,
+        payment_method: PAYMENT_METHODS.VNPAY,
+        totalPrice: getSubtotal() + DELIVERY_PRICE,
+        ticketItems: [
+          {
+            iD_Ticket: state.ticket[0].id,
+            quantity: state.ticket[0].quantity,
+          },
+        ],
+      };
+
+      const response = await OrderService.createOrder(body);
+
+      if (response.success) {
+        let paymentBody = {
+          iD_Order: response.data.orderId,
+          transaction_Type: "Ticket",
+          iD_Customer: user.iD_Customer,
+          iD_Payment: 1,
+          finalPrice: getSubtotal() + DELIVERY_PRICE,
+        };
+
+        const paymentResponse = await TransactionService.createPayment(
+          paymentBody
+        );
+
+        if (paymentResponse.success) {
+          window.open(paymentResponse.data.url);
+        }
+      } else {
+        toast.error("Error creating order");
+      }
+    } else {
+      console.log("Have Order");
+
+      let paymentBody = {
+        iD_Order: state?.order?.iD_Order,
+        transaction_Type: "Ticket",
+        iD_Customer: user?.iD_Customer,
         iD_Payment: 1,
         finalPrice: getSubtotal() + DELIVERY_PRICE,
       };
@@ -65,8 +93,6 @@ export default function Cart() {
       if (paymentResponse.success) {
         window.open(paymentResponse.data.url);
       }
-    } else {
-      toast.error("Error creating order");
     }
   };
 
@@ -91,7 +117,7 @@ export default function Cart() {
               <div className="cart__items__title cart__items__item">
                 <img src={item.image} alt={item.show_Name} />
                 <p>{item.show_Name}</p>
-                <p>{item.price} $</p>
+                <p>{currencyFormatter(item.price)}</p>
                 <p>{item.quantity}</p>
                 <p>{currencyFormatter(item.quantity * item.price)} </p>
                 <p>{item.seller}</p>

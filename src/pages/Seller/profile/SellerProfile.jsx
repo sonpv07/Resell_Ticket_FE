@@ -5,6 +5,7 @@ import { useParams } from "react-router-dom";
 import Report from "../../../components/report/Report";
 import TicketService from "../../../services/ticket.service";
 import TicketList from "../../../components/ticket/list/TicketList";
+import FeedbackService from "../../../services/feedack.service";
 
 export default function SellerProfile() {
   const { id } = useParams();
@@ -45,6 +46,14 @@ export default function SellerProfile() {
     if (response?.success) {
       console.log(response?.data);
       setSeller(response.data);
+
+      let body = {
+        iD_Customer: response.data.iD_Customer,
+      };
+
+      const ratingData = await FeedbackService.getSellerRating(body);
+
+      setSeller({ ...response.data, average_feedback: ratingData.data });
     }
   };
 

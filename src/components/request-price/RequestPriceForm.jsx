@@ -6,7 +6,13 @@ import { AuthContext } from "../../context/AuthContext";
 import { toast } from "react-toastify";
 import Overlay from "../overlay/Overlay";
 
-const RequestPriceForm = ({ isOpen, setIsOpen, ticketId }) => {
+const RequestPriceForm = ({
+  isOpen,
+  setIsOpen,
+  ticketId,
+  currentPrice,
+  currentQuantity,
+}) => {
   const [form] = Form.useForm();
   const { user } = useContext(AuthContext);
 
@@ -17,6 +23,7 @@ const RequestPriceForm = ({ isOpen, setIsOpen, ticketId }) => {
       quantity: values.quantity,
       history: new Date().toISOString(),
       iD_Ticket: ticketId,
+      status: "Pending",
     };
 
     try {
@@ -33,6 +40,8 @@ const RequestPriceForm = ({ isOpen, setIsOpen, ticketId }) => {
       console.error("Error when submitting request:", error);
     }
   };
+
+  console.log(currentQuantity);
 
   return (
     <Overlay isOpen={isOpen} onClose={() => setIsOpen(false)}>
@@ -65,6 +74,7 @@ const RequestPriceForm = ({ isOpen, setIsOpen, ticketId }) => {
           >
             <InputNumber
               min={1}
+              max={currentQuantity}
               placeholder="Enter the quantity"
               style={{ width: "100%" }}
             />
@@ -77,7 +87,7 @@ const RequestPriceForm = ({ isOpen, setIsOpen, ticketId }) => {
             ]}
           >
             <InputNumber
-              min={0}
+              min={5000}
               placeholder="Enter the negotiated price"
               style={{ width: "100%" }}
             />

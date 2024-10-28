@@ -11,8 +11,10 @@ import { toast } from "react-toastify";
 import { DialogContext } from "../../context/DialogContext";
 
 const Header = () => {
-  const { showForm, setShowForm, user, setUser } = useContext(AuthContext);
-  const { openDialog, closeDialog } = useContext(DialogContext);
+  const { showForm, setShowForm, user, setUser, notification } =
+    useContext(AuthContext);
+
+  console.log(notification);
 
   const navigate = useNavigate();
 
@@ -29,7 +31,7 @@ const Header = () => {
         navigate("/profile");
         break;
       case "Notifications":
-        navigate("/view-profile");
+        navigate("/notification");
         break;
       case "Ticket alerts":
         navigate("/view-profile");

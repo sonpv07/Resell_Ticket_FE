@@ -11,13 +11,20 @@ import { useNavigate } from "react-router-dom";
 import RequestPriceService from "../../../services/requestPrice.service";
 import OrderService from "../../../services/order.service";
 import { PAYMENT_METHODS } from "../../../configs/constant";
+import EditTicket from "../../Ticket/EditTicket/EditTicket";
+import NotificationService from "../../../services/notification.service";
 
 export default function TicketManagement() {
   const [requestList, setRequestList] = useState([]);
   const [ticketList, setTicketList] = useState([]);
+  const [orderList, setOrderList] = useState([]);
+
   const [totalActive, setTotalActive] = useState(0);
   const [totalSold, setTotalSold] = useState(0);
   const [totalRevenue, setTotalRevenue] = useState(0);
+
+  const [isOpenEdit, setIsOpenEdit] = useState(false);
+  const [chosenTicket, setChosenTicket] = useState(null);
 
   const navigate = useNavigate();
 
@@ -90,7 +97,15 @@ export default function TicketManagement() {
       key: "action",
       render: (_, record) => (
         <Space size="middle">
-          <Button type="primary">Edit</Button>
+          <Button
+            type="primary"
+            onClick={() => {
+              setChosenTicket(record);
+              setIsOpenEdit(true);
+            }}
+          >
+            Edit
+          </Button>
           {/* <Button
             type="primary"
             style={{ backgroundColor: "red" }}
@@ -142,7 +157,94 @@ export default function TicketManagement() {
                   record.buyerId,
                   record.ticketId,
                   record.quantity,
+                  record.key,
+                  record.requestPrice
+                );
+              }}
+            >
+              Approve
+            </Button>
+            <Button
+              type="primary"
+              style={{ backgroundColor: "red" }}
+              onClick={() =>
+                handleRejectRequest(
+                  record.buyerId,
+                  record.ticketId,
+                  record.quantity,
                   record.key
+                )
+              }
+            >
+              Reject
+            </Button>
+          </Space>
+        ) : record.status === "Completed" ? (
+          <Tag color={"#2196f3"} key={"Approve"}>
+            {"Approved".toUpperCase()}
+          </Tag>
+        ) : (
+          <Tag color={"red"} key={"Reject"}>
+            {"Rejected".toUpperCase()}
+          </Tag>
+        ),
+    },
+
+    // {
+    //   title: "Status",
+    //   dataIndex: "status",
+    //   key: "status",
+    //   render: (tag) => (
+    //     <>
+    //       <Tag color={tag === "Available" ? "#2196f3" : "#ff9800"} key={tag}>
+    //         {tag.toUpperCase()}
+    //       </Tag>
+    //     </>
+    //   ),
+    // },
+  ];
+
+  const prderColumns = [
+    {
+      title: "Ticket",
+      dataIndex: "name",
+      key: "name",
+      render: (text) => <p style={{ fontWeight: 600 }}>{text}</p>,
+    },
+    {
+      title: "Current Price",
+      dataIndex: "currentPrice",
+      key: "price",
+      render: (text) => <p>{currencyFormatter(text)}</p>,
+    },
+    {
+      title: "Request Price",
+      dataIndex: "requestPrice",
+      key: "price",
+      render: (text) => <p>{currencyFormatter(text)}</p>,
+    },
+    {
+      title: "Quantity",
+      dataIndex: "quantity",
+      key: "quantity",
+    },
+
+    {
+      title: "Action",
+      key: "action",
+      render: (_, record) =>
+        record.status === "Pending" ? (
+          <Space size="middle">
+            <Button
+              type="primary"
+              onClick={() => {
+                console.log(record);
+                handleApproveRequest(
+                  record.buyerId,
+                  record.ticketId,
+                  record.quantity,
+                  record.key,
+                  record.requestPrice
                 );
               }}
             >
@@ -251,15 +353,25 @@ export default function TicketManagement() {
     }
   };
 
+  const fetchOrderData = async () => {
+    const response = await OrderService.getOrderBySeller(user.iD_Customer);
+
+    if (response.success) {
+      setOrderList(response.data);
+    }
+  };
+
   const handleApproveRequest = async (
     buyerId,
     ticketId,
     quantity,
-    requestId
+    requestId,
+    requestPrice
   ) => {
     let body = {
       iD_Customer: buyerId,
       payment_method: PAYMENT_METHODS.VNPAY,
+      totalPrice: quantity * requestPrice,
       ticketItems: [
         {
           iD_Ticket: ticketId,
@@ -268,24 +380,53 @@ export default function TicketManagement() {
       ],
     };
 
+    console.log(body);
+
     const response = await OrderService.createOrder(body);
 
     if (response.success) {
-      const request = requestList.findIndex(
-        (request) => request.key === requestId
+      const statusResponse = await RequestPriceService.editRequestStatus(
+        requestId,
+        "Completed"
       );
 
-      if (request >= 0) {
-        const updatedRequestList = [...requestList];
-        updatedRequestList[request] = {
-          ...updatedRequestList[request],
-          status: "Completed",
-        };
-        setRequestList(updatedRequestList);
-        toast.success("Approve request successfully!");
-      } else {
-        toast.error("Approve request fail!");
+      if (statusResponse.success) {
+        const request = requestList.findIndex(
+          (request) => request.key === requestId
+        );
+
+        if (request >= 0) {
+          const updatedRequestList = [...requestList];
+          updatedRequestList[request] = {
+            ...updatedRequestList[request],
+            status: "Completed",
+          };
+          setRequestList(updatedRequestList);
+
+          let notificationBody = {
+            title: "Your request has been approved",
+            event: "",
+            organizing_time: new Date(),
+            iD_Ticket: ticketId,
+            iD_Order: response.data.orderId,
+            iD_Request: requestId,
+            iD_Customer: buyerId,
+          };
+
+          console.log(notificationBody);
+
+          const notificationResponse =
+            await NotificationService.createNotification(notificationBody);
+
+          if (notificationResponse.success) {
+            toast.success("Approve request successfully!");
+          }
+        } else {
+          toast.error("Approve request fail!");
+        }
       }
+    } else {
+      toast.error("Approve request fail!");
     }
   };
 
@@ -295,18 +436,43 @@ export default function TicketManagement() {
     quantity,
     requestId
   ) => {
-    const request = requestList.findIndex(
-      (request) => request.key === requestId
+    const statusResponse = await RequestPriceService.editRequestStatus(
+      requestId,
+      "Rejected"
     );
 
-    if (request >= 0) {
-      const updatedRequestList = [...requestList];
-      updatedRequestList[request] = {
-        ...updatedRequestList[request],
-        status: "Rejected",
-      };
-      setRequestList(updatedRequestList);
-      toast.success("Reject request successfully!");
+    if (statusResponse.success) {
+      const request = requestList.findIndex(
+        (request) => request.key === requestId
+      );
+
+      if (request >= 0) {
+        const updatedRequestList = [...requestList];
+        updatedRequestList[request] = {
+          ...updatedRequestList[request],
+          status: "Rejected",
+        };
+        setRequestList(updatedRequestList);
+
+        let notificationBody = {
+          title: "Your request has been rejected",
+          event: "",
+          organizing_time: new Date(),
+          iD_Ticket: ticketId,
+          iD_Order: null,
+          iD_Request: requestId,
+          iD_Customer: buyerId,
+        };
+
+        const notificationResponse =
+          await NotificationService.createNotification(notificationBody);
+
+        if (notificationResponse.success) {
+          toast.success("Reject request successfully!");
+        }
+      } else {
+        toast.error("Approve request fail!");
+      }
     } else {
       toast.error("Reject request fail!");
     }
@@ -327,17 +493,18 @@ export default function TicketManagement() {
 
   useEffect(() => {
     const fetchDataAndTickets = async () => {
-      await Promise.all([fetchApi(), fetchRequestData()]);
+      await Promise.all([fetchApi(), fetchRequestData(), fetchOrderData()]);
     };
     fetchDataAndTickets();
 
     return () => {
       setRequestList([]);
       setTicketList([]);
+      setOrderList([]);
     };
   }, []);
 
-  console.log(requestList);
+  console.log(orderList);
 
   return (
     <div className="seller-ticket-management">
@@ -405,6 +572,22 @@ export default function TicketManagement() {
         dataSource={requestList}
         style={{ backgroundColor: "#ccc" }}
         className="custom-table"
+      />
+
+      <h2 className="seller-ticket-management__subtitle">Order List</h2>
+      <Table
+        columns={requestColumns}
+        dataSource={requestList}
+        style={{ backgroundColor: "#ccc" }}
+        className="custom-table"
+      />
+
+      <EditTicket
+        isOpen={isOpenEdit}
+        setIsOpen={setIsOpenEdit}
+        ticket={chosenTicket}
+        ticketList={ticketList}
+        setTicketList={setTicketList}
       />
     </div>
   );

@@ -67,7 +67,6 @@ class TicketService {
   }
 
   static async createTicket(sellerId, body) {
-
     try {
       const response = await api.post(`${URL}/${sellerId}`, body);
 
@@ -92,6 +91,20 @@ class TicketService {
       }
     } catch (error) {
       return returnValue(false, null, "Delete Ticket Failure");
+    }
+  }
+
+  static async editTicket(body) {
+    try {
+      const response = await api.put(`${URL}`, body);
+
+      if (response.status >= 200 && response.status < 300) {
+        return returnValue(true, response.data, "Edit Ticket Success");
+      } else {
+        return returnValue(false, null, "Edit Ticket Failure");
+      }
+    } catch (error) {
+      return returnValue(false, null, "Edit Ticket Failure");
     }
   }
 }
