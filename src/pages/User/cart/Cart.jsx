@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import "./Cart.scss";
 import { Button } from "antd";
 import { DeleteFilled } from "@ant-design/icons";
@@ -18,6 +18,8 @@ export default function Cart() {
 
   const { user } = useContext(AuthContext);
 
+  const [loading, setLoading] = useState(false);
+
   const getSubtotal = () => {
     const { subTotal } = state.ticket.reduce(
       (acc, item) => {
@@ -31,16 +33,9 @@ export default function Cart() {
     return subTotal;
   };
 
-  if (!state) {
-    return <h1 className="null">Nothing to checkout</h1>;
-  } else if (
-    state.order &&
-    state?.order?.status.toUpperCase() !== "Pending".toUpperCase()
-  ) {
-    return <h1 className="null">This order is already completed</h1>;
-  }
-
   const handleCreateOrder = async () => {
+    setLoading(true);
+
     if (!state.order) {
       let body = {
         iD_Customer: user.iD_Customer,
@@ -70,9 +65,11 @@ export default function Cart() {
         );
 
         if (paymentResponse.success) {
+          setLoading(false);
           window.open(paymentResponse.data.url);
         }
       } else {
+        setLoading(false);
         toast.error("Error creating order");
       }
     } else {
@@ -91,10 +88,20 @@ export default function Cart() {
       );
 
       if (paymentResponse.success) {
+        setLoading(false);
         window.open(paymentResponse.data.url);
       }
     }
   };
+
+  if (!state) {
+    return <h1 className="null">Nothing to checkout</h1>;
+  } else if (
+    state.order &&
+    state?.order?.status.toUpperCase() !== "Pending".toUpperCase()
+  ) {
+    return <h1 className="null">This order is already completed</h1>;
+  }
 
   return (
     <div className="cart">
@@ -154,6 +161,7 @@ export default function Cart() {
             className="cart__btn"
             style={{ backgroundColor: "#1976d2" }}
             onClick={handleCreateOrder}
+            loading={loading}
           >
             PROCEED TO CHECKOUT
           </Button>

@@ -58,7 +58,9 @@ export const AuthProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    fetchUserData();
+    if (accessToken) {
+      fetchUserData();
+    }
   }, []);
 
   return (

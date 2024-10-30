@@ -11,6 +11,7 @@ export default function EditTicket({
   ticket,
   ticketList,
   setTicketList,
+  fetchTicketList,
 }) {
   const [form] = Form.useForm();
   const [isChanged, setIsChanged] = useState(false);
@@ -33,6 +34,8 @@ export default function EditTicket({
         cloneTicket[index] = { ...cloneTicket[index], ...body };
         setTicketList(cloneTicket);
         toast.success(response.message);
+        fetchTicketList();
+        setIsOpen(false);
       }
     } else {
       toast.error(response.message);

@@ -16,7 +16,11 @@ const RequestPriceForm = ({
   const [form] = Form.useForm();
   const { user } = useContext(AuthContext);
 
+  const [loading, setLoading] = useState(false);
+
   const handleSubmit = async (values) => {
+    setLoading(true);
+
     const requestData = {
       iD_Customer: user?.iD_Customer,
       price_want: values.priceWant,
@@ -38,6 +42,8 @@ const RequestPriceForm = ({
     } catch (error) {
       toast.error("An error occurred while submitting the request.");
       console.error("Error when submitting request:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -77,6 +83,7 @@ const RequestPriceForm = ({
               max={currentQuantity}
               placeholder="Enter the quantity"
               style={{ width: "100%" }}
+              disabled={loading}
             />
           </Form.Item>
           <Form.Item
@@ -90,6 +97,7 @@ const RequestPriceForm = ({
               min={5000}
               placeholder="Enter the negotiated price"
               style={{ width: "100%" }}
+              disabled={loading}
             />
           </Form.Item>
 
@@ -98,7 +106,7 @@ const RequestPriceForm = ({
           </Form.Item> */}
 
           <Form.Item>
-            <Button type="primary" htmlType="submit">
+            <Button type="primary" htmlType="submit" loading={loading}>
               Submit Request
             </Button>
           </Form.Item>

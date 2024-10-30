@@ -10,6 +10,10 @@ export default function Shopping() {
 
   const [category, setCategory] = useState(null);
 
+  const [showName, setShowName] = useState(null);
+
+  const [price, setPrice] = useState(null);
+
   const [ticketList, setTicketList] = useState([]);
 
   const [isLoading, setIsLoading] = useState(true);
@@ -24,11 +28,19 @@ export default function Shopping() {
     { label: "Concert", value: "Concert" },
     { label: "Sport", value: "Sport" },
     { label: "Festival", value: "Festival" },
+    { label: "Theater", value: "Theater" },
+    { label: "Museum", value: "Museum" },
+    { label: "Transport", value: "Transport" },
     { label: "Other", value: "Other" },
   ];
 
   const handleFilter = async () => {
-    const response = await TicketService.filterTicket(location, category);
+    const response = await TicketService.filterTicket(
+      location,
+      category,
+      price,
+      showName
+    );
 
     if (response.success) {
       setTicketList(
@@ -40,6 +52,8 @@ export default function Shopping() {
   const fetchApi = async () => {
     try {
       const response = await TicketService.getTicketList();
+
+      console.log(response.data);
 
       if (response.success) {
         const filterData = response.data.filter(
@@ -70,19 +84,21 @@ export default function Shopping() {
         <div className="shopping__filter-option">
           <div className="shopping__filter-option__item">
             <Select
-              style={{ width: "100%", height: "50px" }}
+              style={{ width: "350px", height: "50px" }}
               className="custom-select"
               placeholder="Select locations..."
               onChange={(value) => setLocation(value)}
+              value={location}
               options={options}
             />
           </div>
           <div className="shopping__filter-option__item">
             <Select
-              style={{ width: "100%", height: "50px" }}
+              style={{ width: "350px", height: "50px" }}
               className="custom-select"
               placeholder="Select ticket category..."
               onChange={(value) => setCategory(value)}
+              value={category}
               options={categoryOptions}
             />
           </div>
@@ -94,11 +110,30 @@ export default function Shopping() {
               Filter
             </button>
           </div>
+          <div className="shopping__filter-option__item">
+            <button
+              className="shopping__filter-option__item__button"
+              onClick={() => {
+                setLocation(null);
+                setCategory(null);
+                setPrice(null);
+                setShowName(null);
+                fetchApi();
+              }}
+            >
+              Clear
+            </button>
+          </div>
         </div>
 
         {/* Add filter options here */}
       </div>
-      <TicketList isLoading={isLoading} ticketList={ticketList} />
+
+      {ticketList.length <= 0 ? (
+        <h1 className="null">No Ticket Found</h1>
+      ) : (
+        <TicketList isLoading={isLoading} ticketList={ticketList} />
+      )}
     </div>
   );
 }

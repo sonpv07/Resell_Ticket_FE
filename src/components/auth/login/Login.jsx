@@ -26,6 +26,12 @@ export default function Login() {
       console.log(response);
 
       if (response.success) {
+        setAccessToken(response.data.accessToken);
+        localStorage.setItem(
+          "token",
+          JSON.stringify(response.data.accessToken)
+        );
+
         console.log(response.data);
 
         const user = await UserService.getProfile(response.data.id);
@@ -33,12 +39,6 @@ export default function Login() {
         if (user) {
           setUser(user.data);
           localStorage.setItem("user", JSON.stringify(user.data));
-
-          setAccessToken(response.data.accessToken);
-          localStorage.setItem(
-            "token",
-            JSON.stringify(response.data.accessToken)
-          );
 
           toast.success(response.message);
         }

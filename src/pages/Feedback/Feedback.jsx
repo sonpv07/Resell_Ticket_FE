@@ -17,8 +17,9 @@ const Feedback = ({
 }) => {
   const [feedback, setFeedback] = useState(feedbackData?.comment ?? "");
   const [rating, setRating] = useState(feedbackData?.stars ?? 0);
+  const [loading, setLoading] = useState(false);
 
-  console.log(orderList);
+  // console.log(orderList);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -75,7 +76,7 @@ const Feedback = ({
             <label>Rating:</label>
             <Rate
               onChange={(value) => setRating(value)}
-              disabled={feedbackData !== null}
+              disabled={feedbackData !== null || loading}
               value={rating}
             />
           </div>
@@ -88,14 +89,14 @@ const Feedback = ({
               required
               className="feedback-form__textarea"
               rows={5}
-              disabled={feedbackData !== null}
+              disabled={feedbackData !== null || loading}
             />
           </div>
 
           <button
             type="submit"
             className="submit-btn"
-            disabled={feedbackData !== null}
+            disabled={feedbackData !== null || loading}
           >
             Submit Feedback
           </button>

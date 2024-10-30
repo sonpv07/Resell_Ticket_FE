@@ -206,12 +206,12 @@ export default function TicketDetail() {
                 >
                   Create Negotiation
                 </button>
-                <button
+                {/* <button
                   className="ticket-detail__button ticket-detail__button--tertiary"
                   onClick={handleChatWithSeller}
                 >
                   Chat with Seller
-                </button>
+                </button> */}
               </>
             )}
           </div>

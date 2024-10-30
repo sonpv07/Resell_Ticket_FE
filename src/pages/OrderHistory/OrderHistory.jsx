@@ -30,7 +30,9 @@ const OrderHistory = () => {
 
     if (responseOrders.success) {
       const data = responseOrders.data.filter(
-        (item) => item?.iD_CustomerNavigation?.iD_Customer === user?.iD_Customer
+        (item) =>
+          item?.iD_CustomerNavigation?.iD_Customer === user?.iD_Customer &&
+          item?.status !== "PENDING"
       );
 
       const updatedOrders = data.map((order) => ({
@@ -52,7 +54,7 @@ const OrderHistory = () => {
 
   return (
     <div className="order-history-container">
-      <h1>Your Completed Orders</h1>
+      <h1>Your Orders</h1>
       <table className="order-history-table">
         <thead>
           <tr>
@@ -63,6 +65,7 @@ const OrderHistory = () => {
             <th>Location</th>
             <th>Price</th>
             <th>Status</th>
+            <th>Order Date</th>
             <th>Action</th>
           </tr>
         </thead>
@@ -82,7 +85,8 @@ const OrderHistory = () => {
                 <td>{order?.orderDetails[0]?.iD_TicketNavigation?.seat}</td>
                 <td>{order?.orderDetails[0]?.iD_TicketNavigation?.location}</td>
                 <td>{currencyFormatter(order.totalPrice)} </td>
-                <td>{order.status}</td>
+                <td>{order?.status}</td>
+                <td>{order?.create_At}</td>
                 <td>
                   {order.status === "COMPLETED" ? (
                     order.feedback ? (
@@ -116,7 +120,7 @@ const OrderHistory = () => {
             ))
           ) : (
             <tr>
-              <td colSpan="7">No completed orders found.</td>
+              <td colSpan="7">No orders found.</td>
             </tr>
           )}
         </tbody>

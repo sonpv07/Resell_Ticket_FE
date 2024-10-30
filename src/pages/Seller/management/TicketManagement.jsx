@@ -32,6 +32,15 @@ export default function TicketManagement() {
 
   const columns = [
     {
+      title: "No",
+      dataIndex: "noIndex",
+      key: "noIndex",
+      render: (text, record, index) => (
+        <p style={{ fontWeight: 600 }}>{index + 1}</p>
+      ),
+    },
+
+    {
       title: "Event Name",
       dataIndex: "name",
       key: "name",
@@ -120,6 +129,15 @@ export default function TicketManagement() {
 
   const requestColumns = [
     {
+      title: "No",
+      dataIndex: "noIndex",
+      key: "noIndex",
+      render: (text, record, index) => (
+        <p style={{ fontWeight: 600 }}>{index + 1}</p>
+      ),
+    },
+
+    {
       title: "Ticket",
       dataIndex: "name",
       key: "name",
@@ -204,23 +222,27 @@ export default function TicketManagement() {
     // },
   ];
 
-  const prderColumns = [
+  const orderColumns = [
+    {
+      title: "No",
+      dataIndex: "noIndex",
+      key: "noIndex",
+      render: (text, record, index) => (
+        <p style={{ fontWeight: 600 }}>{index + 1}</p>
+      ),
+    },
+
     {
       title: "Ticket",
       dataIndex: "name",
       key: "name",
       render: (text) => <p style={{ fontWeight: 600 }}>{text}</p>,
     },
+
     {
-      title: "Current Price",
-      dataIndex: "currentPrice",
-      key: "price",
-      render: (text) => <p>{currencyFormatter(text)}</p>,
-    },
-    {
-      title: "Request Price",
-      dataIndex: "requestPrice",
-      key: "price",
+      title: "Total Price",
+      dataIndex: "totalPrice",
+      key: "totalPrice",
       render: (text) => <p>{currencyFormatter(text)}</p>,
     },
     {
@@ -230,64 +252,39 @@ export default function TicketManagement() {
     },
 
     {
-      title: "Action",
-      key: "action",
-      render: (_, record) =>
-        record.status === "Pending" ? (
-          <Space size="middle">
-            <Button
-              type="primary"
-              onClick={() => {
-                console.log(record);
-                handleApproveRequest(
-                  record.buyerId,
-                  record.ticketId,
-                  record.quantity,
-                  record.key,
-                  record.requestPrice
-                );
-              }}
-            >
-              Approve
-            </Button>
-            <Button
-              type="primary"
-              style={{ backgroundColor: "red" }}
-              onClick={() =>
-                handleRejectRequest(
-                  record.buyerId,
-                  record.ticketId,
-                  record.quantity,
-                  record.key
-                )
-              }
-            >
-              Reject
-            </Button>
-          </Space>
-        ) : record.status === "Completed" ? (
-          <Tag color={"#2196f3"} key={"Approve"}>
-            {"Approved".toUpperCase()}
-          </Tag>
-        ) : (
-          <Tag color={"red"} key={"Reject"}>
-            {"Rejected".toUpperCase()}
-          </Tag>
-        ),
+      title: "Order Date",
+      dataIndex: "date",
+      key: "date",
+      render: (text) => <p>{moment(text).format("LLL")}</p>,
     },
 
-    // {
-    //   title: "Status",
-    //   dataIndex: "status",
-    //   key: "status",
-    //   render: (tag) => (
-    //     <>
-    //       <Tag color={tag === "Available" ? "#2196f3" : "#ff9800"} key={tag}>
-    //         {tag.toUpperCase()}
-    //       </Tag>
-    //     </>
-    //   ),
-    // },
+    {
+      title: "Buyer",
+      dataIndex: "buyer",
+      key: "buyer",
+    },
+
+    {
+      title: "Status",
+      dataIndex: "status",
+      key: "status",
+      render: (tag) => (
+        <>
+          <Tag
+            color={
+              tag === "COMPLETED"
+                ? "green"
+                : tag === "FAILED"
+                ? "red"
+                : "yellow"
+            }
+            key={tag}
+          >
+            {tag.toUpperCase()}
+          </Tag>
+        </>
+      ),
+    },
   ];
 
   const fetchApi = async () => {
@@ -297,7 +294,8 @@ export default function TicketManagement() {
       );
 
       if (response.success) {
-        const transformedData = response.data.map((ticket) => ({
+        const transformedData = response.data.map((ticket, index) => ({
+          noIndex: index + 1,
           key: ticket.iD_Ticket,
           name: ticket.show_Name,
           price: ticket.price,
@@ -311,9 +309,11 @@ export default function TicketManagement() {
 
         const { activeCount, soldCount, revenue } = response.data.reduce(
           (acc, ticket) => {
-            const { quantity, ticketsold, price } = ticket;
+            const { quantity, ticketsold, price, status } = ticket;
 
-            acc.activeCount += quantity;
+            if (status === "Available") {
+              acc.activeCount += quantity;
+            }
             acc.soldCount += ticketsold;
             acc.revenue += price * ticketsold;
 
@@ -325,7 +325,7 @@ export default function TicketManagement() {
         setTotalActive(activeCount);
         setTotalSold(soldCount);
         setTotalRevenue(revenue);
-        setTicketList(transformedData);
+        setTicketList(transformedData.reverse());
       }
     } catch (error) {
       console.error(error);
@@ -338,7 +338,8 @@ export default function TicketManagement() {
     );
 
     if (response.success) {
-      const transformedData = response.data.map((request) => ({
+      const transformedData = response.data.map((request, index) => ({
+        noIndex: index + 1,
         key: request?.iD_Request,
         ticketId: request?.iD_Ticket,
         buyerId: request?.iD_Customer,
@@ -349,15 +350,30 @@ export default function TicketManagement() {
         status: request?.status,
       }));
 
-      setRequestList(transformedData);
+      setRequestList(transformedData.reverse());
     }
   };
 
   const fetchOrderData = async () => {
     const response = await OrderService.getOrderBySeller(user.iD_Customer);
 
+    console.log(response);
+
     if (response.success) {
-      setOrderList(response.data);
+      const transformedData = response.data.map((item, index) => ({
+        key: item?.iD_Order,
+        noIndex: index + 1,
+        paymentMethod: item.payment_method,
+        ticketId: item?.orderDetails[0]?.iD_TicketNavigation?.iD_Ticket,
+        buyerId: item?.iD_CustomerNavigation?.iD_Customer,
+        name: item?.orderDetails[0]?.iD_TicketNavigation?.show_Name,
+        totalPrice: item?.totalPrice,
+        date: item?.create_At,
+        status: item?.status,
+        buyer: item?.iD_CustomerNavigation?.name,
+      }));
+
+      setOrderList(transformedData.reverse());
     }
   };
 
@@ -576,8 +592,8 @@ export default function TicketManagement() {
 
       <h2 className="seller-ticket-management__subtitle">Order List</h2>
       <Table
-        columns={requestColumns}
-        dataSource={requestList}
+        columns={orderColumns}
+        dataSource={orderList}
         style={{ backgroundColor: "#ccc" }}
         className="custom-table"
       />
@@ -588,6 +604,7 @@ export default function TicketManagement() {
         ticket={chosenTicket}
         ticketList={ticketList}
         setTicketList={setTicketList}
+        fetchTicketList={fetchApi}
       />
     </div>
   );

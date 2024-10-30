@@ -6,6 +6,7 @@ import Report from "../../../components/report/Report";
 import TicketService from "../../../services/ticket.service";
 import TicketList from "../../../components/ticket/list/TicketList";
 import FeedbackService from "../../../services/feedack.service";
+import OrderService from "../../../services/order.service";
 
 export default function SellerProfile() {
   const { id } = useParams();
@@ -14,29 +15,7 @@ export default function SellerProfile() {
 
   const [seller, setSeller] = useState(null);
 
-  const [tickets, setTickets] = useState([
-    {
-      id: "1",
-      eventName: "Summer Music Festival",
-      date: "2023-07-15",
-      price: 150,
-      quantity: 5,
-    },
-    {
-      id: "2",
-      eventName: "Rock Concert",
-      date: "2023-08-20",
-      price: 200,
-      quantity: 3,
-    },
-    {
-      id: "3",
-      eventName: "Comedy Show",
-      date: "2023-06-30",
-      price: 80,
-      quantity: 10,
-    },
-  ]);
+  const [tickets, setTickets] = useState([]);
 
   const [showReportModal, setShowReportModal] = useState(false);
 
@@ -53,7 +32,19 @@ export default function SellerProfile() {
 
       const ratingData = await FeedbackService.getSellerRating(body);
 
-      setSeller({ ...response.data, average_feedback: ratingData.data });
+      const orderCount = await OrderService.getOrderBySeller(id);
+
+      let orderList = orderCount.data.filter(
+        (item) => item.status === "COMPLETED"
+      );
+
+      console.log(orderCount);
+
+      setSeller({
+        ...response.data,
+        average_feedback: ratingData?.data,
+        orderCount: orderList.length,
+      });
     }
   };
 
@@ -100,6 +91,9 @@ export default function SellerProfile() {
         </p>
         <p>
           <span>Rating:</span> {seller?.average_feedback}⭐
+        </p>
+        <p>
+          <span>Success Order:</span> {seller?.orderCount}
         </p>
 
         <button

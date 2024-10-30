@@ -11,17 +11,21 @@ import { AuthContext } from "../../context/AuthContext";
 function Package() {
   const [packages, setPackages] = useState([]);
 
+  const [loading, setLoading] = useState(false);
+
   const { user } = useContext(AuthContext);
 
   const fetchData = async () => {
     const response = await PackageService.getPackageList();
 
     if (response.success) {
-      setPackages(response.data.slice(0, 3));
+      setPackages(response.data);
     }
   };
 
   const handleBuyPackage = async (pkg) => {
+    setLoading(true);
+
     let body = {
       iD_Customer: user.iD_Customer,
       iD_Package: pkg.iD_Package,
@@ -37,6 +41,8 @@ function Package() {
     if (response.success) {
       window.open(response.data.url);
     }
+
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -73,7 +79,11 @@ function Package() {
               }}
             >
               {/* Tên gói */}
-              <h3 className="package-name">{pkg.name_Package}</h3>
+              <h3 className="package-name">
+                {pkg.name_Package}{" "}
+                {pkg.iD_Package === user?.iD_Package &&
+                  "( Your current package )"}
+              </h3>
 
               {/* Đường gạch ngang */}
               <hr />
@@ -90,7 +100,7 @@ function Package() {
                 <span>Selling Limit:</span> {pkg.ticket_can_post} times
               </p>
 
-              {pkg.iD_Package === user?.iD_Package ? (
+              {/* {pkg.iD_Package === user?.iD_Package ? (
                 <Button
                   type="primary"
                   size="large"
@@ -98,16 +108,18 @@ function Package() {
                 >
                   Your current package
                 </Button>
-              ) : (
-                <Button
-                  type="primary"
-                  size="large"
-                  style={{ borderRadius: "20px", marginTop: "20px" }}
-                  onClick={() => handleBuyPackage(pkg)}
-                >
-                  Get This Plan
-                </Button>
-              )}
+              ) : ( */}
+              <Button
+                type="primary"
+                size="large"
+                style={{ borderRadius: "20px", marginTop: "20px" }}
+                onClick={() => handleBuyPackage(pkg)}
+                disabled={loading}
+                loading={loading && pkg.iD_Package === user?.iD_Package}
+              >
+                Get This Plan
+              </Button>
+              {/* )} */}
             </Card>
           </Col>
         ))}

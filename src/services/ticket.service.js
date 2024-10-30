@@ -50,11 +50,18 @@ class TicketService {
     }
   }
 
-  static async filterTicket(location, ticketCategory) {
+  static async filterTicket(location, ticketCategory, price, show_Name) {
     try {
-      const response = await api.get(
-        `${URL}/filter?ticketCategory=${ticketCategory}&location=${location}}`
-      );
+      const queryParams = [
+        ticketCategory ? `ticketCategory=${ticketCategory}` : "",
+        location ? `location=${location}` : "",
+        price ? `price=${price}` : "",
+        show_Name ? `show_name=${show_Name}` : "",
+      ]
+        .filter(Boolean)
+        .join("&");
+
+      const response = await api.get(`${URL}/filter?${queryParams}`);
 
       if (response.status >= 200 && response.status < 300) {
         return returnValue(true, response.data, "Filter Ticket Success");

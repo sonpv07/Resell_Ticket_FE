@@ -60,8 +60,8 @@ const Header = () => {
         marginLeft: "-20px",
       }}
     >
-      {SETTING_DATA.map((item) => {
-        return (
+      {SETTING_DATA.map((item) =>
+        (item.needPackage && user?.iD_Package !== null) || !item.needPackage ? (
           <Menu.Item
             onClick={() => handleOnClick(item.label)}
             key={item.label}
@@ -74,8 +74,8 @@ const Header = () => {
               <p>{item.label}</p>
             </div>
           </Menu.Item>
-        );
-      })}
+        ) : null
+      )}
     </Menu>
   );
 
@@ -100,11 +100,12 @@ const Header = () => {
 
           {user ? (
             <Dropdown overlay={menu} trigger={["click"]}>
-              <Badge size="small" count={1}>
+              <Badge size="small">
                 <Avatar
                   style={{ cursor: "pointer", background: "#ccc" }}
-                  size={45}
-                  icon={<UserOutlined />}
+                  size={50}
+                  icon={!user?.avatar && <UserOutlined />}
+                  src={user?.avatar}
                 />
               </Badge>
             </Dropdown>
