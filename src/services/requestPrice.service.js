@@ -10,13 +10,9 @@ class RequestPriceService {
       const response = await api.post(`${URL}`, requestData);
 
       if (response.status >= 200 && response.status < 300) {
-        return returnValue(
-          true,
-          response.data,
-          "Request price submitted successfully"
-        );
+        return returnValue(true, response.data, "Create request successfully");
       } else {
-        return returnValue(false, null, "Failed to submit request price");
+        return returnValue(false, null, "Failed to create request price");
       }
     } catch (error) {
       console.error("Error sending request price", error);

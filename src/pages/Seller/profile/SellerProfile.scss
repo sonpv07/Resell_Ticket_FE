@@ -1,7 +1,19 @@
 .seller-profile {
   margin: 0 auto;
   padding: 20px 30px;
-  font-family: Arial, sans-serif;
+
+  &__container {
+    background-color: #2d3d50;
+    padding: 30px;
+    margin: 0 auto;
+    color: white;
+    margin-bottom: 50px;
+    width: 350px;
+    border-radius: 10px;
+    border: 1px solid #3d536d;
+    display: flex;
+    flex-direction: column;
+  }
 
   &__name {
     font-size: 28px;
@@ -19,6 +31,9 @@
     transition: background-color 0.3s;
     font-weight: 600;
     margin-top: 10px;
+    width: 150px;
+    margin: auto;
+    margin-top: 30px;
 
     &:hover {
       background-color: #d32f2f;
@@ -26,18 +41,17 @@
   }
 
   &__info {
-    background-color: #2d3d50;
-    padding: 30px 100px;
-    margin: 0 auto;
-    color: white;
-    border-radius: 4px;
-    margin-bottom: 50px;
     width: fit-content;
     display: flex;
-    flex-direction: column;
-    gap: 10px;
-    border-radius: 10px;
-    border: 1px solid #3d536d;
+    gap: 30px;
+    justify-content: space-between;
+
+    &__detail {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
     p {
       margin: 5px 0;
     }

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext, useEffect } from "react";
 import "./HomePage.scss";
 import SearchBar from "../../components/search-bar/SearchBar";
 import {
@@ -7,6 +7,7 @@ import {
   DATE_FILTER_DATA,
 } from "../../configs/constant";
 import LocationCard from "../../components/auth/location-card/LocationCard";
+import { AuthContext } from "../../context/AuthContext";
 
 const HomePage = () => {
   return (

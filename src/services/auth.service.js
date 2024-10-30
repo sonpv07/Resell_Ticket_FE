@@ -24,7 +24,11 @@ class AuthService {
       const response = await api.post(`${URL}/Register`, body);
 
       if (response.status >= 200 && response.status < 300) {
-        return returnValue(true, response.data, "Register successfully");
+        return returnValue(
+          true,
+          response.data,
+          "Register successfully, please confirm your email"
+        );
       } else {
         console.error("Register fail", response.data);
         return returnValue(false, null, "Register failed");

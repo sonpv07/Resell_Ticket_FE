@@ -1,56 +1,117 @@
-import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { getCustomerOrders  } from '../../services/axios/axios';
-import './OrderHistory.scss'; 
+import React, { useContext, useEffect, useState } from "react";
+import moment from "moment";
+import { Link } from "react-router-dom";
+import "./OrderHistory.scss";
+import Feedback from "../Feedback/Feedback";
+import OrderService from "../../services/order.service";
+import { AuthContext } from "../../context/AuthContext";
+import { currencyFormatter } from "../../utils";
+import FeedbackService from "../../services/feedack.service";
 
-const OrderHistory = ({ customerId }) => {  
+const OrderHistory = () => {
   const [orders, setOrders] = useState([]);
+  const [feedbacks, setFeedbacks] = useState([]);
+  const [isOpenFeedback, setIsOpenFeedback] = useState(false);
+  const [chosenOrder, setChosenOrder] = useState(null);
+  const [chosenFeedback, setChosenFeedback] = useState(null);
+
+  const { user } = useContext(AuthContext);
+
+  const fetchOrders = async () => {
+    const response = await FeedbackService.getFeedbackByCustomer(
+      user.iD_Customer
+    );
+
+    setFeedbacks(response.data);
+
+    const responseOrders = await OrderService.getOrderByUser();
+
+    console.log(responseOrders);
+
+    if (responseOrders.success) {
+      const data = responseOrders.data.filter(
+        (item) =>
+          item?.iD_CustomerNavigation?.iD_Customer === user?.iD_Customer &&
+          item?.status !== "PENDING"
+      );
+
+      const updatedOrders = data.map((order) => ({
+        ...order,
+        feedback: response.data
+          ? response.data.find((fb) => fb.iD_Order === order.iD_Order)
+          : null,
+      }));
+
+      setOrders(updatedOrders.reverse());
+    }
+  };
 
   useEffect(() => {
-    const fetchOrders = async () => {
-      try {
-        const data = await getCustomerOrders (customerId);  
-        setOrders(data);
-      } catch (error) {
-        console.error('Error fetching orders:', error);
-      }
-    };
+    fetchOrders();
+  }, []);
 
-    if (customerId) { 
-      fetchOrders();
-    }
-  }, [customerId]);
+  console.log(orders);
 
   return (
     <div className="order-history-container">
-      <h1>Your Completed Orders</h1>
+      <h1>Your Orders</h1>
       <table className="order-history-table">
         <thead>
           <tr>
             <th>Order ID</th>
-            <th>Show Name</th>
+            <th>Ticket</th>
             <th>Event Date</th>
             <th>Seat</th>
+            <th>Location</th>
             <th>Price</th>
             <th>Status</th>
+            <th>Order Date</th>
             <th>Action</th>
           </tr>
         </thead>
         <tbody>
           {orders.length > 0 ? (
-            orders.map((order) => (
-              <tr key={order.id}>
-                <td>{order.id}</td>
-                <td>{order.showName}</td>
-                <td>{new Date(order.eventDate).toLocaleDateString()}</td>
-                <td>{order.seat}</td>
-                <td>{order.price} VND</td>
-                <td>{order.status}</td>
+            orders.map((order, index) => (
+              <tr key={order?.iD_Order}>
+                <td>{index + 1}</td>
                 <td>
-                  {order.status === 'successful' ? (
-                    <Link to={`/feedback/${order.id}`} className="feedback-btn">
-                      Give Feedback
-                    </Link>
+                  {order?.orderDetails[0]?.iD_TicketNavigation?.show_Name}
+                </td>
+                <td>
+                  {moment(
+                    order?.orderDetails[0]?.iD_TicketNavigation?.event_Date
+                  ).format("LLL")}
+                </td>
+                <td>{order?.orderDetails[0]?.iD_TicketNavigation?.seat}</td>
+                <td>{order?.orderDetails[0]?.iD_TicketNavigation?.location}</td>
+                <td>{currencyFormatter(order.totalPrice)} </td>
+                <td>{order?.status}</td>
+                <td>{moment(order?.create_At).format("LLL")}</td>
+                <td>
+                  {order.status === "COMPLETED" ? (
+                    order.feedback ? (
+                      <p
+                        className="feedback-btn"
+                        onClick={() => {
+                          setChosenFeedback(order.feedback ?? null);
+                          setChosenOrder(order.iD_Order);
+                          setIsOpenFeedback(true);
+                        }}
+                      >
+                        View Your Feedback
+                      </p>
+                    ) : (
+                      <p
+                        className="feedback-btn"
+                        onClick={() => {
+                          setChosenFeedback(order.feedback ?? null);
+                          setChosenOrder(order.iD_Order);
+                          setIsOpenFeedback(true);
+                        }}
+                      >
+                        Give Feedback
+                      </p>
+                    )
                   ) : (
                     <span className="no-feedback">No Feedback Available</span>
                   )}
@@ -59,11 +120,22 @@ const OrderHistory = ({ customerId }) => {
             ))
           ) : (
             <tr>
-              <td colSpan="7">No completed orders found.</td>
+              <td colSpan="7">No orders found.</td>
             </tr>
           )}
         </tbody>
       </table>
+
+      {isOpenFeedback && (
+        <Feedback
+          isOpen={isOpenFeedback}
+          setIsOpen={setIsOpenFeedback}
+          orderId={chosenOrder}
+          feedbackData={chosenFeedback}
+          orderList={orders}
+          setOrderList={setOrders}
+        />
+      )}
     </div>
   );
 };

@@ -15,8 +15,13 @@
   }
 
   &__image-container {
-    width: 300px;
-    height: 425px;
+    width: 400px;
+    height: 450px;
+
+    .rsis-image {
+      object-fit: cover !important;
+      background-size: cover !important;
+    }
   }
 
   &__image {

@@ -8,18 +8,38 @@ import moment from "moment";
 import { AuthContext } from "../../../context/AuthContext";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import RequestPriceService from "../../../services/requestPrice.service";
+import OrderService from "../../../services/order.service";
+import { PAYMENT_METHODS } from "../../../configs/constant";
+import EditTicket from "../../Ticket/EditTicket/EditTicket";
+import NotificationService from "../../../services/notification.service";
 
 export default function TicketManagement() {
+  const [requestList, setRequestList] = useState([]);
   const [ticketList, setTicketList] = useState([]);
+  const [orderList, setOrderList] = useState([]);
+
   const [totalActive, setTotalActive] = useState(0);
   const [totalSold, setTotalSold] = useState(0);
   const [totalRevenue, setTotalRevenue] = useState(0);
+
+  const [isOpenEdit, setIsOpenEdit] = useState(false);
+  const [chosenTicket, setChosenTicket] = useState(null);
 
   const navigate = useNavigate();
 
   const { user } = useContext(AuthContext);
 
   const columns = [
+    {
+      title: "No",
+      dataIndex: "noIndex",
+      key: "noIndex",
+      render: (text, record, index) => (
+        <p style={{ fontWeight: 600 }}>{index + 1}</p>
+      ),
+    },
+
     {
       title: "Event Name",
       dataIndex: "name",
@@ -86,7 +106,15 @@ export default function TicketManagement() {
       key: "action",
       render: (_, record) => (
         <Space size="middle">
-          <Button type="primary">Edit</Button>
+          <Button
+            type="primary"
+            onClick={() => {
+              setChosenTicket(record);
+              setIsOpenEdit(true);
+            }}
+          >
+            Edit
+          </Button>
           {/* <Button
             type="primary"
             style={{ backgroundColor: "red" }}
@@ -99,6 +127,166 @@ export default function TicketManagement() {
     },
   ];
 
+  const requestColumns = [
+    {
+      title: "No",
+      dataIndex: "noIndex",
+      key: "noIndex",
+      render: (text, record, index) => (
+        <p style={{ fontWeight: 600 }}>{index + 1}</p>
+      ),
+    },
+
+    {
+      title: "Ticket",
+      dataIndex: "name",
+      key: "name",
+      render: (text) => <p style={{ fontWeight: 600 }}>{text}</p>,
+    },
+    {
+      title: "Current Price",
+      dataIndex: "currentPrice",
+      key: "price",
+      render: (text) => <p>{currencyFormatter(text)}</p>,
+    },
+    {
+      title: "Request Price",
+      dataIndex: "requestPrice",
+      key: "price",
+      render: (text) => <p>{currencyFormatter(text)}</p>,
+    },
+    {
+      title: "Quantity",
+      dataIndex: "quantity",
+      key: "quantity",
+    },
+
+    {
+      title: "Action",
+      key: "action",
+      render: (_, record) =>
+        record.status === "Pending" ? (
+          <Space size="middle">
+            <Button
+              type="primary"
+              onClick={() => {
+                console.log(record);
+                handleApproveRequest(
+                  record.buyerId,
+                  record.ticketId,
+                  record.quantity,
+                  record.key,
+                  record.requestPrice
+                );
+              }}
+            >
+              Approve
+            </Button>
+            <Button
+              type="primary"
+              style={{ backgroundColor: "red" }}
+              onClick={() =>
+                handleRejectRequest(
+                  record.buyerId,
+                  record.ticketId,
+                  record.quantity,
+                  record.key
+                )
+              }
+            >
+              Reject
+            </Button>
+          </Space>
+        ) : record.status === "Completed" ? (
+          <Tag color={"#2196f3"} key={"Approve"}>
+            {"Approved".toUpperCase()}
+          </Tag>
+        ) : (
+          <Tag color={"red"} key={"Reject"}>
+            {"Rejected".toUpperCase()}
+          </Tag>
+        ),
+    },
+
+    // {
+    //   title: "Status",
+    //   dataIndex: "status",
+    //   key: "status",
+    //   render: (tag) => (
+    //     <>
+    //       <Tag color={tag === "Available" ? "#2196f3" : "#ff9800"} key={tag}>
+    //         {tag.toUpperCase()}
+    //       </Tag>
+    //     </>
+    //   ),
+    // },
+  ];
+
+  const orderColumns = [
+    {
+      title: "No",
+      dataIndex: "noIndex",
+      key: "noIndex",
+      render: (text, record, index) => (
+        <p style={{ fontWeight: 600 }}>{index + 1}</p>
+      ),
+    },
+
+    {
+      title: "Ticket",
+      dataIndex: "name",
+      key: "name",
+      render: (text) => <p style={{ fontWeight: 600 }}>{text}</p>,
+    },
+
+    {
+      title: "Total Price",
+      dataIndex: "totalPrice",
+      key: "totalPrice",
+      render: (text) => <p>{currencyFormatter(text)}</p>,
+    },
+    {
+      title: "Quantity",
+      dataIndex: "quantity",
+      key: "quantity",
+    },
+
+    {
+      title: "Order Date",
+      dataIndex: "date",
+      key: "date",
+      render: (text) => <p>{moment(text).format("LLL")}</p>,
+    },
+
+    {
+      title: "Buyer",
+      dataIndex: "buyer",
+      key: "buyer",
+    },
+
+    {
+      title: "Status",
+      dataIndex: "status",
+      key: "status",
+      render: (tag) => (
+        <>
+          <Tag
+            color={
+              tag === "COMPLETED"
+                ? "green"
+                : tag === "FAILED"
+                ? "red"
+                : "yellow"
+            }
+            key={tag}
+          >
+            {tag.toUpperCase()}
+          </Tag>
+        </>
+      ),
+    },
+  ];
+
   const fetchApi = async () => {
     try {
       const response = await TicketService.getTicketListBySeller(
@@ -106,7 +294,8 @@ export default function TicketManagement() {
       );
 
       if (response.success) {
-        const transformedData = response.data.map((ticket) => ({
+        const transformedData = response.data.map((ticket, index) => ({
+          noIndex: index + 1,
           key: ticket.iD_Ticket,
           name: ticket.show_Name,
           price: ticket.price,
@@ -120,9 +309,11 @@ export default function TicketManagement() {
 
         const { activeCount, soldCount, revenue } = response.data.reduce(
           (acc, ticket) => {
-            const { quantity, ticketsold, price } = ticket;
+            const { quantity, ticketsold, price, status } = ticket;
 
-            acc.activeCount += quantity;
+            if (status === "Available") {
+              acc.activeCount += quantity;
+            }
             acc.soldCount += ticketsold;
             acc.revenue += price * ticketsold;
 
@@ -134,10 +325,173 @@ export default function TicketManagement() {
         setTotalActive(activeCount);
         setTotalSold(soldCount);
         setTotalRevenue(revenue);
-        setTicketList(transformedData);
+        setTicketList(transformedData.reverse());
       }
     } catch (error) {
       console.error(error);
+    }
+  };
+
+  const fetchRequestData = async () => {
+    const response = await RequestPriceService.getRequestPrice(
+      user.iD_Customer
+    );
+
+    if (response.success) {
+      const transformedData = response.data.map((request, index) => ({
+        noIndex: index + 1,
+        key: request?.iD_Request,
+        ticketId: request?.iD_Ticket,
+        buyerId: request?.iD_Customer,
+        name: request?.ticketNavigation?.show_Name,
+        currentPrice: request?.ticketNavigation?.price,
+        requestPrice: request?.price_want,
+        quantity: request?.quantity,
+        status: request?.status,
+      }));
+
+      setRequestList(transformedData.reverse());
+    }
+  };
+
+  const fetchOrderData = async () => {
+    const response = await OrderService.getOrderBySeller(user.iD_Customer);
+
+    console.log(response);
+
+    if (response.success) {
+      const transformedData = response.data.map((item, index) => ({
+        key: item?.iD_Order,
+        noIndex: index + 1,
+        paymentMethod: item.payment_method,
+        ticketId: item?.orderDetails[0]?.iD_TicketNavigation?.iD_Ticket,
+        quantity: item?.orderDetails[0]?.quantity,
+        buyerId: item?.iD_CustomerNavigation?.iD_Customer,
+        name: item?.orderDetails[0]?.iD_TicketNavigation?.show_Name,
+        totalPrice: item?.totalPrice,
+        date: item?.create_At,
+        status: item?.status,
+        buyer: item?.iD_CustomerNavigation?.name,
+      }));
+
+      setOrderList(transformedData.reverse());
+    }
+  };
+
+  const handleApproveRequest = async (
+    buyerId,
+    ticketId,
+    quantity,
+    requestId,
+    requestPrice
+  ) => {
+    let body = {
+      iD_Customer: buyerId,
+      payment_method: PAYMENT_METHODS.VNPAY,
+      totalPrice: quantity * requestPrice,
+      ticketItems: [
+        {
+          iD_Ticket: ticketId,
+          quantity: quantity,
+        },
+      ],
+    };
+
+    console.log(body);
+
+    const response = await OrderService.createOrder(body);
+
+    if (response.success) {
+      const statusResponse = await RequestPriceService.editRequestStatus(
+        requestId,
+        "Completed"
+      );
+
+      if (statusResponse.success) {
+        const request = requestList.findIndex(
+          (request) => request.key === requestId
+        );
+
+        if (request >= 0) {
+          const updatedRequestList = [...requestList];
+          updatedRequestList[request] = {
+            ...updatedRequestList[request],
+            status: "Completed",
+          };
+          setRequestList(updatedRequestList);
+
+          let notificationBody = {
+            title: "Your request has been approved",
+            event: "",
+            organizing_time: new Date(),
+            iD_Ticket: ticketId,
+            iD_Order: response.data.orderId,
+            iD_Request: requestId,
+            iD_Customer: buyerId,
+          };
+
+          console.log(notificationBody);
+
+          const notificationResponse =
+            await NotificationService.createNotification(notificationBody);
+
+          if (notificationResponse.success) {
+            toast.success("Approve request successfully!");
+          }
+        } else {
+          toast.error("Approve request fail!");
+        }
+      }
+    } else {
+      toast.error("Approve request fail!");
+    }
+  };
+
+  const handleRejectRequest = async (
+    buyerId,
+    ticketId,
+    quantity,
+    requestId
+  ) => {
+    const statusResponse = await RequestPriceService.editRequestStatus(
+      requestId,
+      "Rejected"
+    );
+
+    if (statusResponse.success) {
+      const request = requestList.findIndex(
+        (request) => request.key === requestId
+      );
+
+      if (request >= 0) {
+        const updatedRequestList = [...requestList];
+        updatedRequestList[request] = {
+          ...updatedRequestList[request],
+          status: "Rejected",
+        };
+        setRequestList(updatedRequestList);
+
+        let notificationBody = {
+          title: "Your request has been rejected",
+          event: "",
+          organizing_time: new Date(),
+          iD_Ticket: ticketId,
+          iD_Order: null,
+          iD_Request: requestId,
+          iD_Customer: buyerId,
+        };
+
+        const notificationResponse =
+          await NotificationService.createNotification(notificationBody);
+
+        if (notificationResponse.success) {
+          toast.success("Reject request successfully!");
+        }
+      } else {
+        toast.error("Approve request fail!");
+      }
+    } else {
+      toast.error("Reject request fail!");
     }
   };
 
@@ -155,13 +509,39 @@ export default function TicketManagement() {
   // };
 
   useEffect(() => {
-    fetchApi();
+    const fetchDataAndTickets = async () => {
+      await Promise.all([fetchApi(), fetchRequestData(), fetchOrderData()]);
+    };
+    fetchDataAndTickets();
+
+    return () => {
+      setRequestList([]);
+      setTicketList([]);
+      setOrderList([]);
+    };
   }, []);
 
-  useEffect(() => {}, [ticketList]);
+  console.log(orderList);
 
   return (
     <div className="seller-ticket-management">
+      <div style={{ marginBottom: "30px" }}>
+        <h1 className="seller-ticket-management__title">Package Information</h1>
+        <div className="seller-ticket-management__package">
+          <p>
+            <span>Current Package:</span>{" "}
+            {user?.iD_PackageNavigation?.name_Package}
+          </p>
+          <p>
+            <span>Selling Post:</span> {user?.number_of_tickets_can_posted}
+          </p>
+          <p>
+            <span>End Time: </span>
+            {moment(user?.package_expiration_date).format("MMMM D, YYYY")}
+          </p>
+        </div>
+      </div>
+
       <h1 className="seller-ticket-management__title">Ticket Management</h1>
 
       <div className="seller-ticket-management__stats">
@@ -200,7 +580,32 @@ export default function TicketManagement() {
         columns={columns}
         dataSource={ticketList}
         style={{ backgroundColor: "#ccc" }}
-        className="custom-table" // Apply the custom class
+        className="custom-table"
+      />
+
+      <h2 className="seller-ticket-management__subtitle">Request List</h2>
+      <Table
+        columns={requestColumns}
+        dataSource={requestList}
+        style={{ backgroundColor: "#ccc" }}
+        className="custom-table"
+      />
+
+      <h2 className="seller-ticket-management__subtitle">Order List</h2>
+      <Table
+        columns={orderColumns}
+        dataSource={orderList}
+        style={{ backgroundColor: "#ccc" }}
+        className="custom-table"
+      />
+
+      <EditTicket
+        isOpen={isOpenEdit}
+        setIsOpen={setIsOpenEdit}
+        ticket={chosenTicket}
+        ticketList={ticketList}
+        setTicketList={setTicketList}
+        fetchTicketList={fetchApi}
       />
     </div>
   );

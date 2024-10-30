@@ -1,36 +1,42 @@
 .feedback-container {
   padding: 30px;
-  background-color: #f2f2f2;
-  min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
+  background-color: #fff;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  z-index: 10;
 
-  h1 {
-    font-size: 24px;
-    color: #333;
-    margin-bottom: 20px;
-    display: flex;
-    align-items: center;
-
-    svg {
-      margin-right: 10px;
-    }
+  &__title {
+    font-size: 28px;
+    color: black !important;
+    margin-bottom: 0 !important;
   }
 
   .feedback-form {
     width: 100%;
     max-width: 500px;
-    background-color: #fff;
     padding: 20px;
     border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     display: flex;
     flex-direction: column;
+    gap: 15px;
 
-    &__label {
-      margin-bottom: 20px;
-      font-size: 16px;
+    &__item {
+      display: flex;
+      flex-direction: column;
+    }
+
+    label {
+      margin-bottom: 12px; // Consistent spacing
+      font-size: 18px;
       color: #333;
     }
 
@@ -44,7 +50,7 @@
       transition: border 0.3s ease;
 
       &:focus {
-        border-color: #4CAF50;
+        border-color: #1976d2; // Consistent primary color
       }
     }
 
@@ -60,18 +66,18 @@
         transition: color 0.3s;
 
         &.filled {
-          color: #FFD700;
+          color: #ffd700;
         }
 
         &:hover {
-          color: #FFD700;
+          color: #ffd700;
         }
       }
     }
 
-    &__submit-btn {
-      padding: 12px 20px;
-      background-color: #4CAF50;
+    .submit-btn {
+      padding: 14px 22px;
+      background-color: #1976d2;
       color: #fff;
       border: none;
       border-radius: 5px;
@@ -80,7 +86,7 @@
       transition: background-color 0.3s ease;
 
       &:hover {
-        background-color: #45a049;
+        background-color: #1565c0;
       }
     }
   }

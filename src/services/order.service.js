@@ -36,7 +36,9 @@ class OrderService {
   }
   static async getOrderBySeller(id) {
     try {
-      const response = await api.get(`${URL}/all-order/${id}`);
+      const response = await api.get(
+        `${URL}/all-order-sellerid?sellerid=${id}`
+      );
 
       if (response.status >= 200 && response.status < 300) {
         return returnValue(true, response.data, "Get Order successfully");
@@ -47,14 +49,20 @@ class OrderService {
       return returnValue(false, null, "Get Order fail");
     }
   }
-  
-  static async fetchOrders() {
+
+  static async orderCountBySeller(id) {
     try {
-      const response = await api.get(`${URL}`);
-      return response.data;
+      const response = await api.get(
+        `${URL}/total-all-order-sellerid?sellerid=${id}`
+      );
+
+      if (response.status >= 200 && response.status < 300) {
+        return returnValue(true, response.data, "Get Order successfully");
+      } else {
+        return returnValue(false, null, "Get Order fail");
+      }
     } catch (error) {
-      console.error("Failed to fetch orders:", error);
-      throw error;
+      return returnValue(false, null, "Get Order fail");
     }
   }
 }

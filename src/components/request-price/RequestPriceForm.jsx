@@ -1,84 +1,118 @@
 import React, { useContext, useState, useEffect } from "react";
+import "./RequestPriceForm.scss";
 import { Form, Input, InputNumber, Button } from "antd";
-import { toast, ToastContainer } from "react-toastify";
-import 'react-toastify/dist/ReactToastify.css';
 import RequestPriceService from "../../services/requestPrice.service";
-import { AuthContext } from "../../context/AuthContext"; 
+import { AuthContext } from "../../context/AuthContext";
+import { toast } from "react-toastify";
+import Overlay from "../overlay/Overlay";
 
-const RequestPriceForm = () => {
+const RequestPriceForm = ({
+  isOpen,
+  setIsOpen,
+  ticketId,
+  currentPrice,
+  currentQuantity,
+}) => {
   const [form] = Form.useForm();
-  const { user } = useContext(AuthContext); // Lấy user info từ context
-  const [currentTime, setCurrentTime] = useState("");
+  const { user } = useContext(AuthContext);
 
-  useEffect(() => {
-    // Lấy thời gian hiện tại
-    const now = new Date();
-    setCurrentTime(now.toISOString());
-  }, []);
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (values) => {
+    setLoading(true);
+
     const requestData = {
-      iD_Customer: user?.id,  // Lấy ID cus từ context
-      price_want: values.priceWant || null,  
-      history: currentTime,  // Sử dụng thời gian hiện tại
+      iD_Customer: user?.iD_Customer,
+      price_want: values.priceWant,
+      quantity: values.quantity,
+      history: new Date().toISOString(),
+      iD_Ticket: ticketId,
+      status: "Pending",
     };
 
     try {
       const response = await RequestPriceService.sendRequestPrice(requestData);
 
       if (response.success) {
-        toast.success("Request submitted successfully!");
+        setIsOpen(false);
+        toast.success(response.message);
       } else {
-        toast.error("Failed to submit request: " + response.message);
+        toast.error(response.message);
       }
     } catch (error) {
       toast.error("An error occurred while submitting the request.");
       console.error("Error when submitting request:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
+  console.log(currentQuantity);
+
   return (
-    <div>
-      <ToastContainer /> 
-      <Form
-        form={form}
-        layout="vertical"
-        onFinish={handleSubmit}
-        style={{ maxWidth: 600, margin: "0 auto", padding: "20px", marginTop: "80px", background: "#f0f2f5", borderRadius: "10px" }}
-      >
-        <Form.Item
-          label="Customer ID"
-          name="customerId"
-        >
-          <Input value={user?.id} disabled /> 
-        </Form.Item>
+    <Overlay isOpen={isOpen} onClose={() => setIsOpen(false)}>
+      <div className="request-form__container">
+        <h2 style={{ textAlign: "center", color: "black" }}>
+          Create a request price
+        </h2>
 
-        <Form.Item
-          label="Negotiated Price"
-          name="priceWant"
-          rules={[{ required: true, message: "Please input the negotiated price!" }]}
+        <Form
+          form={form}
+          layout="vertical"
+          onFinish={handleSubmit}
+          style={{
+            maxWidth: 600,
+            margin: "0 auto",
+            borderRadius: "10px",
+            width: "100%",
+          }}
         >
-          <InputNumber
-            min={0}
-            placeholder="Enter the negotiated price"
-            style={{ width: "100%" }}
-          />
-        </Form.Item>
+          {/* <Form.Item label="Customer ID" name="customerId">
+            <Input value={user?.id} disabled />
+          </Form.Item> */}
 
-        <Form.Item
-          label="History (Current Date)"
-          name="history"
-        >
-          <Input value={currentTime} disabled />
-        </Form.Item>
+          <Form.Item
+            label="Quantity"
+            name="quantity"
+            rules={[
+              { required: true, message: "Please input ticket quantity!" },
+            ]}
+          >
+            <InputNumber
+              min={1}
+              max={currentQuantity}
+              placeholder="Enter the quantity"
+              style={{ width: "100%" }}
+              disabled={loading}
+            />
+          </Form.Item>
+          <Form.Item
+            label="Negotiated Price"
+            name="priceWant"
+            rules={[
+              { required: true, message: "Please input the negotiated price!" },
+            ]}
+          >
+            <InputNumber
+              min={5000}
+              placeholder="Enter the negotiated price"
+              style={{ width: "100%" }}
+              disabled={loading}
+            />
+          </Form.Item>
 
-        <Form.Item>
-          <Button type="primary" htmlType="submit">
-            Submit Request
-          </Button>
-        </Form.Item>
-      </Form>
-    </div>
+          {/* <Form.Item label="History (Current Date)" name="history">
+            <Input value={currentTime} disabled />
+          </Form.Item> */}
+
+          <Form.Item>
+            <Button type="primary" htmlType="submit" loading={loading}>
+              Submit Request
+            </Button>
+          </Form.Item>
+        </Form>
+      </div>
+    </Overlay>
   );
 };
 

@@ -7,15 +7,24 @@ import TicketService from "../../../services/ticket.service";
 import UserService from "../../../services/user.service";
 import moment from "moment";
 import { AuthContext } from "../../../context/AuthContext";
+import RequestPriceForm from "../../../components/request-price/RequestPriceForm";
+import SimpleImageSlider from "react-simple-image-slider";
+import FeedbackService from "../../../services/feedack.service";
 
 export default function TicketDetail() {
   const navigate = useNavigate();
 
   const [ticketData, setTicketData] = useState(null);
 
+  const [imgList, setImgList] = useState([]);
+
   const [sellerInfo, setSellerInfo] = useState(null);
 
+  const [sellerRating, setSellerRating] = useState(0);
+
   const [isLoading, setIsLoading] = useState(true);
+
+  const [isOpenRequest, setIsOpenRequest] = useState(false);
 
   const { id } = useParams();
 
@@ -37,6 +46,7 @@ export default function TicketDetail() {
             show_Name: ticketData.Show_Name,
             quantity: selectedQuantity,
             seller: ticketData.iD_CustomerNavigation.name,
+            image: ticketData?.image.split(",")[0],
           },
         ],
       },
@@ -56,6 +66,7 @@ export default function TicketDetail() {
 
       if (response.success) {
         setTicketData(response.data);
+        setImgList(response.data.image.split(","));
 
         const sellerData = await UserService.getProfile(
           response.data.iD_Customer
@@ -63,6 +74,14 @@ export default function TicketDetail() {
 
         if (sellerData.success) {
           setSellerInfo(sellerData.data);
+
+          let body = {
+            iD_Customer: sellerData.data.iD_Customer,
+          };
+
+          const ratingData = await FeedbackService.getSellerRating(body);
+
+          setSellerRating(ratingData.data);
         }
       }
     } catch (error) {
@@ -76,7 +95,7 @@ export default function TicketDetail() {
     fetchData();
   }, [id]);
 
-  console.log(ticketData, user);
+  console.log(imgList);
 
   return (
     <div className="ticket-detail">
@@ -84,12 +103,14 @@ export default function TicketDetail() {
         {/* Ticket Image Section */}
         <div className="ticket-detail__image-container">
           {isLoading ? (
-            <Skeleton.Image style={{ width: 200, height: 200 }} />
+            <Skeleton.Image style={{ width: 400, height: 450 }} />
           ) : (
-            <img
-              src={ticketData?.image}
-              alt={ticketData?.event_info?.name}
-              className="ticket-detail__image"
+            <SimpleImageSlider
+              width={400}
+              height={450}
+              images={imgList}
+              showBullets={true}
+              showNavs={true}
             />
           )}
         </div>
@@ -182,15 +203,16 @@ export default function TicketDetail() {
                 <button
                   className="ticket-detail__button ticket-detail__button--secondary"
                   disabled={ticketData?.quantity === 0}
+                  onClick={() => setIsOpenRequest(true)}
                 >
                   Create Negotiation
                 </button>
-                <button
+                {/* <button
                   className="ticket-detail__button ticket-detail__button--tertiary"
                   onClick={handleChatWithSeller}
                 >
                   Chat with Seller
-                </button>
+                </button> */}
               </>
             )}
           </div>
@@ -217,8 +239,7 @@ export default function TicketDetail() {
                   <span>Email:</span> {sellerInfo?.email}
                 </div>
                 <div className="ticket-detail__seller-rating">
-                  <span> Rating:</span>{" "}
-                  {sellerInfo?.average_feedback.toFixed(1)}
+                  <span> Rating:</span> {sellerRating}
                   <span className="ticket-detail__star">⭐</span>
                 </div>
               </>
@@ -258,6 +279,16 @@ export default function TicketDetail() {
           </>
         )}
       </div>
+
+      {isOpenRequest && (
+        <RequestPriceForm
+          isOpen={isOpenRequest}
+          setIsOpen={setIsOpenRequest}
+          ticketId={id}
+          currentPrice={ticketData?.price}
+          currentQuantity={ticketData?.quantity}
+        />
+      )}
     </div>
   );
 }

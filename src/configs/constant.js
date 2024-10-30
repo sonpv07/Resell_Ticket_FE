@@ -4,6 +4,8 @@ const {
   BellFilled,
   LogoutOutlined,
   CalendarFilled,
+  ShoppingCartOutlined,
+  SolutionOutlined,
 } = require("@ant-design/icons");
 
 export const LOCATION_DATA = [
@@ -46,32 +48,37 @@ export const SETTING_DATA = [
   {
     id: 1,
     icon: <SettingFilled />,
+    needPackage: false,
     label: "Profile",
   },
   {
     id: 2,
     icon: <NotificationFilled />,
     label: "Notifications",
+    needPackage: false,
   },
-  {
-    id: 3,
-    icon: <BellFilled />,
-    label: "Ticket alerts",
-  },
+  // {
+  //   id: 3,
+  //   icon: <BellFilled />,
+  //   label: "Ticket alerts",
+  // },
   {
     id: 4,
-    icon: <BellFilled />,
+    icon: <ShoppingCartOutlined />,
     label: "Order History",
+    needPackage: false,
   },
   {
     id: 5,
-    icon: <BellFilled />,
+    icon: <SolutionOutlined />,
     label: "Seller Space",
+    needPackage: true,
   },
   {
     id: 6,
     icon: <LogoutOutlined />,
     label: "Logout",
+    needPackage: false,
   },
 ];
 

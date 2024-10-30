@@ -1,0 +1,122 @@
+.admin-user-page {
+  padding: 20px;
+  background-color: #1e1e2f;
+  color: #ffffff;
+
+  .admin-title {
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    color: #ffffff;
+  }
+
+  .filter-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    gap: 10px;
+
+    label {
+      font-size: 16px;
+      font-weight: 500;
+      color: #e0e0e0;
+    }
+
+    select {
+      background-color: #333355;
+      color: #ffffff;
+      border: 1px solid #4caf50;
+      padding: 5px 10px;
+      border-radius: 4px;
+
+      &:focus {
+        outline: none;
+        border-color: #66bb6a;
+      }
+    }
+
+    .filter-button {
+      padding: 8px 16px;
+      background-color: #4caf50;
+      color: #ffffff;
+      border: none;
+      border-radius: 4px;
+      font-weight: 500;
+      cursor: pointer;
+
+      &:hover {
+        background-color: #66bb6a;
+      }
+    }
+  }
+
+  .admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+    background-color: #2a2a40;
+    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.3);
+    border-radius: 8px;
+    overflow: hidden;
+
+    th, td {
+      padding: 12px;
+      text-align: left;
+    }
+
+    th {
+      background-color: #333355;
+      color: #e0e0e0;
+      font-weight: 500;
+      border-bottom: 1px solid #404060;
+    }
+
+    td {
+      color: #c7c7d1;
+      border-bottom: 1px solid #404060;
+
+      &:first-child {
+        font-weight: 500;
+      }
+
+      .avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid #4caf50;
+      }
+    }
+
+    tr:hover {
+      background-color: #3d3d5c;
+    }
+  }
+
+  .pagination {
+    display: flex;
+    justify-content: center;
+    padding: 16px;
+    background-color: #2a2a40;
+    border-radius: 8px;
+    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.3);
+
+    .ant-pagination-item,
+    .ant-pagination-prev,
+    .ant-pagination-next {
+      border-color: #4caf50;
+      color: #ffffff;
+
+      &:hover {
+        border-color: #66bb6a;
+        color: #ffffff;
+      }
+    }
+
+    .ant-pagination-item-active {
+      background-color: #4caf50;
+      border-color: #4caf50;
+      color: #ffffff;
+    }
+  }
+}

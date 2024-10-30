@@ -13,7 +13,7 @@ class UserService {
         return returnValue(false, null, "");
       }
     } catch (error) {
-      console.error("Error Login", error);
+      console.error("Error get profile", error);
     }
   }
 

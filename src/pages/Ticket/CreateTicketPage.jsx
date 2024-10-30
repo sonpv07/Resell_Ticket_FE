@@ -4,9 +4,12 @@ import { toast } from "react-toastify";
 import TicketService from "../../services/ticket.service";
 import { AuthContext } from "../../context/AuthContext";
 import FirebaseService from "../../services/firebase.service";
+import { Button } from "antd";
 
 const CreateTicketPage = () => {
-  const { user } = useContext(AuthContext);
+  const { user, setUser } = useContext(AuthContext);
+
+  const [loading, setLoading] = useState(false);
 
   const [ticket, setTicket] = useState({
     price: "",
@@ -22,7 +25,7 @@ const CreateTicketPage = () => {
     image: "",
   });
 
-  const [ticketImage, setTicketImage] = useState(null);
+  const [ticketImage, setTicketImage] = useState([]);
 
   const [errors, setErrors] = useState({
     price: "",
@@ -30,7 +33,7 @@ const CreateTicketPage = () => {
     event_Date: "",
   });
 
-  const [imagePreview, setImagePreview] = useState(null);
+  const [imagePreview, setImagePreview] = useState([]);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -83,28 +86,25 @@ const CreateTicketPage = () => {
   };
 
   const handleImageChange = (e) => {
-    const file = e.target.files[0];
+    const file = e.target.files;
+
     if (file) {
       setTicketImage(file);
-
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreview(reader.result);
-      };
-      reader.readAsDataURL(file);
     }
   };
 
   const uploadImagesFile = async () => {
     try {
       const formData = new FormData();
-      formData.append("Image", ticketImage);
+      for (const single_file of ticketImage) {
+        formData.append("images", single_file);
+      }
 
       const response = await FirebaseService.uploadImage(formData);
 
       if (response.success) {
         console.log(response);
-        return response.data;
+        return response.data.join(",");
       }
     } catch (err) {
       console.log(err);
@@ -138,24 +138,19 @@ const CreateTicketPage = () => {
     }
 
     try {
+      setLoading(true);
+
       let imgURL = null;
-
       imgURL = await uploadImagesFile();
-
       console.log(imgURL);
-
       if (imgURL !== null) {
         let body = { ...ticket };
-
         body.image = imgURL;
-
         const response = await TicketService.createTicket(
           user.iD_Customer,
           body
         );
-
         console.log(response);
-
         if (response.success) {
           toast.success(response.message);
           setTicket({
@@ -167,19 +162,36 @@ const CreateTicketPage = () => {
             event_Date: "",
             show_Name: "",
             description: "",
-            seat: null,
+            seat: "",
             location: "",
             image: null,
           });
-
           setImagePreview(null);
+
+          setTicketImage([]);
+
+          const newUser = {
+            ...user,
+            number_of_tickets_can_posted:
+              user?.number_of_tickets_can_posted - 1,
+          };
+
+          console.log(newUser);
+
+          setUser(newUser);
+
+          localStorage.setItem("user", JSON.stringify(newUser));
         }
       }
     } catch (error) {
       toast.error("Failed to create ticket. Please try again later.");
       console.error("API Error:", error);
+    } finally {
+      setLoading(false);
     }
   };
+
+  console.log(ticketImage);
 
   return (
     <div className="create-ticket-container">
@@ -206,12 +218,23 @@ const CreateTicketPage = () => {
             value={ticket.price}
             onChange={handleChange}
             required
+            disabled={loading}
           />
           {errors.price && <span className="error">{errors.price}</span>}
         </div>
         <div className="create-ticket-form__item">
           <label>Location:</label>
-          <select
+
+          <input
+            type="text"
+            name="location"
+            value={ticket.location}
+            onChange={handleChange}
+            required
+            disabled={loading}
+          />
+
+          {/* <select
             name="location"
             value={ticket.location}
             onChange={handleChange}
@@ -221,7 +244,7 @@ const CreateTicketPage = () => {
             <option value="Concert">Ha Noi</option>
             <option value="Ho Chi Minh">Ho Chi Minh</option>
             <option value="Da Nang">Da Nang</option>
-          </select>
+          </select> */}
         </div>
         <div className="create-ticket-form__item">
           <label>Ticket Category:</label>
@@ -230,6 +253,7 @@ const CreateTicketPage = () => {
             value={ticket.ticket_category}
             onChange={handleChange}
             required
+            disabled={loading}
           >
             <option value="">Select a category</option>
             <option value="Concert">Concert</option>
@@ -245,6 +269,7 @@ const CreateTicketPage = () => {
             name="seat"
             value={ticket.seat}
             onChange={handleChange}
+            disabled={loading}
           />
         </div>
 
@@ -260,6 +285,7 @@ const CreateTicketPage = () => {
             checked={ticket.ticket_type}
             onChange={handleChange}
             style={{ width: "50px", backgroundColor: "transparent" }}
+            disabled={loading}
           />
           <span>{ticket.ticket_type ? "True" : "False"}</span>
         </div>
@@ -270,7 +296,7 @@ const CreateTicketPage = () => {
             name="quantity"
             value={ticket.seat ? 1 : ticket.quantity}
             onChange={handleChange}
-            disabled={ticket.seat ? true : false}
+            disabled={ticket.seat || loading}
             required={!ticket.seat}
           />
           {errors.quantity && <span className="error">{errors.quantity}</span>}
@@ -283,6 +309,7 @@ const CreateTicketPage = () => {
             value={ticket.event_Date}
             onChange={handleChange}
             required
+            disabled={loading}
           />
           {errors.event_Date && (
             <span className="error">{errors.event_Date}</span>
@@ -297,19 +324,42 @@ const CreateTicketPage = () => {
             value={ticket.description}
             onChange={handleChange}
             required
+            disabled={loading}
           />
         </div>
         <div className="create-ticket-form__item">
           <label>Upload Image:</label>
-          <input type="file" name="image" onChange={handleImageChange} />
-          {imagePreview && (
-            <img src={imagePreview} alt="Preview" className="image-preview" />
+          <input
+            type="file"
+            name="image"
+            onChange={handleImageChange}
+            multiple
+          />
+          {ticketImage.length > 0 && (
+            <div className="ticket-form__img-preview">
+              {Array.from(ticketImage).map((item, index) => {
+                return (
+                  <img
+                    key={index}
+                    src={URL.createObjectURL(item)}
+                    alt="Preview"
+                    className="image-preview"
+                  />
+                );
+              })}
+            </div>
           )}
         </div>
 
-        <button type="submit" className="submit-button">
+        <Button
+          type="submit"
+          className="submit-button"
+          style={{ backgroundColor: "#1976d2" }}
+          loading={loading}
+          onClick={handleSubmit}
+        >
           Create Your Ticket
-        </button>
+        </Button>
       </form>
     </div>
   );

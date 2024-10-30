@@ -12,6 +12,9 @@ import RequestPriceForm from "../components/request-price/RequestPriceForm";
 import OrderHistory from "./OrderHistory/OrderHistory";
 import EditProfile from "./User/EditProfile";
 import ViewProfile from "./User/ViewProfile";
+import Layout from "../layout/Layout";
+import Notification from "./Notification/Notification";
+import ConfirmSuccess from "./confirm-success/ConfirmSuccess";
 import DashboardDefault from "./Admin/Dashboard";
 
 // Import các trang Admin
@@ -119,6 +122,16 @@ const pagesData = [
     path: "request-price",
     element: <RequestPriceForm />,
     title: "request price",
+  },
+  {
+    path: "notification",
+    element: <Notification />,
+    title: "notification",
+  },
+  {
+    path: "confirm-success",
+    element: <ConfirmSuccess />,
+    title: "confirmSuccess",
   },
 
   // Admin routes
