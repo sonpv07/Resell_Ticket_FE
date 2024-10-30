@@ -24,12 +24,37 @@ class OrderService {
       const response = await api.get(`${URL}`);
 
       if (response.status >= 200 && response.status < 300) {
+        console.log(response.data);
+
         return returnValue(true, response.data, "Get Order successfully");
       } else {
         return returnValue(false, null, "Get Order fail");
       }
     } catch (error) {
       return returnValue(false, null, "Get Order fail");
+    }
+  }
+  static async getOrderBySeller(id) {
+    try {
+      const response = await api.get(`${URL}/all-order/${id}`);
+
+      if (response.status >= 200 && response.status < 300) {
+        return returnValue(true, response.data, "Get Order successfully");
+      } else {
+        return returnValue(false, null, "Get Order fail");
+      }
+    } catch (error) {
+      return returnValue(false, null, "Get Order fail");
+    }
+  }
+  
+  static async fetchOrders() {
+    try {
+      const response = await api.get(`${URL}`);
+      return response.data;
+    } catch (error) {
+      console.error("Failed to fetch orders:", error);
+      throw error;
     }
   }
 }

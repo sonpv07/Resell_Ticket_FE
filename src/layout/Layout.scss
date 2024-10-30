@@ -1,9 +1,27 @@
 .layout {
   display: flex;
   flex-direction: column;
-  min-height: 100vh; // Ensures the layout takes up the full viewport height
+  height: 100vh;
+}
+
+.main-content {
+  display: flex;
+  flex: 1;
+}
+
+.admin-layout .content {
+  flex: 1;
+  padding: 20px;
+}
+
+.admin-layout .sidebar {
+  width: 200px;
+  background-color: #333;
+  color: #fff;
+  padding: 20px;
 }
 
 .content {
-  flex-grow: 1; // Makes the content area grow to take up available space
+  flex: 1;
+  padding: 20px;
 }

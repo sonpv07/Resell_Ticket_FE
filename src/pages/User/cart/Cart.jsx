@@ -8,9 +8,8 @@ import { AuthContext } from "../../../context/AuthContext";
 import { PAYMENT_METHODS } from "../../../configs/constant";
 import TransactionService from "../../../services/transaction.service";
 import { toast } from "react-toastify";
-import { currencyFormatter } from "../../../utils";
 export default function Cart() {
-  const DELIVERY_PRICE = 10000;
+  const DELIVERY_PRICE = 10;
 
   const { state } = useLocation();
 
@@ -47,11 +46,9 @@ export default function Cart() {
 
     const response = await OrderService.createOrder(body);
 
-    console.log(response.data);
-
     if (response.success) {
       let paymentBody = {
-        iD_Order: response.data.orderId,
+        iD_Order: 21,
         transaction_Type: "Ticket",
         iD_Customer: user.iD_Customer,
         iD_Payment: 1,
@@ -93,7 +90,7 @@ export default function Cart() {
                 <p>{item.show_Name}</p>
                 <p>{item.price} $</p>
                 <p>{item.quantity}</p>
-                <p>{currencyFormatter(item.quantity * item.price)} </p>
+                <p>{item.quantity * item.price} $</p>
                 <p>{item.seller}</p>
               </div>
               <hr />
@@ -108,19 +105,19 @@ export default function Cart() {
           <div>
             <div className="cart__total__detail">
               <p>Subtotal </p>
-              <p>{currencyFormatter(getSubtotal())}</p>
+              <p>{getSubtotal()} $</p>
             </div>
             <hr />
 
             <div className="cart__total__detail">
               <p>Delivery Fee </p>
-              <p>{currencyFormatter(DELIVERY_PRICE)}</p>
+              <p>{DELIVERY_PRICE} $</p>
             </div>
             <hr />
 
             <div className="cart__total__detail">
               <p>Total </p>
-              <p>{currencyFormatter(getSubtotal() + DELIVERY_PRICE)}</p>
+              <p>{getSubtotal() + DELIVERY_PRICE} $</p>
             </div>
           </div>
           <Button

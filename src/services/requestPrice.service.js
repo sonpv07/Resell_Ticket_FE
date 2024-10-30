@@ -59,6 +59,28 @@ class RequestPriceService {
       return returnValue(false, null, "Error updating request price");
     }
   }
+
+  static async editRequestStatus(id, updatedData) {
+    try {
+      const response = await api.put(
+        `${URL}/change-status-request?requestId=${id}&status=${updatedData}`,
+        {}
+      );
+
+      if (response.status >= 200 && response.status < 300) {
+        return returnValue(
+          true,
+          response.data,
+          "Request status updated successfully"
+        );
+      } else {
+        return returnValue(false, null, "Failed to update request status");
+      }
+    } catch (error) {
+      console.error("Error updating request price", error);
+      return returnValue(false, null, "Error updating request status");
+    }
+  }
 }
 
 export default RequestPriceService;

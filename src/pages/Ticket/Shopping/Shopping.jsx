@@ -70,6 +70,8 @@ export default function Shopping() {
         <div className="shopping__filter-option">
           <div className="shopping__filter-option__item">
             <Select
+              mode="multiple"
+              allowClear
               style={{ width: "100%", height: "50px" }}
               className="custom-select"
               placeholder="Select locations..."
@@ -79,6 +81,8 @@ export default function Shopping() {
           </div>
           <div className="shopping__filter-option__item">
             <Select
+              mode="multiple"
+              allowClear
               style={{ width: "100%", height: "50px" }}
               className="custom-select"
               placeholder="Select ticket category..."

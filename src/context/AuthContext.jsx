@@ -1,5 +1,4 @@
-import React, { createContext, useEffect, useState } from "react";
-import UserService from "../services/user.service";
+import React, { createContext, useState } from "react";
 
 export const AuthContext = createContext();
 
@@ -37,19 +36,6 @@ export const AuthProvider = ({ children }) => {
       localStorage.removeItem("refreshToken");
     }
   };
-
-  const fetchUserData = async () => {
-    const userData = await UserService.getProfile(user?.iD_Customer);
-
-    if (userData) {
-      setUser(userData.data);
-      localStorage.setItem("user", JSON.stringify(userData.data));
-    }
-  };
-
-  useEffect(() => {
-    fetchUserData();
-  }, []);
 
   return (
     <AuthContext.Provider
