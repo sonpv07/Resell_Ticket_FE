@@ -59,6 +59,8 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     if (accessToken) {
+      console.log("FETCH DATA AUTH CONTEXT");
+
       fetchUserData();
     }
   }, []);
@@ -76,6 +78,7 @@ export const AuthProvider = ({ children }) => {
         setShowForm,
         notification,
         setNotification,
+        fetchUserData,
       }}
     >
       {children}

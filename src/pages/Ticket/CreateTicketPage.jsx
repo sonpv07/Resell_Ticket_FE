@@ -259,6 +259,9 @@ const CreateTicketPage = () => {
             <option value="Concert">Concert</option>
             <option value="Sport">Sport</option>
             <option value="Theater">Theater</option>
+            <option value="Festival">Festival</option>
+            <option value="Museum">Museum</option>
+            <option value="Transport">Transport</option>
           </select>
         </div>
 

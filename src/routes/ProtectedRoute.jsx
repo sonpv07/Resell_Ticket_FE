@@ -3,7 +3,6 @@ import { Navigate, Outlet, useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import { DialogContext } from "../context/DialogContext";
 
-// Giữ bản gốc của ProtectedRoute để khôi phục lại sau này
 const ProtectedRoute = ({ allowedRoles }) => {
   const { user } = useContext(AuthContext);
   const { openDialog, closeDialog } = useContext(DialogContext);
@@ -35,10 +34,13 @@ const ProtectedRoute = ({ allowedRoles }) => {
     } else if (
       user?.iD_Package === null &&
       user?.iD_RoleNavigation.name_role === "Customer" &&
-      allowedRoles.includes(user?.iD_RoleNavigation.name_role)
+      allowedRoles.includes("Seller")
     ) {
       handleOpenDialog(2);
-    } else if (!allowedRoles.includes(user?.iD_RoleNavigation.name_role)) {
+    } else if (
+      user?.iD_RoleNavigation.name_role !== "Customer" &&
+      !allowedRoles.includes(user?.iD_RoleNavigation.name_role)
+    ) {
       handleOpenDialog(3);
     }
   }, [user, allowedRoles, navigate, closeDialog]);
@@ -48,9 +50,16 @@ const ProtectedRoute = ({ allowedRoles }) => {
   }
 
   if (
+    user?.iD_RoleNavigation.name_role === "Customer" &&
+    allowedRoles.includes("Customer")
+  ) {
+    return <Outlet />;
+  }
+
+  if (
     user?.iD_Package !== null &&
     user?.iD_RoleNavigation.name_role === "Customer" &&
-    allowedRoles.includes(user?.iD_RoleNavigation.name_role)
+    allowedRoles.includes("Seller")
   ) {
     return <Outlet />;
   }
@@ -61,12 +70,7 @@ const ProtectedRoute = ({ allowedRoles }) => {
   ) {
     return <Outlet />;
   }
-  if (
-    user?.iD_RoleNavigation.name_role === "Admin" &&
-    allowedRoles.includes("Admin")
-  ) {
-    return <Outlet />;
-  }
+
   return null;
 };
 

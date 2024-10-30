@@ -1,22 +1,24 @@
-import React, { useState, useEffect } from 'react';
-import { Pagination } from 'antd';
-import orderService from '../../../services/order.service';
-import './AdminOrder.scss';
+import React, { useState, useEffect } from "react";
+import { Pagination } from "antd";
+import orderService from "../../../services/order.service";
+import "./AdminOrder.scss";
+import { currencyFormatter } from "../../../utils";
+import moment from "moment";
 
 const AdminOrder = () => {
   const [orders, setOrders] = useState([]);
   const [filteredOrders, setFilteredOrders] = useState([]);
   const [error, setError] = useState(null);
-  const [selectedStatus, setSelectedStatus] = useState(''); 
+  const [selectedStatus, setSelectedStatus] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
 
   useEffect(() => {
     const loadOrders = async () => {
       try {
-        const data = await orderService.fetchOrders();
-        setOrders(data);
-        setFilteredOrders(data); 
+        const data = await orderService.getOrderByUser();
+        setOrders(data.data);
+        setFilteredOrders(data.data);
       } catch (err) {
         console.error("Error loading orders:", err);
         setError("Failed to load orders");
@@ -28,10 +30,10 @@ const AdminOrder = () => {
   const handleFilter = () => {
     let filtered = orders;
     if (selectedStatus) {
-      filtered = filtered.filter(order => order.status === selectedStatus);
+      filtered = filtered.filter((order) => order.status === selectedStatus);
     }
     setFilteredOrders(filtered);
-    setCurrentPage(1); 
+    setCurrentPage(1);
   };
 
   const handlePageChange = (pageNumber, pageSize) => {
@@ -49,7 +51,10 @@ const AdminOrder = () => {
       <div className="filter-section">
         <label>
           Status:
-          <select value={selectedStatus} onChange={(e) => setSelectedStatus(e.target.value)}>
+          <select
+            value={selectedStatus}
+            onChange={(e) => setSelectedStatus(e.target.value)}
+          >
             <option value="">GET ALL</option>
             <option value="PENDING">PENDING</option>
             <option value="COMPLETED">COMPLETED</option>
@@ -79,9 +84,9 @@ const AdminOrder = () => {
               <td>{order.iD_Order}</td>
               <td>{order.iD_CustomerNavigation?.name}</td>
               <td>{order.payment_method}</td>
-              <td>{order.totalPrice}</td>
+              <td>{currencyFormatter(order.totalPrice)}</td>
               <td>{order.status}</td>
-              <td>{new Date(order.create_At).toLocaleDateString()}</td>
+              <td>{moment(order.create_At).format("LLL")}</td>
             </tr>
           ))}
         </tbody>

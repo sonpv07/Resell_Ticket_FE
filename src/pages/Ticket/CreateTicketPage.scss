@@ -67,12 +67,17 @@
       min-height: 100px;
     }
 
-    .image-preview {
-      max-width: 100%;
-      height: auto;
-      margin-top: 20px;
-      border-radius: 10px;
-      box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+    .ticket-form__img-preview {
+      display: flex;
+      gap: 10px;
+
+      .image-preview {
+        width: 150px;
+        height: 150px;
+        margin-top: 20px;
+        border-radius: 10px;
+        box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+      }
     }
 
     .submit-button {
