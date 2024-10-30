@@ -16,6 +16,10 @@ const getTagColor = (category) => {
       return "#ff9800";
     case "Sport":
       return "#acd8a7";
+    case "Museum":
+      return "yellow";
+    case "Transport":
+      return "grey";
     default:
       return "#000";
   }

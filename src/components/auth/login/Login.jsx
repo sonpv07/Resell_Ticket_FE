@@ -7,6 +7,7 @@ import { AuthContext } from "../../../context/AuthContext";
 import UserService from "../../../services/user.service";
 import { toast } from "react-toastify";
 import Overlay from "../../overlay/Overlay";
+import { useNavigate } from "react-router-dom"; // Thêm hook useNavigate
 
 export default function Login() {
   const [isLoading, setIsLoading] = useState(false);
@@ -14,6 +15,8 @@ export default function Login() {
 
   const { setUser, setAccessToken, showForm, setShowForm } =
     useContext(AuthContext);
+
+  const navigate = useNavigate(); 
 
   const handleLogin = async (values) => {
     console.log("Received values of form: ", values);
@@ -23,24 +26,21 @@ export default function Login() {
     try {
       const response = await AuthService.login(values);
 
-      console.log(response);
+      if (response?.success) {
+        const user = await UserService.getProfile(response?.data?.id);
 
-      if (response.success) {
-        console.log(response.data);
-
-        const user = await UserService.getProfile(response.data.id);
+        setAccessToken(response.data.accessToken);
+        localStorage.setItem("token", JSON.stringify(response.data.accessToken));
 
         if (user) {
           setUser(user.data);
           localStorage.setItem("user", JSON.stringify(user.data));
-
-          setAccessToken(response.data.accessToken);
-          localStorage.setItem(
-            "token",
-            JSON.stringify(response.data.accessToken)
-          );
-
           toast.success(response.message);
+
+          // Kiểm tra vai trò người dùng
+          if (user.data.iD_RoleNavigation?.name_role === "Admin") {
+            navigate("/admin-dashboard"); 
+          } 
         }
       } else {
         toast.error(response.message);

@@ -36,22 +36,6 @@
     margin-bottom: 30px;
   }
 
-  &__package {
-    background-color: #fff;
-    border-radius: 8px;
-    padding: 20px;
-    width: 28%;
-    font-size: 18px;
-
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-
-    span {
-      font-weight: 600;
-    }
-  }
-
   &__stat-item {
     background-color: #fff;
     border-radius: 8px;
