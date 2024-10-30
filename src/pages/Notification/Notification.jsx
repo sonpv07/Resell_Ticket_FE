@@ -4,6 +4,7 @@ import { AuthContext } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import NotificationService from "../../services/notification.service";
 import moment from "moment";
+import { currencyFormatter } from "../../utils";
 
 export default function Notification() {
   const { user } = useContext(AuthContext);
@@ -41,14 +42,14 @@ export default function Notification() {
         <h1 className="null">No Notifications Yet</h1>
       ) : (
         <>
-          <div className="notifications-list__actions">
+          {/* <div className="notifications-list__actions">
             <button
               className="notifications-list__action-btn"
               //   onClick={markAllAsRead}
             >
               Mark all as read
             </button>
-          </div>
+          </div> */}
           <div className="notifications-list__container">
             {notification.map((item) => (
               <div
@@ -81,7 +82,36 @@ export default function Notification() {
                 }}
               >
                 <div className="notifications-list__content">
-                  <p className="notifications-list__message">{item.title}</p>
+                  <p
+                    className="notifications-list__message"
+                    style={{ fontSize: 20 }}
+                  >
+                    {item.title}
+                  </p>
+                  <p className="notifications-list__message">
+                    Your request for Ticket:{" "}
+                    {item?.iD_TicketNavigation?.show_Name} has been{" "}
+                    {item?.iD_RequestNavigation?.status === "Completed"
+                      ? "approved"
+                      : item?.iD_RequestNavigation?.status === "Rejected"
+                      ? "rejected"
+                      : ""}
+                  </p>
+                  {item?.iD_Order && (
+                    <>
+                      <p className="notifications-list__message">
+                        Quantity:
+                        {item?.iD_RequestNavigation?.quantity}
+                      </p>
+                      <p className="notifications-list__message">
+                        Total:
+                        {currencyFormatter(
+                          item?.iD_OrderNavigation?.totalPrice
+                        )}
+                      </p>
+                    </>
+                  )}
+
                   <p className="notifications-list__date">
                     {moment(item.time_create).format("LLL")}
                   </p>

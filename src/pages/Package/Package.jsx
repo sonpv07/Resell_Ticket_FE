@@ -11,6 +11,8 @@ import { AuthContext } from "../../context/AuthContext";
 function Package() {
   const [packages, setPackages] = useState([]);
 
+  const [chosenPackage, setChosenPackage] = useState(null);
+
   const [loading, setLoading] = useState(false);
 
   const { user } = useContext(AuthContext);
@@ -113,9 +115,12 @@ function Package() {
                 type="primary"
                 size="large"
                 style={{ borderRadius: "20px", marginTop: "20px" }}
-                onClick={() => handleBuyPackage(pkg)}
+                onClick={() => {
+                  setChosenPackage(pkg);
+                  handleBuyPackage(pkg);
+                }}
                 disabled={loading}
-                loading={loading && pkg.iD_Package === user?.iD_Package}
+                loading={loading && chosenPackage.iD_Package === pkg.iD_Package}
               >
                 Get This Plan
               </Button>

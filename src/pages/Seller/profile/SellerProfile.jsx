@@ -7,6 +7,8 @@ import TicketService from "../../../services/ticket.service";
 import TicketList from "../../../components/ticket/list/TicketList";
 import FeedbackService from "../../../services/feedack.service";
 import OrderService from "../../../services/order.service";
+import { Avatar } from "antd";
+import { UserOutlined } from "@ant-design/icons";
 
 export default function SellerProfile() {
   const { id } = useParams();
@@ -80,21 +82,31 @@ export default function SellerProfile() {
 
   return (
     <div className="seller-profile">
-      <div className="seller-profile__info">
-        <h1 className="seller-profile__name">{seller?.name}</h1>
+      <div className="seller-profile__container">
+        <div className="seller-profile__info">
+          <Avatar
+            size={120}
+            icon={!seller?.avatar && <UserOutlined />}
+            src={seller?.avatar}
+            style={{ margin: "0 auto" }}
+          />
+          <div className="seller-profile__info__detail">
+            <h1 className="seller-profile__name">{seller?.name}</h1>
 
-        <p>
-          <span>Email:</span> {seller?.email}
-        </p>
-        <p>
-          <span>Contact:</span> {seller?.contact}
-        </p>
-        <p>
-          <span>Rating:</span> {seller?.average_feedback}⭐
-        </p>
-        <p>
-          <span>Success Order:</span> {seller?.orderCount}
-        </p>
+            <p>
+              <span>Email:</span> {seller?.email}
+            </p>
+            <p>
+              <span>Contact:</span> {seller?.contact}
+            </p>
+            <p>
+              <span>Rating:</span> {seller?.average_feedback}⭐
+            </p>
+            <p>
+              <span>Success Order:</span> {seller?.orderCount}
+            </p>
+          </div>
+        </div>
 
         <button
           className="seller-profile__report-btn"
@@ -103,6 +115,7 @@ export default function SellerProfile() {
           Report Seller
         </button>
       </div>
+
       <h2 className="seller-profile__tickets-title">Tickets for Sale</h2>
       <div className="seller-profile__tickets">
         <TicketList ticketList={tickets} isLoading={loading} />

@@ -59,7 +59,7 @@ const OrderHistory = () => {
         <thead>
           <tr>
             <th>Order ID</th>
-            <th>Show Name</th>
+            <th>Ticket</th>
             <th>Event Date</th>
             <th>Seat</th>
             <th>Location</th>
@@ -86,7 +86,7 @@ const OrderHistory = () => {
                 <td>{order?.orderDetails[0]?.iD_TicketNavigation?.location}</td>
                 <td>{currencyFormatter(order.totalPrice)} </td>
                 <td>{order?.status}</td>
-                <td>{order?.create_At}</td>
+                <td>{moment(order?.create_At).format("LLL")}</td>
                 <td>
                   {order.status === "COMPLETED" ? (
                     order.feedback ? (

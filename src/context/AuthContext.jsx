@@ -44,16 +44,16 @@ export const AuthProvider = ({ children }) => {
   const fetchUserData = async () => {
     const userData = await UserService.getProfile(user?.iD_Customer);
 
-    if (userData) {
+    if (userData.success) {
       setUser(userData.data);
       localStorage.setItem("user", JSON.stringify(userData.data));
 
-      const notificationResponse =
-        await NotificationService.getNotificationByUser(user?.iD_Customer);
+      // const notificationResponse =
+      //   await NotificationService.getNotificationByUser(user?.iD_Customer);
 
-      if (notificationResponse.success) {
-        setNotification(notificationResponse.data.reverse());
-      }
+      // if (notificationResponse.success) {
+      //   setNotification(notificationResponse.data.reverse());
+      // }
     }
   };
 

@@ -56,11 +56,7 @@ export default function Shopping() {
       console.log(response.data);
 
       if (response.success) {
-        const filterData = response.data.filter(
-          (item) => item.status === "Available"
-        );
-
-        setTicketList(filterData);
+        setTicketList(response.data);
       }
     } catch (error) {
       console.error(error);

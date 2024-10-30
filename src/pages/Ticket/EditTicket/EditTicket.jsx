@@ -88,7 +88,7 @@ export default function EditTicket({
               style={{ width: "100%" }}
             />
           </Form.Item>
-          <Form.Item
+          {/* <Form.Item
             label="Quantity"
             name="quantity"
             rules={[{ required: true, message: "Please input the quantity" }]}
@@ -98,14 +98,14 @@ export default function EditTicket({
               placeholder="Enter the quantity"
               style={{ width: "100%" }}
             />
-          </Form.Item>
+          </Form.Item> */}
 
           <Form.Item
             label="Status"
             name="status"
             rules={[{ required: true, message: "Please select availability!" }]}
           >
-            <Radio.Group>
+            <Radio.Group disabled={ticket?.quantity === 0}>
               <Radio value="Available">Available</Radio>
               <Radio value="Unavailable">Unavailable</Radio>
             </Radio.Group>

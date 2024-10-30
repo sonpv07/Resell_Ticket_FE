@@ -365,6 +365,7 @@ export default function TicketManagement() {
         noIndex: index + 1,
         paymentMethod: item.payment_method,
         ticketId: item?.orderDetails[0]?.iD_TicketNavigation?.iD_Ticket,
+        quantity: item?.orderDetails[0]?.quantity,
         buyerId: item?.iD_CustomerNavigation?.iD_Customer,
         name: item?.orderDetails[0]?.iD_TicketNavigation?.show_Name,
         totalPrice: item?.totalPrice,

@@ -14,6 +14,7 @@ import EditProfile from "./User/EditProfile";
 import ViewProfile from "./User/ViewProfile";
 import Layout from "../layout/Layout";
 import Notification from "./Notification/Notification";
+import ConfirmSuccess from "./confirm-success/ConfirmSuccess";
 
 const pagesData = [
   {
@@ -120,6 +121,11 @@ const pagesData = [
     path: "notification",
     element: <Notification />,
     title: "notification",
+  },
+  {
+    path: "confirm-success",
+    element: <ConfirmSuccess />,
+    title: "confirmSuccess",
   },
 ];
 

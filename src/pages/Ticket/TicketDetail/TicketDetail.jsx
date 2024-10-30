@@ -46,6 +46,7 @@ export default function TicketDetail() {
             show_Name: ticketData.Show_Name,
             quantity: selectedQuantity,
             seller: ticketData.iD_CustomerNavigation.name,
+            image: ticketData?.image.split(",")[0],
           },
         ],
       },

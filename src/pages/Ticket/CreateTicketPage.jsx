@@ -4,9 +4,12 @@ import { toast } from "react-toastify";
 import TicketService from "../../services/ticket.service";
 import { AuthContext } from "../../context/AuthContext";
 import FirebaseService from "../../services/firebase.service";
+import { Button } from "antd";
 
 const CreateTicketPage = () => {
   const { user, setUser } = useContext(AuthContext);
+
+  const [loading, setLoading] = useState(false);
 
   const [ticket, setTicket] = useState({
     price: "",
@@ -135,6 +138,8 @@ const CreateTicketPage = () => {
     }
 
     try {
+      setLoading(true);
+
       let imgURL = null;
       imgURL = await uploadImagesFile();
       console.log(imgURL);
@@ -157,11 +162,13 @@ const CreateTicketPage = () => {
             event_Date: "",
             show_Name: "",
             description: "",
-            seat: null,
+            seat: "",
             location: "",
             image: null,
           });
           setImagePreview(null);
+
+          setTicketImage([]);
 
           const newUser = {
             ...user,
@@ -179,6 +186,8 @@ const CreateTicketPage = () => {
     } catch (error) {
       toast.error("Failed to create ticket. Please try again later.");
       console.error("API Error:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -209,6 +218,7 @@ const CreateTicketPage = () => {
             value={ticket.price}
             onChange={handleChange}
             required
+            disabled={loading}
           />
           {errors.price && <span className="error">{errors.price}</span>}
         </div>
@@ -221,6 +231,7 @@ const CreateTicketPage = () => {
             value={ticket.location}
             onChange={handleChange}
             required
+            disabled={loading}
           />
 
           {/* <select
@@ -242,6 +253,7 @@ const CreateTicketPage = () => {
             value={ticket.ticket_category}
             onChange={handleChange}
             required
+            disabled={loading}
           >
             <option value="">Select a category</option>
             <option value="Concert">Concert</option>
@@ -257,6 +269,7 @@ const CreateTicketPage = () => {
             name="seat"
             value={ticket.seat}
             onChange={handleChange}
+            disabled={loading}
           />
         </div>
 
@@ -272,6 +285,7 @@ const CreateTicketPage = () => {
             checked={ticket.ticket_type}
             onChange={handleChange}
             style={{ width: "50px", backgroundColor: "transparent" }}
+            disabled={loading}
           />
           <span>{ticket.ticket_type ? "True" : "False"}</span>
         </div>
@@ -282,7 +296,7 @@ const CreateTicketPage = () => {
             name="quantity"
             value={ticket.seat ? 1 : ticket.quantity}
             onChange={handleChange}
-            disabled={ticket.seat ? true : false}
+            disabled={ticket.seat || loading}
             required={!ticket.seat}
           />
           {errors.quantity && <span className="error">{errors.quantity}</span>}
@@ -295,6 +309,7 @@ const CreateTicketPage = () => {
             value={ticket.event_Date}
             onChange={handleChange}
             required
+            disabled={loading}
           />
           {errors.event_Date && (
             <span className="error">{errors.event_Date}</span>
@@ -309,6 +324,7 @@ const CreateTicketPage = () => {
             value={ticket.description}
             onChange={handleChange}
             required
+            disabled={loading}
           />
         </div>
         <div className="create-ticket-form__item">
@@ -335,9 +351,15 @@ const CreateTicketPage = () => {
           )}
         </div>
 
-        <button type="submit" className="submit-button">
+        <Button
+          type="submit"
+          className="submit-button"
+          style={{ backgroundColor: "#1976d2" }}
+          loading={loading}
+          onClick={handleSubmit}
+        >
           Create Your Ticket
-        </button>
+        </Button>
       </form>
     </div>
   );
