@@ -65,6 +65,15 @@ class OrderService {
       return returnValue(false, null, "Get Order fail");
     }
   }
+    static async fetchOrders() {
+    try {
+      const response = await api.get(`${URL}`);
+      return response.data;
+    } catch (error) {
+      console.error("Failed to fetch orders:", error);
+      throw error;
+    }
+  }
 }
 
 export default OrderService;
