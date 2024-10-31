@@ -152,7 +152,7 @@ function AdminPackage() {
       title: "Price",
       dataIndex: "price",
       key: "price",
-      render: (text) => `${currencyFormatter.text}`,
+      render: (text) => `${currencyFormatter(text)}`,
     },
     { title: "Time (days)", dataIndex: "time_package", key: "time_package" },
     {

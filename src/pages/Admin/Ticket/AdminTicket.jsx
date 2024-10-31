@@ -15,7 +15,7 @@ function AdminTicket() {
   const fetchTickets = async () => {
     setLoading(true);
     try {
-      const response = await TicketService.fetchTickets();
+      const response = await TicketService.getTicketList();
       if (response.success) {
         setTickets(response.data);
       } else {
