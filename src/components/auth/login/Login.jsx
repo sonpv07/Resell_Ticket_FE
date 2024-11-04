@@ -12,11 +12,10 @@ import { useNavigate } from "react-router-dom";
 export default function Login() {
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-  const navigate = useNavigate();
 
   const { setUser, setAccessToken, showForm, setShowForm } =
     useContext(AuthContext);
-
+  const navigate = useNavigate();
   const handleLogin = async (values) => {
     console.log("Received values of form: ", values);
 
