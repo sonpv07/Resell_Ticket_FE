@@ -77,6 +77,21 @@ class RequestPriceService {
       return returnValue(false, null, "Error updating request status");
     }
   }
+
+  static async getAllRequest(id) {
+    try {
+      const response = await api.get(`${URL}`);
+
+      if (response.status >= 200 && response.status < 300) {
+        return returnValue(true, response.data, "");
+      } else {
+        return returnValue(false, null, "Failed to retrieve request price");
+      }
+    } catch (error) {
+      console.error("Error fetching request price", error);
+      return returnValue(false, null, "Error fetching request price");
+    }
+  }
 }
 
 export default RequestPriceService;

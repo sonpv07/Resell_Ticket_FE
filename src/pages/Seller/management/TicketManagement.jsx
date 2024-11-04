@@ -13,11 +13,13 @@ import OrderService from "../../../services/order.service";
 import { PAYMENT_METHODS } from "../../../configs/constant";
 import EditTicket from "../../Ticket/EditTicket/EditTicket";
 import NotificationService from "../../../services/notification.service";
+import UserDetailModal from "../../../components/user-detail-modal/UserDetailModal";
 
 export default function TicketManagement() {
   const [requestList, setRequestList] = useState([]);
   const [ticketList, setTicketList] = useState([]);
   const [orderList, setOrderList] = useState([]);
+  const [revenue, setRevenue] = useState(0);
 
   const [totalActive, setTotalActive] = useState(0);
   const [totalSold, setTotalSold] = useState(0);
@@ -25,6 +27,9 @@ export default function TicketManagement() {
 
   const [isOpenEdit, setIsOpenEdit] = useState(false);
   const [chosenTicket, setChosenTicket] = useState(null);
+
+  const [isOpenUserModal, setIsOpenUserModal] = useState(false);
+  const [chosenUser, setChosenUser] = useState(null);
 
   const navigate = useNavigate();
 
@@ -160,6 +165,22 @@ export default function TicketManagement() {
       dataIndex: "quantity",
       key: "quantity",
     },
+    {
+      title: "Buyer",
+      dataIndex: "buyer",
+      key: "buyer",
+      render: (text, record) => (
+        <p
+          style={{ fontWeight: 600, cursor: "pointer" }}
+          onClick={() => {
+            setChosenUser(record.buyerDetails);
+            setIsOpenUserModal(true);
+          }}
+        >
+          {text}
+        </p>
+      ),
+    },
 
     {
       title: "Action",
@@ -198,7 +219,7 @@ export default function TicketManagement() {
             </Button>
           </Space>
         ) : record.status === "Completed" ? (
-          <Tag color={"#2196f3"} key={"Approve"}>
+          <Tag color={"blue"} key={"Approve"}>
             {"Approved".toUpperCase()}
           </Tag>
         ) : (
@@ -262,6 +283,17 @@ export default function TicketManagement() {
       title: "Buyer",
       dataIndex: "buyer",
       key: "buyer",
+      render: (text, record) => (
+        <p
+          style={{ fontWeight: 600, cursor: "pointer" }}
+          onClick={() => {
+            setChosenUser(record.buyerDetails);
+            setIsOpenUserModal(true);
+          }}
+        >
+          {text}
+        </p>
+      ),
     },
 
     {
@@ -326,6 +358,14 @@ export default function TicketManagement() {
         setTotalSold(soldCount);
         setTotalRevenue(revenue);
         setTicketList(transformedData.reverse());
+
+        const revenueData = await OrderService.orderCountBySeller(
+          user?.iD_Customer
+        );
+
+        if (revenueData.success) {
+          setRevenue(revenueData.data);
+        }
       }
     } catch (error) {
       console.error(error);
@@ -336,6 +376,8 @@ export default function TicketManagement() {
     const response = await RequestPriceService.getRequestPrice(
       user.iD_Customer
     );
+
+    console.log(response);
 
     if (response.success) {
       const transformedData = response.data.map((request, index) => ({
@@ -348,6 +390,8 @@ export default function TicketManagement() {
         requestPrice: request?.price_want,
         quantity: request?.quantity,
         status: request?.status,
+        buyer: request?.iD_CustomerNavigation?.name,
+        buyerDetails: request?.iD_CustomerNavigation,
       }));
 
       setRequestList(transformedData.reverse());
@@ -356,8 +400,6 @@ export default function TicketManagement() {
 
   const fetchOrderData = async () => {
     const response = await OrderService.getOrderBySeller(user.iD_Customer);
-
-    console.log(response);
 
     if (response.success) {
       const transformedData = response.data.map((item, index) => ({
@@ -372,6 +414,7 @@ export default function TicketManagement() {
         date: item?.create_At,
         status: item?.status,
         buyer: item?.iD_CustomerNavigation?.name,
+        buyerDetails: item?.iD_CustomerNavigation,
       }));
 
       setOrderList(transformedData.reverse());
@@ -396,8 +439,6 @@ export default function TicketManagement() {
         },
       ],
     };
-
-    console.log(body);
 
     const response = await OrderService.createOrder(body);
 
@@ -521,7 +562,7 @@ export default function TicketManagement() {
     };
   }, []);
 
-  console.log(orderList);
+  console.log(chosenUser);
 
   return (
     <div className="seller-ticket-management">
@@ -547,7 +588,7 @@ export default function TicketManagement() {
       <div className="seller-ticket-management__stats">
         <div className="seller-ticket-management__stat-item">
           <h2>Total Revenue</h2>
-          <p>{currencyFormatter(totalRevenue)}</p>
+          <p>{currencyFormatter(revenue)}</p>
         </div>
         <div className="seller-ticket-management__stat-item">
           <h2>Sold Tickets</h2>
@@ -606,6 +647,12 @@ export default function TicketManagement() {
         ticketList={ticketList}
         setTicketList={setTicketList}
         fetchTicketList={fetchApi}
+      />
+
+      <UserDetailModal
+        isOpen={isOpenUserModal}
+        setIsOpen={setIsOpenUserModal}
+        user={chosenUser}
       />
     </div>
   );

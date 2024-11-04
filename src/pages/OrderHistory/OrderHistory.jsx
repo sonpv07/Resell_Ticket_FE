@@ -82,7 +82,9 @@ const OrderHistory = () => {
                     order?.orderDetails[0]?.iD_TicketNavigation?.event_Date
                   ).format("LLL")}
                 </td>
-                <td>{order?.orderDetails[0]?.iD_TicketNavigation?.seat}</td>
+                <td>
+                  {order?.orderDetails[0]?.iD_TicketNavigation?.seat ?? "N/A"}
+                </td>
                 <td>{order?.orderDetails[0]?.iD_TicketNavigation?.location}</td>
                 <td>{currencyFormatter(order.totalPrice)} </td>
                 <td>{order?.status}</td>

@@ -95,7 +95,7 @@ export default function TicketDetail() {
     fetchData();
   }, [id]);
 
-  console.log(imgList);
+  console.log();
 
   return (
     <div className="ticket-detail">
@@ -147,16 +147,26 @@ export default function TicketDetail() {
           <div className="ticket-detail__availability">
             {isLoading ? (
               <Skeleton.Input active />
-            ) : ticketData?.quantity > 0 ? (
-              <>
-                <span className="ticket-detail__in-stock">In Stock</span>
-                <span className="ticket-detail__stock-count">
-                  {ticketData?.quantity}{" "}
-                  {ticketData?.quantity === 1 ? "ticket" : "tickets"} available
+            ) : new Date(ticketData.event_Date).getTime() >
+              new Date().getTime() ? (
+              ticketData?.quantity > 0 ? (
+                <>
+                  <span className="ticket-detail__in-stock">In Stock</span>
+                  <span className="ticket-detail__stock-count">
+                    {ticketData?.quantity}{" "}
+                    {ticketData?.quantity === 1 ? "ticket" : "tickets"}{" "}
+                    available
+                  </span>
+                </>
+              ) : (
+                <span className="ticket-detail__out-of-stock">
+                  Out of Stock
                 </span>
-              </>
+              )
             ) : (
-              <span className="ticket-detail__out-of-stock">Out of Stock</span>
+              <span className="ticket-detail__out-of-stock">
+                This event is end
+              </span>
             )}
           </div>
 
@@ -173,7 +183,12 @@ export default function TicketDetail() {
                     id="quantity"
                     value={selectedQuantity}
                     onChange={handleQuantityChange}
-                    disabled={ticketData?.quantity === 0}
+                    disabled={
+                      ticketData?.quantity === 0 ||
+                      ticketData?.status === "Unavailable" ||
+                      new Date(ticketData.event_Date).getTime() <
+                        new Date().getTime()
+                    }
                   >
                     {Array.from({ length: ticketData?.quantity }).map(
                       (_, i) => (
@@ -196,13 +211,23 @@ export default function TicketDetail() {
                 <button
                   className="ticket-detail__button ticket-detail__button--primary"
                   onClick={handleBuyNow}
-                  disabled={ticketData?.quantity === 0}
+                  disabled={
+                    ticketData?.quantity === 0 ||
+                    ticketData?.status === "Unavailable" ||
+                    new Date(ticketData.event_Date).getTime() <
+                      new Date().getTime()
+                  }
                 >
                   Buy Now
                 </button>
                 <button
                   className="ticket-detail__button ticket-detail__button--secondary"
-                  disabled={ticketData?.quantity === 0}
+                  disabled={
+                    ticketData?.quantity === 0 ||
+                    ticketData?.status === "Unavailable" ||
+                    new Date(ticketData.event_Date).getTime() <
+                      new Date().getTime()
+                  }
                   onClick={() => setIsOpenRequest(true)}
                 >
                   Create Negotiation

@@ -22,6 +22,7 @@ import AdminOrder from "./Admin/Order/AdminOrder";
 import AdminUser from "./Admin/User/AdminUser";
 import AdminPackage from "./Admin/Package/AdminPackage";
 import AdminTicket from "./Admin/Ticket/AdminTicket";
+import RequestList from "./Request/RequestList";
 
 const pagesData = [
   {
@@ -119,8 +120,8 @@ const pagesData = [
   },
 
   {
-    path: "request-price",
-    element: <RequestPriceForm />,
+    path: "request",
+    element: <RequestList />,
     title: "request price",
   },
   {

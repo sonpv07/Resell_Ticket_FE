@@ -7,10 +7,12 @@ import { AuthContext } from "../../../context/AuthContext";
 import UserService from "../../../services/user.service";
 import { toast } from "react-toastify";
 import Overlay from "../../overlay/Overlay";
+import { useNavigate } from "react-router-dom";
 
 export default function Login() {
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const navigate = useNavigate();
 
   const { setUser, setAccessToken, showForm, setShowForm } =
     useContext(AuthContext);
@@ -41,6 +43,10 @@ export default function Login() {
           localStorage.setItem("user", JSON.stringify(user.data));
 
           toast.success(response.message);
+
+          if (user.data.iD_RoleNavigation?.name_role === "Admin") {
+            navigate("/admin-dashboard");
+          }
         }
       } else {
         toast.error(response.message);

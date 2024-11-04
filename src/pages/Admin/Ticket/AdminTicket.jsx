@@ -79,7 +79,7 @@ function AdminTicket() {
       title: "Price",
       dataIndex: "price",
       key: "price",
-      render: (text) => `${currencyFormatter.text}`,
+      render: (text) => `${currencyFormatter(text)}`,
     },
     { title: "Category", dataIndex: "ticket_category", key: "ticket_category" },
     {

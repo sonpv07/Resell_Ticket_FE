@@ -21,6 +21,7 @@ const Header = () => {
   const handleLogout = () => {
     setUser(null);
     localStorage.removeItem("user");
+    localStorage.removeItem("token");
     navigate("/");
     toast.success("Logout Success");
   };
@@ -38,6 +39,9 @@ const Header = () => {
         break;
       case "Order History":
         navigate("/order-history");
+        break;
+      case "Request List":
+        navigate("request");
         break;
       case "Seller Space":
         navigate("/seller");

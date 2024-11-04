@@ -6,6 +6,7 @@ const {
   CalendarFilled,
   ShoppingCartOutlined,
   SolutionOutlined,
+  HourglassOutlined,
 } = require("@ant-design/icons");
 
 export const LOCATION_DATA = [
@@ -55,6 +56,12 @@ export const SETTING_DATA = [
     id: 2,
     icon: <NotificationFilled />,
     label: "Notifications",
+    needPackage: false,
+  },
+  {
+    id: 3,
+    icon: <HourglassOutlined />,
+    label: "Request List",
     needPackage: false,
   },
   // {

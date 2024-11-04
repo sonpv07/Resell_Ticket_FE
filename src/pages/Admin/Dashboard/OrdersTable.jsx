@@ -7,6 +7,7 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
+import { currencyFormatter } from "../../../utils";
 
 export default function RecentOrdersTable() {
   const [recentOrders, setRecentOrders] = useState([]);
@@ -14,12 +15,12 @@ export default function RecentOrdersTable() {
   useEffect(() => {
     const fetchRecentOrders = async () => {
       try {
-        const response = await OrderService.fetchOrders();
-        if (response) {
+        const response = await OrderService.getOrderByUser();
+        if (response.success) {
           const threeDaysAgo = new Date();
           threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
 
-          const recentOrdersData = response.filter((order) => {
+          const recentOrdersData = response.data.filter((order) => {
             const orderDate = new Date(order.create_At);
             return orderDate >= threeDaysAgo;
           });
@@ -56,8 +57,10 @@ export default function RecentOrdersTable() {
                 <TableCell>{order.iD_CustomerNavigation?.contact}</TableCell>
                 <TableCell>{order.payment_method}</TableCell>
                 <TableCell>{order.status}</TableCell>
-                <TableCell>{order.totalPrice}</TableCell>
-                <TableCell>{new Date(order.create_At).toLocaleString()}</TableCell>
+                <TableCell>{currencyFormatter(order.totalPrice)}</TableCell>
+                <TableCell>
+                  {new Date(order.create_At).toLocaleString()}
+                </TableCell>
               </TableRow>
             ))
           ) : (
