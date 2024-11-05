@@ -4,10 +4,11 @@ import orderService from "../../../services/order.service";
 import "./AdminOrder.scss";
 import { currencyFormatter } from "../../../utils";
 import moment from "moment";
+import * as XLSX from "xlsx"; 
 
 const AdminOrder = () => {
-  const [orders, setOrders] = useState([]);
-  const [filteredOrders, setFilteredOrders] = useState([]);
+  const [orders, setOrders] = useState([]); 
+  const [filteredOrders, setFilteredOrders] = useState([]); 
   const [error, setError] = useState(null);
   const [selectedStatus, setSelectedStatus] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -17,8 +18,8 @@ const AdminOrder = () => {
     const loadOrders = async () => {
       try {
         const data = await orderService.getOrderByUser();
-        setOrders(data.data);
-        setFilteredOrders(data.data);
+        setOrders(data.data || []); 
+        setFilteredOrders(data.data || []); 
       } catch (err) {
         console.error("Error loading orders:", err);
         setError("Failed to load orders");
@@ -42,7 +43,28 @@ const AdminOrder = () => {
   };
 
   const startIndex = (currentPage - 1) * pageSize;
-  const currentOrders = filteredOrders.slice(startIndex, startIndex + pageSize);
+  const currentOrders = (filteredOrders || []).slice(startIndex, startIndex + pageSize); 
+
+  // Export to Excel function
+  const exportToExcel = () => {
+    
+    const exportData = filteredOrders.map((order) => ({
+      OrderID: order.iD_Order,
+      CustomerName: order.iD_CustomerNavigation?.name,
+      PaymentMethod: order.payment_method,
+      TotalPrice: currencyFormatter(order.totalPrice),
+      Status: order.status,
+      OrderDate: moment(order.create_At).format("LLL"),
+    }));
+
+    
+    const worksheet = XLSX.utils.json_to_sheet(exportData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Orders");
+
+    
+    XLSX.writeFile(workbook, "Order_List.xlsx");
+  };
 
   return (
     <div className="admin-order">
@@ -63,6 +85,7 @@ const AdminOrder = () => {
           </select>
         </label>
         <button onClick={handleFilter}>Filter Orders</button>
+        <button onClick={exportToExcel} className="export-button">Export to Excel</button> {/* Export Button */}
       </div>
 
       {error && <div className="error">{error}</div>}

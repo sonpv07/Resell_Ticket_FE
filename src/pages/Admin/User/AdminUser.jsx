@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Pagination } from "antd";
 import UserService from "../../../services/user.service";
+import * as XLSX from "xlsx";
 import "./AdminUserPage.scss";
 
 const AdminUser = () => {
@@ -19,7 +20,7 @@ const AdminUser = () => {
       const response = await UserService.getProfileList();
       if (response && response.success) {
         setUsers(response.data);
-        setFilteredUsers(response.data); // Initialize filtered list
+        setFilteredUsers(response.data); 
       } else {
         console.error("Failed to fetch users.");
       }
@@ -41,12 +42,19 @@ const AdminUser = () => {
       );
       setFilteredUsers(filtered);
     }
-    setCurrentPage(1); // Reset to first page after filtering
+    setCurrentPage(1); 
   };
 
   const handlePageChange = (pageNumber, pageSize) => {
     setCurrentPage(pageNumber);
     setPageSize(pageSize);
+  };
+
+  const exportToExcel = () => {
+    const worksheet = XLSX.utils.json_to_sheet(filteredUsers);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Users");
+    XLSX.writeFile(workbook, "Users.xlsx");
   };
 
   const startIndex = (currentPage - 1) * pageSize;
@@ -72,8 +80,26 @@ const AdminUser = () => {
         <button onClick={applyRoleFilter} className="filter-button">
           Filter
         </button>
-      </div>
+      
 
+     
+      <button
+        onClick={exportToExcel}
+        className="excel-button"
+        style={{
+          backgroundColor: "#4caf50",
+          color: "white",
+          padding: "8px 16px",
+          border: "none",
+          borderRadius: "4px",
+          cursor: "pointer",
+          
+          
+        }}
+      >
+        Export to Excel
+      </button>
+        </div>
       <table className="admin-table">
         <thead>
           <tr>

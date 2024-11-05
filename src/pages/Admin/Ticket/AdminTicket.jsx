@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Table, Select, Button, Modal, message, Pagination } from "antd";
 import TicketService from "../../../services/ticket.service";
-import "./AdminTicket.scss";
 import { currencyFormatter } from "../../../utils";
+import * as XLSX from "xlsx"; 
+import "./AdminTicket.scss";
 
 function AdminTicket() {
   const [tickets, setTickets] = useState([]);
@@ -72,6 +73,31 @@ function AdminTicket() {
   const startIndex = (currentPage - 1) * pageSize;
   const currentTickets = tickets.slice(startIndex, startIndex + pageSize);
 
+  const handleExportExcel = () => {
+    const data = tickets.map((ticket) => ({
+      "ID Ticket": ticket.iD_Ticket,
+      "Customer ID": ticket.iD_Customer,
+      Price: currencyFormatter(ticket.price),
+      Category: ticket.ticket_category,
+      Type: ticket.ticket_type === 1 ? "1" : "0",
+      Quantity: ticket.quantity,
+      "Event Date": ticket.event_Date ? new Date(ticket.event_Date).toLocaleDateString() : "N/A",
+      "Show Name": ticket.show_Name,
+      Location: ticket.location,
+      Description: ticket.description,
+      Seat: ticket.seat,
+      "Tickets Sold": ticket.ticketsold,
+      Status: ticket.status,
+    }));
+    
+    const worksheet = XLSX.utils.json_to_sheet(data);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Tickets");
+
+    // Export the Excel file
+    XLSX.writeFile(workbook, "TicketsData.xlsx");
+  };
+
   const columns = [
     { title: "ID Ticket", dataIndex: "iD_Ticket", key: "iD_Ticket" },
     { title: "Customer ID", dataIndex: "iD_Customer", key: "iD_Customer" },
@@ -90,12 +116,6 @@ function AdminTicket() {
     },
     { title: "Quantity", dataIndex: "quantity", key: "quantity" },
     {
-      title: "History",
-      dataIndex: "ticket_History",
-      key: "ticket_History",
-      render: (date) => (date ? new Date(date).toLocaleDateString() : "N/A"),
-    },
-    {
       title: "Status",
       dataIndex: "status",
       key: "status",
@@ -105,12 +125,7 @@ function AdminTicket() {
         </Button>
       ),
     },
-    {
-      title: "Event Date",
-      dataIndex: "event_Date",
-      key: "event_Date",
-      render: (date) => (date ? new Date(date).toLocaleDateString() : "N/A"),
-    },
+    { title: "Event Date", dataIndex: "event_Date", key: "event_Date", render: (date) => (date ? new Date(date).toLocaleDateString() : "N/A") },
     { title: "Show Name", dataIndex: "show_Name", key: "show_Name" },
     { title: "Location", dataIndex: "location", key: "location" },
     { title: "Description", dataIndex: "description", key: "description" },
@@ -133,6 +148,11 @@ function AdminTicket() {
   return (
     <div className="admin-ticket-page">
       <h2 className="admin-title">Admin Ticket Management</h2>
+
+      <Button className=" " type="primary" onClick={handleExportExcel}  style={{ backgroundColor: "#4caf50", borderColor: "#66bb6a", marginBottom: 16 }} >
+        Export to Excel
+      </Button>
+
       <Table
         rowKey="iD_Ticket"
         columns={columns}
@@ -152,7 +172,6 @@ function AdminTicket() {
         responsive={true}
       />
 
-      {/* Modal for editing status */}
       <Modal
         title="Update Status"
         visible={isModalVisible}
