@@ -24,6 +24,7 @@ import AdminPackage from "./Admin/Package/AdminPackage";
 import AdminTicket from "./Admin/Ticket/AdminTicket";
 import RequestList from "./Request/RequestList";
 import ChatPage from "./Chat/ChatPage";
+import TransactionPage from "./Admin/Transaction/TransactionPage";
 
 const pagesData = [
   {
@@ -157,6 +158,12 @@ const pagesData = [
         element: <AdminUser />,
         title: "User",
       },
+      {
+        path: "transactions/:customerId",
+        element: <TransactionPage />,
+        title: "Transactions/:customerId",
+      },
+
       {
         path: "package",
         element: <AdminPackage />,

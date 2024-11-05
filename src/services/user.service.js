@@ -47,6 +47,19 @@ class UserService {
       return returnValue(false, error, "Error fetching user profiles");
     }
   }
+   static async getTransactionByCustomerId(customerId) {
+    try {
+      const response = await api.get(`/Transaction/get-transaction-buy-package-successful`, {
+        params: { customerId }, 
+      });
+      return response.data; 
+    } catch (error) {
+      console.error("Error fetching transactions:", error);
+      throw error; 
+    }
+  }
+
+  
 
   
 }
