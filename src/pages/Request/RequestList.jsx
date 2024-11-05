@@ -22,7 +22,7 @@ export default function RequestList() {
         (item) => item?.iD_Customer === user?.iD_Customer
       );
 
-      setRequests(data);
+      setRequests(data.reverse());
     }
   };
 
@@ -40,6 +40,7 @@ export default function RequestList() {
             <th>Ticket</th>
             <th>Ticket Price</th>
             <th>Request Price</th>
+            <th>Quantity</th>
             <th>Status</th>
             <th>Created Date</th>
             <th>Action</th>
@@ -53,6 +54,7 @@ export default function RequestList() {
                 <td>{request?.ticketNavigation?.show_Name}</td>
                 <td>{currencyFormatter(request?.ticketNavigation?.price)}</td>
                 <td>{currencyFormatter(request.price_want)} </td>
+                <td>{request.quantity} </td>
                 <td>
                   <Tag
                     color={

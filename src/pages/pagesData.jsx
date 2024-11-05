@@ -23,6 +23,7 @@ import AdminUser from "./Admin/User/AdminUser";
 import AdminPackage from "./Admin/Package/AdminPackage";
 import AdminTicket from "./Admin/Ticket/AdminTicket";
 import RequestList from "./Request/RequestList";
+import ChatPage from "./Chat/ChatPage";
 
 const pagesData = [
   {
@@ -167,6 +168,12 @@ const pagesData = [
         title: "Ticket",
       },
     ],
+  },
+
+  {
+    path: "chat",
+    element: <ChatPage />,
+    title: "chat",
   },
 ];
 

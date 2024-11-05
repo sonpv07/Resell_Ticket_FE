@@ -529,7 +529,7 @@ export default function TicketManagement() {
           toast.success("Reject request successfully!");
         }
       } else {
-        toast.error("Approve request fail!");
+        toast.error("Reject request fail!");
       }
     } else {
       toast.error("Reject request fail!");

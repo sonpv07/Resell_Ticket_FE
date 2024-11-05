@@ -7,13 +7,18 @@ import OrderService from "../../services/order.service";
 import { AuthContext } from "../../context/AuthContext";
 import { currencyFormatter } from "../../utils";
 import FeedbackService from "../../services/feedack.service";
+import Report from "../../components/report/Report";
+import ReportService from "../../services/report.service";
 
 const OrderHistory = () => {
   const [orders, setOrders] = useState([]);
   const [feedbacks, setFeedbacks] = useState([]);
+  const [reports, setReports] = useState([]);
   const [isOpenFeedback, setIsOpenFeedback] = useState(false);
   const [chosenOrder, setChosenOrder] = useState(null);
   const [chosenFeedback, setChosenFeedback] = useState(null);
+  const [chosenReport, setChosenReport] = useState(null);
+  const [showReportModal, setShowReportModal] = useState(false);
 
   const { user } = useContext(AuthContext);
 
@@ -24,11 +29,15 @@ const OrderHistory = () => {
 
     setFeedbacks(response.data);
 
+    const responseReport = await ReportService.getReports();
+
+    setReports(responseReport.data);
+
     const responseOrders = await OrderService.getOrderByUser();
 
     console.log(responseOrders);
 
-    if (responseOrders.success) {
+    if (responseOrders.success && response.success && responseReport.success) {
       const data = responseOrders.data.filter(
         (item) =>
           item?.iD_CustomerNavigation?.iD_Customer === user?.iD_Customer &&
@@ -40,6 +49,11 @@ const OrderHistory = () => {
         feedback: response.data
           ? response.data.find((fb) => fb.iD_Order === order.iD_Order)
           : null,
+        report: responseReport.data.find(
+          (rp) =>
+            rp.iD_Order === order.iD_Order &&
+            rp.iD_OrderNavigation.iD_Customer === user?.iD_Customer
+        ),
       }));
 
       setOrders(updatedOrders.reverse());
@@ -58,7 +72,7 @@ const OrderHistory = () => {
       <table className="order-history-table">
         <thead>
           <tr>
-            <th>Order ID</th>
+            <th>ID</th>
             <th>Ticket</th>
             <th>Event Date</th>
             <th>Seat</th>
@@ -89,31 +103,59 @@ const OrderHistory = () => {
                 <td>{currencyFormatter(order.totalPrice)} </td>
                 <td>{order?.status}</td>
                 <td>{moment(order?.create_At).format("LLL")}</td>
-                <td>
+                <td style={{ display: "flex", gap: 10 }}>
                   {order.status === "COMPLETED" ? (
-                    order.feedback ? (
-                      <p
-                        className="feedback-btn"
-                        onClick={() => {
-                          setChosenFeedback(order.feedback ?? null);
-                          setChosenOrder(order.iD_Order);
-                          setIsOpenFeedback(true);
-                        }}
-                      >
-                        View Your Feedback
-                      </p>
-                    ) : (
-                      <p
-                        className="feedback-btn"
-                        onClick={() => {
-                          setChosenFeedback(order.feedback ?? null);
-                          setChosenOrder(order.iD_Order);
-                          setIsOpenFeedback(true);
-                        }}
-                      >
-                        Give Feedback
-                      </p>
-                    )
+                    <>
+                      {order.feedback ? (
+                        <p
+                          className="feedback-btn"
+                          onClick={() => {
+                            setChosenFeedback(order.feedback ?? null);
+                            setChosenOrder(order.iD_Order);
+                            setIsOpenFeedback(true);
+                          }}
+                        >
+                          View Feedback
+                        </p>
+                      ) : (
+                        <p
+                          className="feedback-btn"
+                          onClick={() => {
+                            setChosenFeedback(order.feedback ?? null);
+                            setChosenOrder(order.iD_Order);
+                            setIsOpenFeedback(true);
+                          }}
+                        >
+                          Give Feedback
+                        </p>
+                      )}
+
+                      {order?.report ? (
+                        <p
+                          className="feedback-btn"
+                          style={{ background: "red" }}
+                          onClick={() => {
+                            setChosenReport(order.report ?? null);
+                            setChosenOrder(order.iD_Order);
+                            setShowReportModal(true);
+                          }}
+                        >
+                          View Report
+                        </p>
+                      ) : (
+                        <p
+                          className="feedback-btn"
+                          style={{ background: "red" }}
+                          onClick={() => {
+                            setChosenReport(order.report ?? null);
+                            setShowReportModal(true);
+                            setChosenOrder(order.iD_Order);
+                          }}
+                        >
+                          Report
+                        </p>
+                      )}
+                    </>
                   ) : (
                     <span className="no-feedback">No Feedback Available</span>
                   )}
@@ -136,6 +178,18 @@ const OrderHistory = () => {
           feedbackData={chosenFeedback}
           orderList={orders}
           setOrderList={setOrders}
+        />
+      )}
+
+      {showReportModal && (
+        <Report
+          isShow={showReportModal}
+          setIsShow={setShowReportModal}
+          // sellerId={seller.iD_Customer}
+          orderId={chosenOrder}
+          setOrderList={setOrders}
+          orderList={orders}
+          reportData={chosenReport}
         />
       )}
     </div>
