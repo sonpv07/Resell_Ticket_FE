@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom"; // Change import to useNavigate
 import { Pagination } from "antd";
 import UserService from "../../../services/user.service";
 import * as XLSX from "xlsx";
@@ -8,8 +9,10 @@ const AdminUser = () => {
   const [users, setUsers] = useState([]);
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [selectedRole, setSelectedRole] = useState("All");
+  const [selectedPackage, setSelectedPackage] = useState("All");
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
+  const navigate = useNavigate(); // Initialize useNavigate
 
   useEffect(() => {
     fetchUsers();
@@ -20,7 +23,7 @@ const AdminUser = () => {
       const response = await UserService.getProfileList();
       if (response && response.success) {
         setUsers(response.data);
-        setFilteredUsers(response.data); 
+        setFilteredUsers(response.data);
       } else {
         console.error("Failed to fetch users.");
       }
@@ -31,18 +34,31 @@ const AdminUser = () => {
 
   const handleRoleChange = (event) => {
     setSelectedRole(event.target.value);
+    applyFilters(event.target.value, selectedPackage);
   };
 
-  const applyRoleFilter = () => {
-    if (selectedRole === "All") {
-      setFilteredUsers(users);
-    } else {
-      const filtered = users.filter(
-        (user) => user.iD_RoleNavigation?.name_role === selectedRole
+  const handlePackageChange = (event) => {
+    setSelectedPackage(event.target.value);
+    applyFilters(selectedRole, event.target.value);
+  };
+
+  const applyFilters = (role, packageType) => {
+    let filtered = users;
+
+    if (role !== "All") {
+      filtered = filtered.filter(
+        (user) => user.iD_RoleNavigation?.name_role === role
       );
-      setFilteredUsers(filtered);
     }
-    setCurrentPage(1); 
+
+    if (packageType !== "All") {
+      filtered = filtered.filter(
+        (user) => user.iD_PackageNavigation?.name_Package === packageType
+      );
+    }
+
+    setFilteredUsers(filtered);
+    setCurrentPage(1);
   };
 
   const handlePageChange = (pageNumber, pageSize) => {
@@ -57,6 +73,10 @@ const AdminUser = () => {
     XLSX.writeFile(workbook, "Users.xlsx");
   };
 
+  const handleTransactionClick = (customerId) => {
+  navigate(`/admin-dashboard/transactions/${customerId}`);
+  };
+
   const startIndex = (currentPage - 1) * pageSize;
   const currentUsers = filteredUsers.slice(startIndex, startIndex + pageSize);
 
@@ -64,42 +84,40 @@ const AdminUser = () => {
     <div className="admin-user-page">
       <h2 className="admin-title">Admin User Management</h2>
 
-      <div className="filter-container">
-        <label htmlFor="role-filter">Filter by Role: </label>
-        <select
-          id="role-filter"
-          value={selectedRole}
-          onChange={handleRoleChange}
-        >
-          <option value="">Choose Role</option>
-          <option value="All">All</option>
-          <option value="Customer">Customer</option>
-          <option value="Staff">Staff</option>
-          <option value="Admin">Admin</option>
-        </select>
-        <button onClick={applyRoleFilter} className="filter-button">
-          Filter
-        </button>
-      
-
-     
-      <button
-        onClick={exportToExcel}
-        className="excel-button"
-        style={{
-          backgroundColor: "#4caf50",
-          color: "white",
-          padding: "8px 16px",
-          border: "none",
-          borderRadius: "4px",
-          cursor: "pointer",
-          
-          
-        }}
-      >
-        Export to Excel
-      </button>
+      <div className="filter-container" style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+        <div>
+          <label htmlFor="role-filter">Filter by Role: </label>
+          <select
+            id="role-filter"
+            value={selectedRole}
+            onChange={handleRoleChange}
+          >
+            <option value="All">All Roles</option>
+            <option value="Customer">Customer</option>
+            <option value="Staff">Staff</option>
+            <option value="Admin">Admin</option>
+          </select>
         </div>
+
+        <div>
+          <label htmlFor="package-filter">Filter by Package: </label>
+          <select
+            id="package-filter"
+            value={selectedPackage}
+            onChange={handlePackageChange}
+          >
+            <option value="All">All Packages</option>
+            <option value="Basiccc">Basiccc</option>
+            <option value="Premium">Premium</option>
+            <option value="Business">Business</option>
+          </select>
+        </div>
+
+        <button onClick={exportToExcel} className="excel-button" style={{ backgroundColor: "#4caf50", color: "white", padding: "8px 16px", border: "none", borderRadius: "4px", cursor: "pointer" }}>
+          Export to Excel
+        </button>
+      </div>
+
       <table className="admin-table">
         <thead>
           <tr>
@@ -114,6 +132,7 @@ const AdminUser = () => {
             <th>Package Expiration</th>
             <th>Tickets Allowed</th>
             <th>Avatar</th>
+            <th>Transactions</th> {/* New column for transactions */}
           </tr>
         </thead>
         <tbody>
@@ -126,20 +145,14 @@ const AdminUser = () => {
               <td>{user.average_feedback}</td>
               <td>{user.iD_RoleNavigation?.name_role}</td>
               <td>{user.iD_PackageNavigation?.name_Package}</td>
-              <td>
-                {new Date(user.package_registration_time).toLocaleDateString()}
-              </td>
-              <td>
-                {new Date(user.package_expiration_date).toLocaleDateString()}
-              </td>
+              <td>{new Date(user.package_registration_time).toLocaleDateString()}</td>
+              <td>{new Date(user.package_expiration_date).toLocaleDateString()}</td>
               <td>{user.number_of_tickets_can_posted}</td>
               <td>
-                <img
-                  loading="lazy"
-                  src={user.avatar}
-                  alt="User Avatar"
-                  className="avatar"
-                />
+                <img loading="lazy" src={user.avatar} alt="User Avatar" className="avatar" />
+              </td>
+              <td>
+                <button onClick={() => handleTransactionClick(user.iD_Customer)} className="transaction-button">View Transactions</button>
               </td>
             </tr>
           ))}
@@ -151,9 +164,6 @@ const AdminUser = () => {
         pageSize={pageSize}
         total={filteredUsers.length}
         onChange={handlePageChange}
-        showSizeChanger={false}
-        className="pagination"
-        responsive={true}
       />
     </div>
   );

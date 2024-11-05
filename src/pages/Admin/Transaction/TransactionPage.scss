@@ -1,0 +1,68 @@
+.transaction-page {
+  padding: 30px;
+  background-color: #24243a; 
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); 
+  max-width: 1200px; 
+  margin: 20px auto;
+
+  .admin-title {
+    font-size: 28px;
+    font-weight: bold;
+    margin-bottom: 30px;
+    color: #f0f0f0; 
+    text-align: center; 
+  }
+
+  .transaction-table {
+    margin-bottom: 20px;
+    background-color: #33334d; 
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5); 
+    width: 100%; 
+
+    thead {
+      tr {
+        th {
+          background-color: #3a3a5e; 
+          color: #f0f0f0; 
+          font-weight: bold;
+          padding: 12px; 
+          text-align: left; 
+        }
+      }
+    }
+
+    tbody {
+      tr {
+        &:hover {
+          background-color: #404065; 
+        }
+
+        td {
+          color: #f5f5f5; 
+          padding: 12px;
+          border-bottom: 1px solid #555; 
+        }
+      }
+    }
+  }
+
+  .no-transactions,
+  .loading,
+  .error-message {
+    color: #f0f0f0; 
+    text-align: center;
+    margin-top: 20px;
+    font-size: 18px;
+  }
+
+  .error-message {
+    color: #ff6b6b; 
+  }
+
+  .loading {
+    font-weight: bold;
+  }
+}
