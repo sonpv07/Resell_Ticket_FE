@@ -17,22 +17,41 @@ class UserService {
     }
   }
 
-  static async editProfile(values) {
-    try {
-      console.log(values);
+  // static async editProfile(values) {
+  //   try {
+  //     console.log(values);
 
-      const response = await api.put(`${URL}`, values);
+  //     const response = await api.put(`${URL}`, values);
+
+  //     if (response.status >= 200 && response.status < 300) {
+  //       return returnValue(true, response.data, "Update profile successfully");
+  //     } else {
+  //       return returnValue(false, null, "Update profile failed");
+  //     }
+  //   } catch (error) {
+  //     console.error("Error Edit Profile", error);
+  //     return returnValue(false, error, "Update profile failed");
+  //   }
+  // }
+
+  static async editProfile(updatedUser) {
+    try {
+      console.log(updatedUser); // Log the updated user object for debugging
+
+     const response = await api.put(`${URL}`, updatedUser);
 
       if (response.status >= 200 && response.status < 300) {
-        return returnValue(true, response.data, "Update profile successfully");
+        return { success: true, data: response.data, message: "Update profile successfully" };
       } else {
-        return returnValue(false, null, "Update profile failed");
+        return { success: false, message: "Update profile failed" };
       }
     } catch (error) {
       console.error("Error Edit Profile", error);
-      return returnValue(false, error, "Update profile failed");
+      return { success: false, message: "Update profile failed", error };
     }
   }
+
+
 
   static async getProfileList() {
     try {
@@ -58,6 +77,16 @@ class UserService {
       throw error; 
     }
   }
+  
+  // static async updateUser(updatedUser) {
+  //   try {
+  //     const response = await api.put(`/${URL}`, updatedUser);
+  //     return response.data; 
+  //     console.error("Error updating user:", error);
+  //     return { success: false };
+  //   }
+  // }
+
 
   
 
