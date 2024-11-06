@@ -1,25 +1,28 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 import { Pagination } from "antd";
 import orderService from "../../../services/order.service";
 import "./AdminOrder.scss";
 import { currencyFormatter } from "../../../utils";
 import moment from "moment";
-import * as XLSX from "xlsx"; 
+import * as XLSX from "xlsx";
 
 const AdminOrder = () => {
-  const [orders, setOrders] = useState([]); 
-  const [filteredOrders, setFilteredOrders] = useState([]); 
+  const [orders, setOrders] = useState([]);
+  const [filteredOrders, setFilteredOrders] = useState([]);
   const [error, setError] = useState(null);
   const [selectedStatus, setSelectedStatus] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
 
+  const navigate = useNavigate(); 
+
   useEffect(() => {
     const loadOrders = async () => {
       try {
         const data = await orderService.getOrderByUser();
-        setOrders(data.data || []); 
-        setFilteredOrders(data.data || []); 
+        setOrders(data.data || []);
+        setFilteredOrders(data.data || []);
       } catch (err) {
         console.error("Error loading orders:", err);
         setError("Failed to load orders");
@@ -28,26 +31,28 @@ const AdminOrder = () => {
     loadOrders();
   }, []);
 
-  const handleFilter = () => {
+  useEffect(() => {
     let filtered = orders;
     if (selectedStatus) {
-      filtered = filtered.filter((order) => order.status === selectedStatus);
+      filtered = orders.filter((order) => order.status === selectedStatus);
     }
     setFilteredOrders(filtered);
     setCurrentPage(1);
-  };
+  }, [selectedStatus, orders]);
 
   const handlePageChange = (pageNumber, pageSize) => {
     setCurrentPage(pageNumber);
     setPageSize(pageSize);
   };
 
-  const startIndex = (currentPage - 1) * pageSize;
-  const currentOrders = (filteredOrders || []).slice(startIndex, startIndex + pageSize); 
+  const handleViewReport = (orderId) => {
+    navigate(`/admin-dashboard/report/${orderId}`); 
+  };
 
-  // Export to Excel function
+  const startIndex = (currentPage - 1) * pageSize;
+  const currentOrders = filteredOrders.slice(startIndex, startIndex + pageSize);
+
   const exportToExcel = () => {
-    
     const exportData = filteredOrders.map((order) => ({
       OrderID: order.iD_Order,
       CustomerName: order.iD_CustomerNavigation?.name,
@@ -57,12 +62,10 @@ const AdminOrder = () => {
       OrderDate: moment(order.create_At).format("LLL"),
     }));
 
-    
     const worksheet = XLSX.utils.json_to_sheet(exportData);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "Orders");
 
-    
     XLSX.writeFile(workbook, "Order_List.xlsx");
   };
 
@@ -84,8 +87,7 @@ const AdminOrder = () => {
             <option value="PROCESSING">PROCESSING</option>
           </select>
         </label>
-        <button onClick={handleFilter}>Filter Orders</button>
-        <button onClick={exportToExcel} className="export-button">Export to Excel</button> {/* Export Button */}
+        <button onClick={exportToExcel} className="export-button">Export to Excel</button>
       </div>
 
       {error && <div className="error">{error}</div>}
@@ -99,6 +101,7 @@ const AdminOrder = () => {
             <th>Total Price</th>
             <th>Status</th>
             <th>Order Date</th>
+            <th>Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -110,6 +113,9 @@ const AdminOrder = () => {
               <td>{currencyFormatter(order.totalPrice)}</td>
               <td>{order.status}</td>
               <td>{moment(order.create_At).format("LLL")}</td>
+              <td>
+                <button onClick={() => handleViewReport(order.iD_Order)}>View Report</button>
+              </td>
             </tr>
           ))}
         </tbody>

@@ -25,7 +25,7 @@ import AdminTicket from "./Admin/Ticket/AdminTicket";
 import RequestList from "./Request/RequestList";
 import ChatPage from "./Chat/ChatPage";
 import TransactionPage from "./Admin/Transaction/TransactionPage";
-
+import ViewReport from "./Admin/ViewReport/ViewReport";
 const pagesData = [
   {
     path: "",
@@ -152,6 +152,11 @@ const pagesData = [
         path: "order",
         element: <AdminOrder />,
         title: "Order",
+      },
+      {
+        path: "report/:orderId",
+        element: <ViewReport />,
+        title: "report/:orderId",
       },
       {
         path: "user",

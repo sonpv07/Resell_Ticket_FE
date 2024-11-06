@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom"; // Change import to useNavigate
+import { useNavigate } from "react-router-dom";
 import { Pagination } from "antd";
 import UserService from "../../../services/user.service";
 import * as XLSX from "xlsx";
@@ -12,7 +12,11 @@ const AdminUser = () => {
   const [selectedPackage, setSelectedPackage] = useState("All");
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
-  const navigate = useNavigate(); // Initialize useNavigate
+  const [editUser, setEditUser] = useState(null); 
+  const [newRole, setNewRole] = useState(""); 
+  const [newIsActive, setNewIsActive] = useState(true); 
+  const [toastMessage, setToastMessage] = useState(""); 
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchUsers();
@@ -74,7 +78,48 @@ const AdminUser = () => {
   };
 
   const handleTransactionClick = (customerId) => {
-  navigate(`/admin-dashboard/transactions/${customerId}`);
+    navigate(`/admin-dashboard/transactions/${customerId}`);
+  };
+
+  const handleEditClick = (user) => {
+    setEditUser(user);
+    setNewRole(user.iD_RoleNavigation?.name_role || "");
+    setNewIsActive(user.isActive);
+  };
+
+  const handleSaveChanges = async () => {
+    if (editUser) {
+      try {
+        const roleMap = {
+          Customer: 2,
+          Admin: 1,
+          Staff: 3, 
+        };
+
+        const updatedUser = {
+          ...editUser,
+          iD_Role: roleMap[newRole] || 2,  
+          isActive: newIsActive ? "Active" : "InActive",  
+        };
+
+        const response = await UserService.editProfile(updatedUser);
+        if (response && response.success) {
+          const updatedUsers = users.map((user) =>
+            user.iD_Customer === updatedUser.iD_Customer ? updatedUser : user
+          );
+          setUsers(updatedUsers);
+          setFilteredUsers(updatedUsers);
+          setEditUser(null);
+          setToastMessage("User updated successfully!"); // Display success message
+        } else {
+          console.error("Failed to update user.");
+          setToastMessage("Failed to update user.");
+        }
+      } catch (error) {
+        console.error("Error updating user:", error);
+        setToastMessage("Error updating user.");
+      }
+    }
   };
 
   const startIndex = (currentPage - 1) * pageSize;
@@ -84,14 +129,11 @@ const AdminUser = () => {
     <div className="admin-user-page">
       <h2 className="admin-title">Admin User Management</h2>
 
-      <div className="filter-container" style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+      
+      <div className="filter-container">
         <div>
           <label htmlFor="role-filter">Filter by Role: </label>
-          <select
-            id="role-filter"
-            value={selectedRole}
-            onChange={handleRoleChange}
-          >
+          <select id="role-filter" value={selectedRole} onChange={handleRoleChange}>
             <option value="All">All Roles</option>
             <option value="Customer">Customer</option>
             <option value="Staff">Staff</option>
@@ -101,11 +143,7 @@ const AdminUser = () => {
 
         <div>
           <label htmlFor="package-filter">Filter by Package: </label>
-          <select
-            id="package-filter"
-            value={selectedPackage}
-            onChange={handlePackageChange}
-          >
+          <select id="package-filter" value={selectedPackage} onChange={handlePackageChange}>
             <option value="All">All Packages</option>
             <option value="Basiccc">Basiccc</option>
             <option value="Premium">Premium</option>
@@ -113,11 +151,10 @@ const AdminUser = () => {
           </select>
         </div>
 
-        <button onClick={exportToExcel} className="excel-button" style={{ backgroundColor: "#4caf50", color: "white", padding: "8px 16px", border: "none", borderRadius: "4px", cursor: "pointer" }}>
-          Export to Excel
-        </button>
+        <button onClick={exportToExcel} className="excel-button">Export to Excel</button>
       </div>
 
+      
       <table className="admin-table">
         <thead>
           <tr>
@@ -132,7 +169,9 @@ const AdminUser = () => {
             <th>Package Expiration</th>
             <th>Tickets Allowed</th>
             <th>Avatar</th>
-            <th>Transactions</th> {/* New column for transactions */}
+            <th>Active Status</th>
+            <th>Transactions</th>
+            <th>Edit</th>
           </tr>
         </thead>
         <tbody>
@@ -148,23 +187,42 @@ const AdminUser = () => {
               <td>{new Date(user.package_registration_time).toLocaleDateString()}</td>
               <td>{new Date(user.package_expiration_date).toLocaleDateString()}</td>
               <td>{user.number_of_tickets_can_posted}</td>
-              <td>
-                <img loading="lazy" src={user.avatar} alt="User Avatar" className="avatar" />
-              </td>
-              <td>
-                <button onClick={() => handleTransactionClick(user.iD_Customer)} className="transaction-button">View Transactions</button>
-              </td>
+              <td><img src={user.avatar} alt="User Avatar" className="avatar" /></td>
+              <td>{user.isActive}</td>
+              <td><button onClick={() => handleTransactionClick(user.iD_Customer)}>View Transactions</button></td>
+              <td><button onClick={() => handleEditClick(user)}>Edit</button></td>
             </tr>
           ))}
         </tbody>
       </table>
 
-      <Pagination
-        current={currentPage}
-        pageSize={pageSize}
-        total={filteredUsers.length}
-        onChange={handlePageChange}
-      />
+      <Pagination current={currentPage} pageSize={pageSize} total={filteredUsers.length} onChange={handlePageChange} />
+
+      
+      {editUser && (
+        <div className="edit-overlay">
+          <div className="edit-modal">
+            <h3>Edit User</h3>
+            <div>
+              <label>Role: </label>
+              <select value={newRole} onChange={(e) => setNewRole(e.target.value)}>
+                <option value="Customer">Customer</option>
+                <option value="Staff">Staff</option>
+                <option value="Admin">Admin</option>
+              </select>
+            </div>
+            <div>
+              <label>Active: </label>
+              <input type="checkbox" checked={newIsActive} onChange={() => setNewIsActive(!newIsActive)} />
+            </div>
+            <button onClick={handleSaveChanges}>Save</button>
+            <button onClick={() => setEditUser(null)}>Cancel</button>
+          </div>
+        </div>
+      )}
+
+      
+      {toastMessage && <div className="toast">{toastMessage}</div>}
     </div>
   );
 };
