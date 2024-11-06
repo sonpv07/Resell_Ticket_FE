@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom"; // Change import to useNavigate
+import { useNavigate } from "react-router-dom"; 
 import { Pagination } from "antd";
 import UserService from "../../../services/user.service";
 import * as XLSX from "xlsx";
@@ -12,7 +12,7 @@ const AdminUser = () => {
   const [selectedPackage, setSelectedPackage] = useState("All");
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
-  const navigate = useNavigate(); // Initialize useNavigate
+  const navigate = useNavigate(); 
 
   useEffect(() => {
     fetchUsers();
@@ -74,7 +74,7 @@ const AdminUser = () => {
   };
 
   const handleTransactionClick = (customerId) => {
-  navigate(`/admin-dashboard/transactions/${customerId}`);
+    navigate(`/admin-dashboard/transactions/${customerId}`);
   };
 
   const startIndex = (currentPage - 1) * pageSize;
@@ -132,6 +132,7 @@ const AdminUser = () => {
             <th>Package Expiration</th>
             <th>Tickets Allowed</th>
             <th>Avatar</th>
+            <th>Active Status</th> {/* New column for Active Status */}
             <th>Transactions</th> {/* New column for transactions */}
           </tr>
         </thead>
@@ -151,6 +152,7 @@ const AdminUser = () => {
               <td>
                 <img loading="lazy" src={user.avatar} alt="User Avatar" className="avatar" />
               </td>
+              <td>{user.isActive ? "Active" : "Inactive"}</td> 
               <td>
                 <button onClick={() => handleTransactionClick(user.iD_Customer)} className="transaction-button">View Transactions</button>
               </td>
