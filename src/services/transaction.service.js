@@ -21,6 +21,21 @@ class TransactionService {
       return returnValue(false, null, "Create Payment fail");
     }
   }
+
+  static async createPaymentPayOS(body) {
+    try {
+      const response = await api.post(`${URL}/create-payment-link`, body);
+
+      if (response.status >= 200 && response.status < 300) {
+        return returnValue(true, response.data, "Create Payment successfully");
+      } else {
+        return returnValue(false, null, "Create Payment fail");
+      }
+    } catch (error) {
+      console.error("Error Login", error);
+      return returnValue(false, null, "Create Payment fail");
+    }
+  }
 }
 
 export default TransactionService;

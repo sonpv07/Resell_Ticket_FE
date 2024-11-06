@@ -14,6 +14,8 @@ import { PAYMENT_METHODS } from "../../../configs/constant";
 import EditTicket from "../../Ticket/EditTicket/EditTicket";
 import NotificationService from "../../../services/notification.service";
 import UserDetailModal from "../../../components/user-detail-modal/UserDetailModal";
+import FeedbackService from "../../../services/feedack.service";
+import FeedbackModal from "../../../components/feedback/FeedbackModal";
 
 export default function TicketManagement() {
   const [requestList, setRequestList] = useState([]);
@@ -30,6 +32,9 @@ export default function TicketManagement() {
 
   const [isOpenUserModal, setIsOpenUserModal] = useState(false);
   const [chosenUser, setChosenUser] = useState(null);
+
+  const [chosenFeedback, setChosenFeedback] = useState(null);
+  const [isOpenFeedback, setIsOpenFeedback] = useState(false);
 
   const navigate = useNavigate();
 
@@ -317,7 +322,29 @@ export default function TicketManagement() {
         </>
       ),
     },
+
+    {
+      title: "Action",
+      dataIndex: "date",
+      key: "date",
+      render: (text, record) =>
+        record.feedback ? (
+          <Button
+            type="primary"
+            onClick={() => {
+              setChosenFeedback(record.feedback);
+              setIsOpenFeedback(true);
+            }}
+          >
+            View Feedback
+          </Button>
+        ) : (
+          ""
+        ),
+    },
   ];
+
+  console.log(chosenFeedback);
 
   const fetchApi = async () => {
     try {
@@ -401,6 +428,10 @@ export default function TicketManagement() {
   const fetchOrderData = async () => {
     const response = await OrderService.getOrderBySeller(user.iD_Customer);
 
+    const feedbackData = await FeedbackService.getAllFeedback();
+
+    console.log(feedbackData);
+
     if (response.success) {
       const transformedData = response.data.map((item, index) => ({
         key: item?.iD_Order,
@@ -415,6 +446,9 @@ export default function TicketManagement() {
         status: item?.status,
         buyer: item?.iD_CustomerNavigation?.name,
         buyerDetails: item?.iD_CustomerNavigation,
+        feedback: feedbackData?.data?.find(
+          (fb) => fb?.iD_Order === item.iD_Order
+        ),
       }));
 
       setOrderList(transformedData.reverse());
@@ -447,6 +481,8 @@ export default function TicketManagement() {
         requestId,
         "Completed"
       );
+
+      console.log(statusResponse);
 
       if (statusResponse.success) {
         const request = requestList.findIndex(
@@ -562,7 +598,7 @@ export default function TicketManagement() {
     };
   }, []);
 
-  console.log(chosenUser);
+  console.log(orderList);
 
   return (
     <div className="seller-ticket-management">
@@ -654,6 +690,14 @@ export default function TicketManagement() {
         setIsOpen={setIsOpenUserModal}
         user={chosenUser}
       />
+
+      {isOpenFeedback && (
+        <FeedbackModal
+          isOpen={isOpenFeedback}
+          setIsOpen={setIsOpenFeedback}
+          orderFeedback={chosenFeedback}
+        />
+      )}
     </div>
   );
 }

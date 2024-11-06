@@ -10,6 +10,9 @@ import { AuthContext } from "../../../context/AuthContext";
 import RequestPriceForm from "../../../components/request-price/RequestPriceForm";
 import SimpleImageSlider from "react-simple-image-slider";
 import FeedbackService from "../../../services/feedack.service";
+import { addDoc, collection, serverTimestamp } from "firebase/firestore";
+import { db } from "../../../lib/firebase";
+import { DialogContext } from "../../../context/DialogContext";
 
 export default function TicketDetail() {
   const navigate = useNavigate();
@@ -32,11 +35,49 @@ export default function TicketDetail() {
 
   const [selectedQuantity, setSelectedQuantity] = useState(1);
 
+  const { openDialog, closeDialog } = useContext(DialogContext);
+
+  const handleOpenDialog = () => {
+    openDialog({
+      title: "Alert",
+      component: <p>Please Login to use further features</p>,
+      okCallback: () => {
+        closeDialog();
+      },
+      okText: "Confirm",
+    });
+  };
+
+  // Function to create a new chat document with two users
+  const createChat = async (user1, user2) => {
+    try {
+      if (!user) {
+        handleOpenDialog();
+        return;
+      }
+
+      const chatDocRef = await addDoc(collection(db, "boxchat"), {
+        users: [user1, user2], // Array containing two users
+        createdAt: serverTimestamp(), // Timestamp for when the chat was created
+      });
+      console.log("Chat document created with ID:", chatDocRef.id);
+      alert(`Chat created successfully with ID: ${chatDocRef.id}`);
+    } catch (error) {
+      console.error("Error creating chat document:", error);
+      alert("Failed to create chat document");
+    }
+  };
+
   const handleQuantityChange = (e) => {
     setSelectedQuantity(Number(e.target.value));
   };
 
   const handleBuyNow = () => {
+    if (!user) {
+      handleOpenDialog();
+      return;
+    }
+
     navigate("/cart", {
       state: {
         ticket: [
@@ -51,11 +92,6 @@ export default function TicketDetail() {
         ],
       },
     });
-  };
-
-  const handleChatWithSeller = () => {
-    console.log("Opening chat with seller");
-    // Implement chat logic here
   };
 
   const fetchData = async () => {
@@ -228,16 +264,23 @@ export default function TicketDetail() {
                     new Date(ticketData.event_Date).getTime() <
                       new Date().getTime()
                   }
-                  onClick={() => setIsOpenRequest(true)}
+                  onClick={() => {
+                    if (!user) {
+                      handleOpenDialog();
+                      return;
+                    }
+
+                    setIsOpenRequest(true);
+                  }}
                 >
                   Create Negotiation
                 </button>
-                {/* <button
+                <button
                   className="ticket-detail__button ticket-detail__button--tertiary"
-                  onClick={handleChatWithSeller}
+                  onClick={() => createChat(user, sellerInfo)}
                 >
                   Chat with Seller
-                </button> */}
+                </button>
               </>
             )}
           </div>
