@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom"; // If using React Router
-import UserService from "../../../services/user.service"; // Adjust path as necessary
-import './TransactionPage.scss'; // Đảm bảo import file SCSS
+import { useParams } from "react-router-dom"; 
+import UserService from "../../../services/user.service"; 
+import './TransactionPage.scss'; 
 
 const TransactionPage = () => {
   const { customerId } = useParams(); 

@@ -15,7 +15,7 @@ const AdminUser = () => {
   const [editUser, setEditUser] = useState(null); 
   const [newRole, setNewRole] = useState(""); 
   const [newIsActive, setNewIsActive] = useState(true); 
-  const [toastMessage, setToastMessage] = useState(""); // for success/error messages
+  const [toastMessage, setToastMessage] = useState(""); 
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -129,7 +129,7 @@ const AdminUser = () => {
     <div className="admin-user-page">
       <h2 className="admin-title">Admin User Management</h2>
 
-      {/* Filter options */}
+      
       <div className="filter-container">
         <div>
           <label htmlFor="role-filter">Filter by Role: </label>
@@ -154,7 +154,7 @@ const AdminUser = () => {
         <button onClick={exportToExcel} className="excel-button">Export to Excel</button>
       </div>
 
-      {/* User table */}
+      
       <table className="admin-table">
         <thead>
           <tr>
@@ -198,7 +198,7 @@ const AdminUser = () => {
 
       <Pagination current={currentPage} pageSize={pageSize} total={filteredUsers.length} onChange={handlePageChange} />
 
-      {/* Edit User Modal */}
+      
       {editUser && (
         <div className="edit-overlay">
           <div className="edit-modal">
