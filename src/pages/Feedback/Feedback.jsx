@@ -93,13 +93,15 @@ const Feedback = ({
             />
           </div>
 
-          <button
-            type="submit"
-            className="submit-btn"
-            disabled={feedbackData !== null || loading}
-          >
-            Submit Feedback
-          </button>
+          {!feedbackData && (
+            <button
+              type="submit"
+              className="submit-btn"
+              disabled={feedbackData !== null || loading}
+            >
+              Submit Feedback
+            </button>
+          )}
         </form>
       </div>
     </Overlay>

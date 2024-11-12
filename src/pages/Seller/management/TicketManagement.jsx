@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 
 import "./TicketManagement.scss";
-import { Button, Space, Table, Tag } from "antd";
+import { Button, Input, Space, Table, Tag } from "antd";
 import TicketService from "../../../services/ticket.service";
 import { currencyFormatter, getTagColor } from "../../../utils";
 import moment from "moment";
@@ -14,6 +14,11 @@ import { PAYMENT_METHODS } from "../../../configs/constant";
 import EditTicket from "../../Ticket/EditTicket/EditTicket";
 import NotificationService from "../../../services/notification.service";
 import UserDetailModal from "../../../components/user-detail-modal/UserDetailModal";
+import FeedbackService from "../../../services/feedack.service";
+import FeedbackModal from "../../../components/feedback/FeedbackModal";
+import { EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
+import UserService from "../../../services/user.service";
+import { DialogContext } from "../../../context/DialogContext";
 
 export default function TicketManagement() {
   const [requestList, setRequestList] = useState([]);
@@ -31,9 +36,20 @@ export default function TicketManagement() {
   const [isOpenUserModal, setIsOpenUserModal] = useState(false);
   const [chosenUser, setChosenUser] = useState(null);
 
+  const [chosenFeedback, setChosenFeedback] = useState(null);
+  const [isOpenFeedback, setIsOpenFeedback] = useState(false);
+
+  const [isShowPayOs, setIsShowPayOs] = useState(false);
+  const [isEditPayOs, setIsEditPayOs] = useState(false);
+
   const navigate = useNavigate();
 
-  const { user } = useContext(AuthContext);
+  const { user, setUser } = useContext(AuthContext);
+  const { openDialog, closeDialog } = useContext(DialogContext);
+
+  const [clientId, setClientId] = useState(user?.clientId ?? "");
+  const [apiKey, setApiKey] = useState(user?.apiKey ?? "");
+  const [checksumKey, setChecksumKey] = useState(user?.checksumKey ?? "");
 
   const columns = [
     {
@@ -317,7 +333,29 @@ export default function TicketManagement() {
         </>
       ),
     },
+
+    {
+      title: "Action",
+      dataIndex: "date",
+      key: "date",
+      render: (text, record) =>
+        record.feedback ? (
+          <Button
+            type="primary"
+            onClick={() => {
+              setChosenFeedback(record.feedback);
+              setIsOpenFeedback(true);
+            }}
+          >
+            View Feedback
+          </Button>
+        ) : (
+          ""
+        ),
+    },
   ];
+
+  console.log(chosenFeedback);
 
   const fetchApi = async () => {
     try {
@@ -401,6 +439,10 @@ export default function TicketManagement() {
   const fetchOrderData = async () => {
     const response = await OrderService.getOrderBySeller(user.iD_Customer);
 
+    const feedbackData = await FeedbackService.getAllFeedback();
+
+    console.log(feedbackData);
+
     if (response.success) {
       const transformedData = response.data.map((item, index) => ({
         key: item?.iD_Order,
@@ -415,6 +457,9 @@ export default function TicketManagement() {
         status: item?.status,
         buyer: item?.iD_CustomerNavigation?.name,
         buyerDetails: item?.iD_CustomerNavigation,
+        feedback: feedbackData?.data?.find(
+          (fb) => fb?.iD_Order === item.iD_Order
+        ),
       }));
 
       setOrderList(transformedData.reverse());
@@ -448,7 +493,42 @@ export default function TicketManagement() {
         "Completed"
       );
 
+      console.log(statusResponse);
+
       if (statusResponse.success) {
+        statusResponse.data.forEach((statusResponse) => {
+          const {
+            iD_Request,
+            status,
+            iD_Customer,
+            price_want,
+            history,
+            quantity,
+            iD_CustomerNavigation,
+          } = statusResponse;
+
+          const requestIndex = requestList.findIndex(
+            (request) => request.iD_Request === iD_Request
+          );
+
+          // If the request is found, update its status and other relevant data
+          if (requestIndex >= 0) {
+            const updatedRequestList = [...requestList];
+
+            updatedRequestList[requestIndex] = {
+              ...updatedRequestList[requestIndex],
+              status,
+              iD_Customer,
+              price_want,
+              history,
+              quantity,
+              iD_CustomerNavigation,
+            };
+
+            setRequestList(updatedRequestList);
+          }
+        });
+
         const request = requestList.findIndex(
           (request) => request.key === requestId
         );
@@ -536,6 +616,28 @@ export default function TicketManagement() {
     }
   };
 
+  const handleUpdatePayOs = async () => {
+    const response = await UserService.updatePayOs(
+      user?.iD_Customer,
+      clientId,
+      apiKey,
+      checksumKey
+    );
+
+    if (response.success) {
+      let newUser = {
+        ...user,
+        apiKey: apiKey,
+        checksumKey: checksumKey,
+        clientId: clientId,
+      };
+
+      setUser(newUser);
+      localStorage.setItem("user", JSON.stringify(newUser));
+      toast.success("Update PayOs successfully!");
+    }
+  };
+
   // const handleRemoveTicket = async (id) => {
   //   const response = await TicketService.deleteTicket(id);
   //   if (response.success) {
@@ -562,7 +664,7 @@ export default function TicketManagement() {
     };
   }, []);
 
-  console.log(chosenUser);
+  console.log(orderList);
 
   return (
     <div className="seller-ticket-management">
@@ -579,6 +681,85 @@ export default function TicketManagement() {
           <p>
             <span>End Time: </span>
             {moment(user?.package_expiration_date).format("MMMM D, YYYY")}
+          </p>
+        </div>
+      </div>
+
+      <div style={{ marginBottom: "30px" }}>
+        <h1 className="seller-ticket-management__title">PayOS Config</h1>
+        <div className="seller-ticket-management__package">
+          <p>
+            <span>Client ID:</span>{" "}
+            <Input.Password
+              placeholder="input client id"
+              visibilityToggle={{
+                visible: isShowPayOs,
+                onVisibleChange: setIsShowPayOs,
+              }}
+              value={clientId}
+              disabled={!isEditPayOs}
+              onChange={(e) => setClientId(e.target.value)}
+            />
+          </p>
+          <p>
+            <span>Api Key:</span>{" "}
+            <Input.Password
+              placeholder="input api key"
+              visibilityToggle={{
+                visible: isShowPayOs,
+                onVisibleChange: setIsShowPayOs,
+              }}
+              value={apiKey}
+              disabled={!isEditPayOs}
+              onChange={(e) => setApiKey(e.target.value)}
+            />
+          </p>
+          <p>
+            <span>Checksum Key: </span>
+            <Input.Password
+              placeholder="input checksum key"
+              visibilityToggle={{
+                visible: isShowPayOs,
+                onVisibleChange: setIsShowPayOs,
+              }}
+              disabled={!isEditPayOs}
+              value={checksumKey}
+              onChange={(e) => setChecksumKey(e.target.value)}
+            />
+
+            {!isEditPayOs && (
+              <div style={{ marginTop: 10, display: "flex", gap: 10 }}>
+                <Button
+                  style={{ width: 80 }}
+                  onClick={() => setIsShowPayOs((prevState) => !prevState)}
+                >
+                  {isShowPayOs ? "Hide" : "Show"}
+                </Button>
+                <Button
+                  style={{ width: 80 }}
+                  onClick={() => setIsEditPayOs((prevState) => !prevState)}
+                >
+                  Edit
+                </Button>
+              </div>
+            )}
+
+            {isEditPayOs && (
+              <div style={{ marginTop: 10, display: "flex", gap: 10 }}>
+                <Button style={{ width: 80 }} onClick={handleUpdatePayOs}>
+                  Apply
+                </Button>
+                <Button
+                  style={{ width: 80 }}
+                  onClick={() => {
+                    setIsEditPayOs(false);
+                    setIsShowPayOs(false);
+                  }}
+                >
+                  Cancel
+                </Button>
+              </div>
+            )}
           </p>
         </div>
       </div>
@@ -611,7 +792,20 @@ export default function TicketManagement() {
         <button
           className="header__button"
           onClick={() => {
-            navigate("/seller/create-ticket");
+            if (!user?.clientId || !user?.checksumKey || !user?.apiKey) {
+              openDialog({
+                title: "Alert",
+                component: (
+                  <p>Please Provide PayOS key to use further features</p>
+                ),
+                okCallback: () => {
+                  closeDialog();
+                },
+                okText: "Confirm",
+              });
+            } else {
+              navigate("/seller/create-ticket");
+            }
           }}
         >
           Sell Ticket
@@ -654,6 +848,14 @@ export default function TicketManagement() {
         setIsOpen={setIsOpenUserModal}
         user={chosenUser}
       />
+
+      {isOpenFeedback && (
+        <FeedbackModal
+          isOpen={isOpenFeedback}
+          setIsOpen={setIsOpenFeedback}
+          orderFeedback={chosenFeedback}
+        />
+      )}
     </div>
   );
 }

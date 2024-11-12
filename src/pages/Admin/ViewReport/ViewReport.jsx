@@ -2,17 +2,38 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import ReportService from "../../../services/report.service";
 import "./ViewReport.scss";
+import moment from "moment";
+import * as XLSX from "xlsx";
 
 const ViewReport = () => {
-  const { orderId } = useParams(); 
+  const { orderId } = useParams();
   const [reportData, setReportData] = useState([]);
   const [error, setError] = useState(null);
+
+  const exportToExcel = () => {
+    const exportData = reportData.map((report) => ({
+      ReportID: report.iD_Report,
+      OrderID: report.iD_Order,
+      CustomerID: report.iD_OrderNavigation?.iD_Customer,
+      Comment: report.comment,
+      CreationDate: moment(report.iD_OrderNavigation?.create_At).format("LLL"),
+    }));
+
+    const worksheet = XLSX.utils.json_to_sheet(exportData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Reports");
+
+    // Save the workbook as an Excel file
+    XLSX.writeFile(workbook, `Order_Report_${orderId}.xlsx`);
+  };
 
   useEffect(() => {
     const fetchReports = async () => {
       try {
         const response = await ReportService.getReports();
-        const filteredReports = response.data.filter((report) => report.iD_Order === Number(orderId));
+        const filteredReports = response.data.filter(
+          (report) => report.iD_Order === Number(orderId)
+        );
         setReportData(filteredReports);
       } catch (err) {
         console.error("Error loading report data:", err);
@@ -22,9 +43,15 @@ const ViewReport = () => {
     fetchReports();
   }, [orderId]);
 
+  console.log(reportData);
+
   return (
     <div className="order-report">
       <h2>Order Report for Order ID: {orderId}</h2>
+
+      <button onClick={exportToExcel} className="export-button">
+        Export to Excel
+      </button>
 
       {error && <p className="error">{error}</p>}
 
@@ -36,12 +63,7 @@ const ViewReport = () => {
               <th>Order ID</th>
               <th>Customer ID</th>
               <th>Comment</th>
-              <th>History</th>
-              <th>Payment Method</th>
-              <th>Total Price</th>
-              <th>Status</th>
-              <th>Shipping Time</th>
-              <th>Creation Date</th>
+              <th>Create Date</th>
             </tr>
           </thead>
           <tbody>
@@ -51,12 +73,15 @@ const ViewReport = () => {
                 <td>{report.iD_Order}</td>
                 <td>{report.iD_OrderNavigation?.iD_Customer}</td>
                 <td>{report.comment}</td>
-                <td>{new Date(report.history).toLocaleString()}</td>
-                <td>{report.iD_OrderNavigation?.payment_method}</td>
+                <td>{moment(report.history).format("LLL")}</td>
+                {/* <td>{report.iD_OrderNavigation?.payment_method}</td>
                 <td>{report.iD_OrderNavigation?.totalPrice}</td>
                 <td>{report.iD_OrderNavigation?.status}</td>
-                <td>{new Date(report.iD_OrderNavigation?.shipping_time).toLocaleString()}</td>
-                <td>{new Date(report.iD_OrderNavigation?.create_At).toLocaleString()}</td>
+                <td>
+                  {new Date(
+                    report.iD_OrderNavigation?.create_At
+                  ).toLocaleString()}
+                </td> */}
               </tr>
             ))}
           </tbody>

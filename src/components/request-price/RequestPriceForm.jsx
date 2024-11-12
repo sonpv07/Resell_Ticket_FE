@@ -12,6 +12,7 @@ const RequestPriceForm = ({
   ticketId,
   currentPrice,
   currentQuantity,
+  requestData,
 }) => {
   const [form] = Form.useForm();
   const { user } = useContext(AuthContext);
@@ -48,6 +49,13 @@ const RequestPriceForm = ({
   };
 
   console.log(currentQuantity);
+
+  useEffect(() => {
+    form.setFieldsValue({
+      priceWant: requestData?.price_want,
+      quantity: requestData?.quantity,
+    });
+  }, [requestData, form]);
 
   return (
     <Overlay isOpen={isOpen} onClose={() => setIsOpen(false)}>

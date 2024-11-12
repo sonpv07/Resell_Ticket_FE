@@ -60,9 +60,11 @@ export default function Cart() {
           finalPrice: getSubtotal() + DELIVERY_PRICE,
         };
 
-        const paymentResponse = await TransactionService.createPayment(
+        const paymentResponse = await TransactionService.createPaymentPayOS(
           paymentBody
         );
+
+        console.log(paymentResponse);
 
         if (paymentResponse.success) {
           setLoading(false);

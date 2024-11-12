@@ -35,7 +35,7 @@ const OrderHistory = () => {
 
     const responseOrders = await OrderService.getOrderByUser();
 
-    console.log(responseOrders);
+    console.log(responseReport);
 
     if (responseOrders.success && response.success && responseReport.success) {
       const data = responseOrders.data.filter(
@@ -52,7 +52,7 @@ const OrderHistory = () => {
         report: responseReport.data.find(
           (rp) =>
             rp.iD_Order === order.iD_Order &&
-            rp.iD_OrderNavigation.iD_Customer === user?.iD_Customer
+            user?.iD_Customer === rp?.iD_OrderNavigation?.iD_Customer
         ),
       }));
 

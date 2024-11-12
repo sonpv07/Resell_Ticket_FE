@@ -46,6 +46,12 @@ const Header = () => {
       case "Seller Space":
         navigate("/seller");
         break;
+      case "Transaction History":
+        navigate("/transactions-history");
+        break;
+      case "Chat":
+        navigate("/chat");
+        break;
       case "Logout":
         handleLogout();
         break;
@@ -70,7 +76,7 @@ const Header = () => {
             onClick={() => handleOnClick(item.label)}
             key={item.label}
             style={{
-              width: "200px",
+              width: "230px",
             }}
           >
             <div className="menu-item">

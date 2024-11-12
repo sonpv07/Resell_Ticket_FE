@@ -6,9 +6,14 @@ import moment from "moment";
 import { currencyFormatter } from "../../utils";
 import { Tag } from "antd";
 import { useNavigate } from "react-router-dom";
+import RequestPriceForm from "../../components/request-price/RequestPriceForm";
 
 export default function RequestList() {
   const [requests, setRequests] = useState([]);
+
+  const [isOpenEdit, setIsOpenEdit] = useState(false);
+
+  const [chosenRequest, setChosenRequest] = useState(null);
 
   const navigate = useNavigate();
 
@@ -25,6 +30,8 @@ export default function RequestList() {
       setRequests(data.reverse());
     }
   };
+
+  console.log(requests);
 
   useEffect(() => {
     fetchOrders();
@@ -53,7 +60,7 @@ export default function RequestList() {
                 <td>{index + 1}</td>
                 <td>{request?.ticketNavigation?.show_Name}</td>
                 <td>{currencyFormatter(request?.ticketNavigation?.price)}</td>
-                <td>{currencyFormatter(request.price_want)} </td>
+                <td>{currencyFormatter(request?.price_want)} </td>
                 <td>{request.quantity} </td>
                 <td>
                   <Tag
@@ -68,12 +75,12 @@ export default function RequestList() {
                   >
                     {request?.status === "Completed"
                       ? "Approved".toUpperCase()
-                      : request?.status.toUpperCase()}
+                      : request?.status?.toUpperCase()}
                   </Tag>
                 </td>
                 <td>{moment(request?.history).format("LLL")}</td>
 
-                <td>
+                <td style={{ display: "flex", gap: 10 }}>
                   <p
                     className="feedback-btn"
                     onClick={() => {
@@ -82,6 +89,17 @@ export default function RequestList() {
                   >
                     View Ticket
                   </p>
+                  {request?.status === "Pending" && (
+                    <p
+                      className="feedback-btn"
+                      onClick={() => {
+                        setIsOpenEdit(true);
+                        setChosenRequest(request);
+                      }}
+                    >
+                      Edit Request
+                    </p>
+                  )}
                 </td>
               </tr>
             ))
@@ -92,6 +110,15 @@ export default function RequestList() {
           )}
         </tbody>
       </table>
+
+      {isOpenEdit && (
+        <RequestPriceForm
+          isOpen={isOpenEdit}
+          setIsOpen={setIsOpenEdit}
+          currentQuantity={chosenRequest?.ticketNavigation?.quantity}
+          requestData={chosenRequest}
+        />
+      )}
     </div>
   );
 }

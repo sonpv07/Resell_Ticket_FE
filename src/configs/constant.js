@@ -7,6 +7,7 @@ const {
   ShoppingCartOutlined,
   SolutionOutlined,
   HourglassOutlined,
+  MessageOutlined,
 } = require("@ant-design/icons");
 
 export const LOCATION_DATA = [
@@ -64,25 +65,37 @@ export const SETTING_DATA = [
     label: "Request List",
     needPackage: false,
   },
+  {
+    id: 4,
+    icon: <MessageOutlined />,
+    label: "Chat",
+    needPackage: false,
+  },
   // {
   //   id: 3,
   //   icon: <BellFilled />,
   //   label: "Ticket alerts",
   // },
   {
-    id: 4,
+    id: 5,
     icon: <ShoppingCartOutlined />,
     label: "Order History",
     needPackage: false,
   },
   {
-    id: 5,
+    id: 6,
+    icon: <ShoppingCartOutlined />,
+    label: "Transaction History",
+    needPackage: false,
+  },
+  {
+    id: 7,
     icon: <SolutionOutlined />,
     label: "Seller Space",
     needPackage: true,
   },
   {
-    id: 6,
+    id: 8,
     icon: <LogoutOutlined />,
     label: "Logout",
     needPackage: false,

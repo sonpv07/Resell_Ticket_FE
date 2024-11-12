@@ -51,6 +51,19 @@ class FeedbackService {
       console.error("Error Get average", error);
     }
   }
+  static async getAllFeedback() {
+    try {
+      const response = await api.get(`${URL}`);
+
+      if (response.status >= 200 && response.status < 300) {
+        return returnValue(true, response.data, "");
+      } else {
+        return returnValue(false, null, "");
+      }
+    } catch (error) {
+      console.error("Error Get average", error);
+    }
+  }
 }
 
 export default FeedbackService;
