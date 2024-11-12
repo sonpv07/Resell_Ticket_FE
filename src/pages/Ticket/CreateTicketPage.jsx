@@ -26,26 +26,21 @@ const CreateTicketPage = () => {
   });
 
   const [ticketImage, setTicketImage] = useState([]);
-
   const [errors, setErrors] = useState({
     price: "",
     quantity: "",
     event_Date: "",
   });
 
-  const [imagePreview, setImagePreview] = useState([]);
-
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
 
-    // Handle checkbox for ticket_type (true/false)
     if (type === "checkbox") {
       setTicket({
         ...ticket,
         [name]: checked,
       });
     } else {
-      // Validate price and quantity
       if (name === "price" && value <= 0) {
         setErrors((prevErrors) => ({
           ...prevErrors,
@@ -59,7 +54,6 @@ const CreateTicketPage = () => {
       } else if (name === "event_Date") {
         const selectedDate = new Date(value);
         const today = new Date();
-
         if (selectedDate <= today) {
           setErrors((prevErrors) => ({
             ...prevErrors,
@@ -87,7 +81,6 @@ const CreateTicketPage = () => {
 
   const handleImageChange = (e) => {
     const file = e.target.files;
-
     if (file) {
       setTicketImage(file);
     }
@@ -99,11 +92,8 @@ const CreateTicketPage = () => {
       for (const single_file of ticketImage) {
         formData.append("images", single_file);
       }
-
       const response = await FirebaseService.uploadImage(formData);
-
       if (response.success) {
-        console.log(response);
         return response.data.join(",");
       }
     } catch (err) {
@@ -114,10 +104,21 @@ const CreateTicketPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validate event date is in the future
+    if (!ticket.show_Name.trim()) {
+      toast.error("Show Name cannot be empty.", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+      return;
+    }
+
     const selectedDate = new Date(ticket.event_Date);
     const today = new Date();
-
     if (selectedDate <= today) {
       toast.error("Event Date must be in the future.", {
         position: "top-right",
@@ -131,7 +132,6 @@ const CreateTicketPage = () => {
       return;
     }
 
-    // Validate fields
     if (ticket.price <= 0 || ticket.quantity <= 0) {
       alert("Please make sure all values are valid before submitting.");
       return;
@@ -139,10 +139,8 @@ const CreateTicketPage = () => {
 
     try {
       setLoading(true);
-
       let imgURL = null;
       imgURL = await uploadImagesFile();
-      console.log(imgURL);
       if (imgURL !== null) {
         let body = { ...ticket };
         body.image = imgURL;
@@ -150,7 +148,6 @@ const CreateTicketPage = () => {
           user.iD_Customer,
           body
         );
-        console.log(response);
         if (response.success) {
           toast.success(response.message);
           setTicket({
@@ -166,20 +163,13 @@ const CreateTicketPage = () => {
             location: "",
             image: null,
           });
-          setImagePreview(null);
-
           setTicketImage([]);
-
           const newUser = {
             ...user,
             number_of_tickets_can_posted:
               user?.number_of_tickets_can_posted - 1,
           };
-
-          console.log(newUser);
-
           setUser(newUser);
-
           localStorage.setItem("user", JSON.stringify(newUser));
         }
       }
@@ -191,16 +181,12 @@ const CreateTicketPage = () => {
     }
   };
 
-  console.log(ticketImage);
-
   return (
     <div className="create-ticket-container">
       <h1 className="title">Sell Your Ticket</h1>
-
       <form onSubmit={handleSubmit} className="create-ticket-form">
         <div className="create-ticket-form__item">
           <label>Show Name:</label>
-
           <input
             type="text"
             name="show_Name"
@@ -222,9 +208,9 @@ const CreateTicketPage = () => {
           />
           {errors.price && <span className="error">{errors.price}</span>}
         </div>
+
         <div className="create-ticket-form__item">
           <label>Location:</label>
-
           <input
             type="text"
             name="location"
@@ -233,19 +219,8 @@ const CreateTicketPage = () => {
             required
             disabled={loading}
           />
-
-          {/* <select
-            name="location"
-            value={ticket.location}
-            onChange={handleChange}
-            required
-          >
-            <option value="">Select a location</option>
-            <option value="Concert">Ha Noi</option>
-            <option value="Ho Chi Minh">Ho Chi Minh</option>
-            <option value="Da Nang">Da Nang</option>
-          </select> */}
         </div>
+
         <div className="create-ticket-form__item">
           <label>Ticket Category:</label>
           <select
@@ -275,22 +250,18 @@ const CreateTicketPage = () => {
           />
         </div>
 
-        <div
-          className="create-ticket-form__item"
-          style={{ flexDirection: "row", alignItems: "center" }}
-        >
+        <div className="create-ticket-form__item">
           <label>Allow Negotiation:</label>
           <input
-            className="input"
             type="checkbox"
             name="ticket_type"
             checked={ticket.ticket_type}
             onChange={handleChange}
-            style={{ width: "50px", backgroundColor: "transparent" }}
             disabled={loading}
           />
           <span>{ticket.ticket_type ? "True" : "False"}</span>
         </div>
+
         <div className="create-ticket-form__item">
           <label>Quantity:</label>
           <input
@@ -303,6 +274,7 @@ const CreateTicketPage = () => {
           />
           {errors.quantity && <span className="error">{errors.quantity}</span>}
         </div>
+
         <div className="create-ticket-form__item">
           <label>Event Date:</label>
           <input
@@ -320,7 +292,6 @@ const CreateTicketPage = () => {
 
         <div className="create-ticket-form__item">
           <label>Description:</label>
-
           <textarea
             name="description"
             value={ticket.description}
@@ -329,6 +300,7 @@ const CreateTicketPage = () => {
             disabled={loading}
           />
         </div>
+
         <div className="create-ticket-form__item">
           <label>Upload Image:</label>
           <input
@@ -339,16 +311,14 @@ const CreateTicketPage = () => {
           />
           {ticketImage.length > 0 && (
             <div className="ticket-form__img-preview">
-              {Array.from(ticketImage).map((item, index) => {
-                return (
-                  <img
-                    key={index}
-                    src={URL.createObjectURL(item)}
-                    alt="Preview"
-                    className="image-preview"
-                  />
-                );
-              })}
+              {Array.from(ticketImage).map((item, index) => (
+                <img
+                  key={index}
+                  src={URL.createObjectURL(item)}
+                  alt="Preview"
+                  className="image-preview"
+                />
+              ))}
             </div>
           )}
         </div>
