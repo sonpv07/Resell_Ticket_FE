@@ -306,7 +306,7 @@ const CreateTicketPage = () => {
         <div className="create-ticket-form__item">
           <label>Event Date:</label>
           <input
-            type="date"
+            type="datetime-local"
             name="event_Date"
             value={ticket.event_Date}
             onChange={handleChange}

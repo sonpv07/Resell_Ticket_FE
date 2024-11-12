@@ -13,6 +13,7 @@ import {
 } from "firebase/firestore";
 import { db } from "../../lib/firebase";
 import { AuthContext } from "../../context/AuthContext";
+import { message } from "antd";
 
 const ChatPage = () => {
   const [conversations, setConversations] = useState([]);
@@ -89,7 +90,7 @@ const ChatPage = () => {
     if (user) {
       getChatsWithLatestMessages();
     }
-  }, [user]);
+  }, [user, message]);
 
   useEffect(() => {
     if (!selectedConversation) return;

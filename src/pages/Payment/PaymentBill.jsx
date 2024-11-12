@@ -1,12 +1,20 @@
-import React from "react";
+import React, { useEffect } from "react";
 import "./PaymentBill.scss";
 import { useLocation, useNavigate } from "react-router-dom";
 import { CheckOutlined, CloseOutlined } from "@ant-design/icons";
+import TransactionService from "../../services/transaction.service";
 
 export default function PaymentBill() {
   const location = useLocation();
 
   console.log(location);
+
+  const queryParams = new URLSearchParams(location.search);
+
+  const code = queryParams.get("code");
+  const orderCode = queryParams.get("orderCode");
+
+  console.log(code, orderCode);
 
   const navigate = useNavigate();
 
@@ -16,19 +24,25 @@ export default function PaymentBill() {
     return false;
   };
 
-  const paymentDetails = {
-    orderId: "ORD-12345-ABCDE",
-    amount: 150.0,
-    date: "2023-05-25 14:30:00",
-    paymentMethod: "Credit Card (**** 1234)",
+  const handleUpdate = async () => {
+    const response = await TransactionService.updateTransaction(
+      orderCode,
+      code
+    );
+
+    console.log(response);
+
+    if (response.success) {
+      console.log(response.data);
+    }
   };
 
-  const ticketDetails = {
-    eventName: "Summer Music Festival",
-    eventDate: "2023-07-15 18:00:00",
-    quantity: 2,
-    ticketType: "General Admission",
-  };
+  useEffect(() => {
+    if (code && orderCode) {
+      // Check if payment was successful with the provided code and orderCode
+      handleUpdate();
+    }
+  }, [location]);
 
   return (
     <div className="successful-payment">

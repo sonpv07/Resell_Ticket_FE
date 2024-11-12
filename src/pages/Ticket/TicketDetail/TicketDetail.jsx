@@ -10,7 +10,12 @@ import { AuthContext } from "../../../context/AuthContext";
 import RequestPriceForm from "../../../components/request-price/RequestPriceForm";
 import SimpleImageSlider from "react-simple-image-slider";
 import FeedbackService from "../../../services/feedack.service";
-import { addDoc, collection, serverTimestamp } from "firebase/firestore";
+import {
+  addDoc,
+  collection,
+  getDocs,
+  serverTimestamp,
+} from "firebase/firestore";
 import { db } from "../../../lib/firebase";
 import { DialogContext } from "../../../context/DialogContext";
 
@@ -50,24 +55,38 @@ export default function TicketDetail() {
 
   // Function to create a new chat document with two users
   const createChat = async (user1, user2) => {
-    try {
-      if (!user) {
-        handleOpenDialog();
-        return;
-      }
+    if (!user) {
+      handleOpenDialog();
+      return;
+    }
 
-      const chatDocRef = await addDoc(collection(db, "boxchat"), {
-        users: [user1, user2], // Array containing two users
-        createdAt: serverTimestamp(), // Timestamp for when the chat was created
+    try {
+      const chatsRef = collection(db, "boxchat");
+      const querySnapshot = await getDocs(chatsRef);
+
+      const existingChat = querySnapshot.docs.find((doc) => {
+        const users = doc.data().users;
+        return (
+          users.length === 2 &&
+          users.some((u) => u?.iD_Customer === user1?.iD_Customer) &&
+          users.some((u) => u?.iD_Customer === user2?.iD_Customer)
+        );
       });
-      console.log("Chat document created with ID:", chatDocRef.id);
-      alert(`Chat created successfully with ID: ${chatDocRef.id}`);
+
+      if (existingChat) {
+        navigate(`/chat`);
+      } else {
+        const chatDocRef = await addDoc(chatsRef, {
+          users: [user1, user2],
+          createdAt: serverTimestamp(),
+        });
+        console.log("Chat document created with ID:", chatDocRef.id);
+        navigate(`/chat`);
+      }
     } catch (error) {
-      console.error("Error creating chat document:", error);
-      alert("Failed to create chat document");
+      console.error("Error creating or checking chat document:", error);
     }
   };
-
   const handleQuantityChange = (e) => {
     setSelectedQuantity(Number(e.target.value));
   };

@@ -26,6 +26,7 @@ import RequestList from "./Request/RequestList";
 import ChatPage from "./Chat/ChatPage";
 import TransactionPage from "./Admin/Transaction/TransactionPage";
 import ViewReport from "./Admin/ViewReport/ViewReport";
+import TransactionHistory from "./Transaction-History/TransactionHistory";
 const pagesData = [
   {
     path: "",
@@ -186,6 +187,11 @@ const pagesData = [
     path: "chat",
     element: <ChatPage />,
     title: "chat",
+  },
+  {
+    path: "transactions-history",
+    element: <TransactionHistory />,
+    title: "transactions-history",
   },
 ];
 
